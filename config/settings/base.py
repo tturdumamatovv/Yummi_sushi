@@ -27,7 +27,7 @@ PROJECT_APPS = [
 
 ]
 
-SITE_ID = config('SITE_ID')
+SITE_ID = config('SITE_ID', cast=int)
 
 DJANGO_APPS = [
     'apps.authentication',
