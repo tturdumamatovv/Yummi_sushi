@@ -58,6 +58,8 @@ class UserAddress(models.Model):
     intercom = models.CharField(max_length=10, verbose_name=_("Домофон"), null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Дата создания"))
     is_primary = models.BooleanField(default=False, verbose_name=_("Главный"))
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, verbose_name=_('Широта'))
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, verbose_name=_('Долгота'))
 
     class Meta:
         verbose_name = _("Адрес пользователя")

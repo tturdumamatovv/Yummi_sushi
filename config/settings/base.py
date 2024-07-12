@@ -32,6 +32,7 @@ SITE_ID = config('SITE_ID', cast=int)
 DJANGO_APPS = [
     'apps.authentication',
     'apps.product',
+    'apps.orders',
 ]
 
 THIRD_PARTY_APPS = [
