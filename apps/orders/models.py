@@ -48,9 +48,7 @@ class Order(models.Model):
     delivery = models.ForeignKey(Delivery, on_delete=models.CASCADE, verbose_name=_('Доставка'))
     order_time = models.DateTimeField(auto_now_add=True, verbose_name=_('Время заказа'))
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Общая сумма'))
-    customer_name = models.CharField(max_length=100, verbose_name=_('Имя клиента'))
-    customer_phone = models.CharField(max_length=15, verbose_name=_('Телефон клиента'))
-    customer_email = models.EmailField(verbose_name=_('Электронная почта клиента'))
+    user = models.ForeignKey('authentication.User', on_delete=models.CASCADE, verbose_name=_('Пользователь'))
     is_pickup = models.BooleanField(default=False, verbose_name=_('Самовывоз'))
 
     order_status = models.CharField(

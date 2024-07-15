@@ -19,7 +19,7 @@ class DeliveryAdmin(admin.ModelAdmin):
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'restaurant', 'delivery', 'order_time', 'total_amount', 'customer_name', 'order_status', 'is_pickup')
-    search_fields = ('customer_name', 'customer_phone', 'customer_email')
+        'id', 'restaurant', 'delivery', 'order_time', 'total_amount', 'user', 'order_status', 'is_pickup')
+    search_fields = ('user',)
     list_filter = ('order_time', 'order_status', 'restaurant', 'is_pickup')
-    list_display_links = ('id', 'customer_name')
+    list_display_links = ('id', 'user')
