@@ -34,8 +34,10 @@ class Category(models.Model):
             self.slug = slugify(unidecode(self.name))
         super().save(*args, **kwargs)
 
+
 class Product(models.Model):
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name=_('Категория'))
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name=_('Категория'),
+                                 related_name='products', blank=True, null=True)
     name = models.CharField(max_length=100, verbose_name=_('Название'))
     description = models.TextField(verbose_name=_('Описание'), blank=True, null=True)
     photo = models.ImageField(upload_to='topping_photos/', verbose_name=_('Фото'), blank=True, null=True)
@@ -93,6 +95,7 @@ class Topping(models.Model):
 
 
 class Set(models.Model):
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name=_('Категория'), related_name='sets')
     name = models.CharField(max_length=100, verbose_name=_('Название'))
     description = models.TextField(verbose_name=_('Описание'), blank=True, null=True)
     photo = models.ImageField(upload_to='topping_photos/', verbose_name=_('Фото'), blank=True, null=True)
