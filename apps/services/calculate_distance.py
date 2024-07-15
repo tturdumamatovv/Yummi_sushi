@@ -21,7 +21,7 @@ def get_distance_between_locations(api_key, origin, destination):
 
 
 if __name__ == "__main__":
-    api_key = "AIzaSyCWbO5aOn8hS3EWJycj73dHqH8fHHfO4w4"
+    api_key = ""
     origin = (42.837155, 74.590484)  # New York City (latitude, longitude)
     destination = (42.843516, 74.588999)  # Los Angeles (latitude, longitude)
     distance = get_distance_between_locations(api_key, origin, destination)

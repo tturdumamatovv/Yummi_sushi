@@ -1,10 +1,9 @@
 import os
-
-from pathlib import Path
-from decouple import config
 from datetime import timedelta
+from pathlib import Path
 
-from config.settings.simple_ui import *
+from decouple import config
+from django.utils.translation import gettext_lazy as _
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -33,13 +32,14 @@ DJANGO_APPS = [
     'apps.authentication',
     'apps.product',
     'apps.orders',
+    'apps.pages',
 ]
 
 THIRD_PARTY_APPS = [
     'rest_framework',
     'corsheaders',
     'drf_spectacular',
-
+    'modeltranslation',
 
 ]
 
@@ -54,6 +54,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'config.middleware.LanguageMiddleware',
+
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
@@ -96,7 +98,13 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTH_USER_MODEL = "authentication.User"
 
-LANGUAGE_CODE = 'ru-ru'
+LANGUAGE_CODE = 'ru'
+LANGUAGES = (
+    ('ru', _('Russian')),
+    ('ky', _('Kyrgyz')),
+)
+
+MODELTRANSLATION_DEFAULT_LANGUAGE = 'ru'
 
 TIME_ZONE = 'Asia/Bishkek'
 
@@ -117,7 +125,6 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 DEFAULT_PROFILE_PICTURE_URL = MEDIA_URL + 'profile_pictures/default-user.jpg'
 
-
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -125,7 +132,6 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
 }
-
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=14),
@@ -138,7 +144,7 @@ SPECTACULAR_SETTINGS = {
     'COMPONENT_SPLIT_REQUEST': True,
     "VERSION": "1.0.0",
     "SCHEMA_PATH_PREFIX": r"/api/v[0-9]",
-    "SERVE_PERMISSIONS": ("rest_framework.permissions.AllowAny", ),
+    "SERVE_PERMISSIONS": ("rest_framework.permissions.AllowAny",),
     "SERVE_AUTHENTICATION": ('rest_framework.authentication.SessionAuthentication',
                              'rest_framework.authentication.BasicAuthentication'),
     "PREPROCESSING_HOOKS": ("apps.openapi.preprocessors.get_urls_preprocessor",),

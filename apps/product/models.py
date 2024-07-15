@@ -1,5 +1,7 @@
 from django.db import models
+from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
+from unidecode import unidecode
 
 
 class Size(models.Model):
@@ -17,7 +19,8 @@ class Size(models.Model):
 class Category(models.Model):
     name = models.CharField(max_length=50, verbose_name=_('Название'))
     description = models.CharField(max_length=100, blank=True, verbose_name=_('Описание'))
-    size = models.ManyToManyField(Size, related_name='categories', verbose_name=_('Размеры'))
+    slug = models.SlugField(max_length=100, unique=True, verbose_name=_('Ссылка'), blank=True, null=True)
+    image = models.ImageField(upload_to='category_photos/', verbose_name=_('Фото'), blank=True, null=True)
 
     class Meta:
         verbose_name = "Категория"
@@ -26,6 +29,10 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(unidecode(self.name))
+        super().save(*args, **kwargs)
 
 class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name=_('Категория'))

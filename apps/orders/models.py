@@ -1,7 +1,5 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from geopy.distance import distance
-
 from apps.authentication.models import UserAddress
 
 
@@ -28,20 +26,6 @@ class Delivery(models.Model):
     delivery_time = models.DateTimeField(verbose_name=_('Время доставки'))
     delivery_fee = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Стоимость доставки'))
 
-    def calculate_distance(self):
-        """
-        Calculates the distance between the user's address and the restaurant's location.
-
-        Returns:
-            float: The distance in kilometers between the user's address and the restaurant's location.
-                   Returns 0 if the user's address is not provided.
-        """
-        if not self.user_address:
-            return 0
-        else:
-            user_location = (self.user_address.latitude, self.user_address.longitude)
-            restaurant_location = (self.restaurant.latitude, self.restaurant.longitude)
-            return distance(user_location, restaurant_location).km
 
     class Meta:
         verbose_name = "Доставка"
