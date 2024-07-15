@@ -16,5 +16,4 @@ class ProductSizeForm(forms.ModelForm):
         else:
             product = None
 
-        if product:
-            self.fields['size'].queryset = Size.objects.filter(categories=product.category)
+

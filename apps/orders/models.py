@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from geopy.distance import distance
 
 from apps.authentication.models import UserAddress
 
@@ -7,11 +8,11 @@ from apps.authentication.models import UserAddress
 class Restaurant(models.Model):
     name = models.CharField(max_length=100, verbose_name=_('Название'))
     address = models.CharField(max_length=255, verbose_name=_('Адрес'))
-    phone_number = models.CharField(max_length=15, verbose_name=_('Телефонный номер'))
-    email = models.EmailField(verbose_name=_('Электронная почта'))
-    opening_hours = models.CharField(max_length=100, verbose_name=_('Часы работы'))
-    latitude = models.DecimalField(max_digits=9, decimal_places=6, verbose_name=_('Широта'))
-    longitude = models.DecimalField(max_digits=9, decimal_places=6, verbose_name=_('Долгота'))
+    phone_number = models.CharField(max_length=15, verbose_name=_('Телефонный номер'), blank=True, null=True)
+    email = models.EmailField(verbose_name=_('Электронная почта'), blank=True, null=True)
+    opening_hours = models.CharField(max_length=100, verbose_name=_('Часы работы'), blank=True, null=True)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, verbose_name=_('Широта'), blank=True, null=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, verbose_name=_('Долгота'), blank=True, null=True)
 
     class Meta:
         verbose_name = "Ресторан"
@@ -26,6 +27,21 @@ class Delivery(models.Model):
     user_address = models.ForeignKey(UserAddress, on_delete=models.CASCADE, verbose_name=_('Адрес пользователя'))
     delivery_time = models.DateTimeField(verbose_name=_('Время доставки'))
     delivery_fee = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Стоимость доставки'))
+
+    def calculate_distance(self):
+        """
+        Calculates the distance between the user's address and the restaurant's location.
+
+        Returns:
+            float: The distance in kilometers between the user's address and the restaurant's location.
+                   Returns 0 if the user's address is not provided.
+        """
+        if not self.user_address:
+            return 0
+        else:
+            user_location = (self.user_address.latitude, self.user_address.longitude)
+            restaurant_location = (self.restaurant.latitude, self.restaurant.longitude)
+            return distance(user_location, restaurant_location).km
 
     class Meta:
         verbose_name = "Доставка"

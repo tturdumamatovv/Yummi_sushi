@@ -34,6 +34,7 @@ class Product(models.Model):
     photo = models.ImageField(upload_to='topping_photos/', verbose_name=_('Фото'), blank=True, null=True)
     ingredients = models.ManyToManyField('Ingredient', related_name='products', verbose_name=_('Ингредиенты'))
     toppings = models.ManyToManyField('Topping', related_name='products', verbose_name=_('Добавки'))
+    bonuses = models.BooleanField(default=False, verbose_name=_('Можно оптатить бонусами'))
 
     class Meta:
         verbose_name = "Продукт"
@@ -74,10 +75,27 @@ class Topping(models.Model):
     name = models.CharField(max_length=100, verbose_name=_('Название'))
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Цена'))
     photo = models.ImageField(upload_to='topping_photos/', verbose_name=_('Фото'), blank=True, null=True)
+    bonuses = models.BooleanField(default=False, verbose_name=_('Можно оптатить бонусами'))
 
     class Meta:
         verbose_name = "Добавка"
         verbose_name_plural = "Добавки"
+
+    def __str__(self):
+        return self.name
+
+
+class Set(models.Model):
+    name = models.CharField(max_length=100, verbose_name=_('Название'))
+    description = models.TextField(verbose_name=_('Описание'), blank=True, null=True)
+    photo = models.ImageField(upload_to='topping_photos/', verbose_name=_('Фото'), blank=True, null=True)
+    products = models.ManyToManyField(ProductSize, related_name='sets', verbose_name=_('Продукты'))
+    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Цена'))
+    bonuses = models.BooleanField(default=False, verbose_name=_('Можно оптатить бонусами'))
+
+    class Meta:
+        verbose_name = "Сет"
+        verbose_name_plural = "Сеты"
 
     def __str__(self):
         return self.name

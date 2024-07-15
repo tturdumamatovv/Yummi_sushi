@@ -34,7 +34,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     fcm_token = models.CharField(max_length=255, blank=True, null=True, verbose_name=_('Токен'))
     receive_notifications = models.BooleanField(default=False, verbose_name=_('Получать уведомления'), null=True,
                                                 blank=True)
-
+    last_order = models.DateTimeField(null=True, blank=True, verbose_name=_("Последний заказ"))
+    bonus = models.DecimalField(max_digits=9, decimal_places=2, verbose_name=_('Бонусы'), null=True, blank=True)
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'phone_number'
@@ -52,14 +53,16 @@ class UserAddress(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='addresses', verbose_name=_("Пользователь"))
     city = models.CharField(max_length=100, verbose_name=_("Город"))
     street = models.CharField(max_length=100, verbose_name=_("Улица"))
+    house_number = models.CharField(max_length=10, verbose_name=_("Номер дома"), null=True, blank=True)
     apartment_number = models.CharField(max_length=10, verbose_name=_("Номер квартиры"), null=True, blank=True)
     entrance = models.CharField(max_length=10, verbose_name=_("Подъезд"), null=True, blank=True)
     floor = models.CharField(max_length=10, verbose_name=_("Этаж"), null=True, blank=True)
     intercom = models.CharField(max_length=10, verbose_name=_("Домофон"), null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Дата создания"))
     is_primary = models.BooleanField(default=False, verbose_name=_("Главный"))
-    latitude = models.DecimalField(max_digits=9, decimal_places=6, verbose_name=_('Широта'))
-    longitude = models.DecimalField(max_digits=9, decimal_places=6, verbose_name=_('Долгота'))
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, verbose_name=_('Широта'), null=True, blank=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, verbose_name=_('Долгота'), null=True, blank=True)
+    comment = models.TextField(verbose_name=_("Комментарий"), null=True, blank=True)
 
     class Meta:
         verbose_name = _("Адрес пользователя")
@@ -67,4 +70,4 @@ class UserAddress(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return f'{self.city} - {self.street} - {self.apartment_number} - {self.entrance} - {self.floor} - {self.intercom}'
+        return f'{self.city} - {self.street} {self.house_number}'
