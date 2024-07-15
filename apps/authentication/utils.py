@@ -31,7 +31,7 @@ def send_sms(phone_number, confirmation_code):
     phones_element = ET.SubElement(request_body, "phones")
     ET.SubElement(phones_element, "phone").text = phone_number
 
-    if settings.PRODUCTION:
+    if settings.DEBUG:
         ET.SubElement(request_body, "test").text = "0"
 
     request_body_str = ET.tostring(request_body, encoding="UTF-8", method="xml")

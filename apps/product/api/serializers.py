@@ -20,7 +20,7 @@ class ProductSizeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProductSize
-        fields = ['size', 'price']
+        fields = ['id', 'size', 'price']
 
 
 class ProductSerializer(serializers.ModelSerializer):

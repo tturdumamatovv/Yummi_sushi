@@ -1,4 +1,3 @@
-
 import math
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -29,6 +28,7 @@ class Restaurant(models.Model):
         user_location = (user_lat, user_lon)
         return geodesic(restaurant_location, user_location).kilometers
 
+
 class Delivery(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, verbose_name=_('Ресторан'))
     user_address = models.ForeignKey(UserAddress, on_delete=models.CASCADE, verbose_name=_('Адрес пользователя'))
@@ -47,7 +47,8 @@ class Order(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, verbose_name=_('Ресторан'))
     delivery = models.ForeignKey(Delivery, on_delete=models.CASCADE, verbose_name=_('Доставка'))
     order_time = models.DateTimeField(auto_now_add=True, verbose_name=_('Время заказа'))
-    total_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Общая сумма'))
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Общая сумма'), blank=True,
+                                       null=True)
     user = models.ForeignKey('authentication.User', on_delete=models.CASCADE, verbose_name=_('Пользователь'))
     is_pickup = models.BooleanField(default=False, verbose_name=_('Самовывоз'))
 
@@ -68,17 +69,16 @@ class Order(models.Model):
         verbose_name_plural = "Заказы"
 
     def __str__(self):
-        return f"Заказ #{self.id} от {self.customer_name}"
-
-    def save(self, *args, **kwargs):
-        self.total_amount = self.get_total_amount()
-        super().save(*args, **kwargs)
+        return f"Заказ #{self.id} от {self.user.full_name}"
 
     def get_total_amount(self):
-        total_amount = 0
+        total_amount = self.delivery.delivery_fee
         for order_item in self.order_items.all():
             total_amount += order_item.total_amount
         return total_amount
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
 
 
 class OrderItem(models.Model):
@@ -101,3 +101,5 @@ class OrderItem(models.Model):
         elif self.set:
             self.total_amount = self.quantity * self.set.price
         super().save(*args, **kwargs)
+        self.order.total_amount = self.order.get_total_amount()
+        self.order.save()

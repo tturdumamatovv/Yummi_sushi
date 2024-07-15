@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Restaurant, Delivery, Order
+from .models import Restaurant, Delivery, Order, OrderItem
 
 
 @admin.register(Restaurant)
@@ -16,6 +16,11 @@ class DeliveryAdmin(admin.ModelAdmin):
     list_filter = ('delivery_time', 'restaurant')
 
 
+
+class OrderItemInline(admin.TabularInline):
+    model = OrderItem
+    extra = 0
+
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = (
@@ -23,3 +28,4 @@ class OrderAdmin(admin.ModelAdmin):
     search_fields = ('user',)
     list_filter = ('order_time', 'order_status', 'restaurant', 'is_pickup')
     list_display_links = ('id', 'user')
+    inlines = [OrderItemInline]
