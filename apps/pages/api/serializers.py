@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from apps.pages.models import Banner, OrderTypes, MainPage, Phone, Email, SocialLink, Address, PaymentMethod, Contacts
+from apps.pages.models import Banner, OrderTypes, MainPage, Phone, Email, SocialLink, Address, PaymentMethod, Contacts, \
+    StaticPage
 from apps.product.models import Category
 
 
@@ -79,3 +80,11 @@ class ContactsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contacts
         fields = ['phones', 'emails', 'social_links', 'addresses', 'payment_methods']
+
+
+class StaticPageSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = StaticPage
+        fields = ['title', 'slug', 'description', 'meta_title',
+                  'meta_description', ]
