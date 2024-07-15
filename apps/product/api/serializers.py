@@ -31,3 +31,20 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ['name', 'description', 'photo', 'ingredients', 'toppings', 'product_sizes', 'bonuses']
+
+
+class SizeProductSerializer(serializers.ModelSerializer):
+    product = ProductSerializer()
+    size = serializers.StringRelatedField()
+
+    class Meta:
+        model = ProductSize
+        fields = ['product', 'size', 'price']
+
+
+class SetSerializer(serializers.ModelSerializer):
+    products = SizeProductSerializer(many=True)
+
+    class Meta:
+        model = Set
+        fields = ['name', 'description', 'photo', 'products', 'price', 'bonuses']

@@ -2,8 +2,8 @@ from django.shortcuts import render
 from rest_framework import generics
 from rest_framework.exceptions import NotFound
 
-from apps.product.api.serializers import ProductSerializer
-from apps.product.models import Category, Product
+from apps.product.api.serializers import ProductSerializer, SetSerializer
+from apps.product.models import Category, Product, Set
 
 
 # Create your views here.
@@ -17,3 +17,14 @@ class ProductListByCategorySlugView(generics.ListAPIView):
         except Category.DoesNotExist:
             raise NotFound("Категория не найдена")
         return Product.objects.filter(category=category)
+
+
+class SetListView(generics.ListAPIView):
+    serializer_class = SetSerializer
+
+    def get_queryset(self):
+        return Set.objects.prefetch_related(
+            'products__product__ingredients',
+            'products__product__toppings',
+            'products__size'
+        )

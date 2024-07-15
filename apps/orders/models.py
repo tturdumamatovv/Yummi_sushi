@@ -1,6 +1,11 @@
+
+import math
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from geopy.distance import geodesic
+
 from apps.authentication.models import UserAddress
+from apps.product.models import ProductSize, Set
 
 
 class Restaurant(models.Model):
@@ -19,13 +24,16 @@ class Restaurant(models.Model):
     def __str__(self):
         return self.name
 
+    def distance_to(self, user_lat, user_lon):
+        restaurant_location = (self.latitude, self.longitude)
+        user_location = (user_lat, user_lon)
+        return geodesic(restaurant_location, user_location).kilometers
 
 class Delivery(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, verbose_name=_('Ресторан'))
     user_address = models.ForeignKey(UserAddress, on_delete=models.CASCADE, verbose_name=_('Адрес пользователя'))
     delivery_time = models.DateTimeField(verbose_name=_('Время доставки'))
     delivery_fee = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Стоимость доставки'))
-
 
     class Meta:
         verbose_name = "Доставка"
@@ -44,6 +52,7 @@ class Order(models.Model):
     customer_phone = models.CharField(max_length=15, verbose_name=_('Телефон клиента'))
     customer_email = models.EmailField(verbose_name=_('Электронная почта клиента'))
     is_pickup = models.BooleanField(default=False, verbose_name=_('Самовывоз'))
+
     order_status = models.CharField(
         max_length=20,
         choices=[
@@ -72,3 +81,25 @@ class Order(models.Model):
         for order_item in self.order_items.all():
             total_amount += order_item.total_amount
         return total_amount
+
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='order_items', verbose_name=_('Заказ'))
+    product_size = models.ForeignKey(ProductSize, on_delete=models.CASCADE, verbose_name=_('Размер продукта'))
+    set = models.ForeignKey(Set, on_delete=models.CASCADE, blank=True, null=True, verbose_name=_('Сет'))
+    quantity = models.PositiveIntegerField(verbose_name=_('Количество'))
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Общая сумма'))
+
+    class Meta:
+        verbose_name = "Элемент заказа"
+        verbose_name_plural = "Элементы заказа"
+
+    def __str__(self):
+        return f"{self.product_size.product.name} ({self.product_size.size.name}) - {self.quantity} шт."
+
+    def save(self, *args, **kwargs):
+        if self.product_size:
+            self.total_amount = self.quantity * self.product_size.price
+        elif self.set:
+            self.total_amount = self.quantity * self.set.price
+        super().save(*args, **kwargs)
