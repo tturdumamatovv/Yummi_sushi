@@ -1,29 +1,25 @@
-def calculate_delivery_fee(distance_km):
-    if distance_km <= 3:
+import math
+from django.db.models import Max, Min
+from django.core.exceptions import ObjectDoesNotExist
+
+from apps.orders.models import DistancePricing
+
+
+def get_price_from_db(distance_km):
+    if not DistancePricing.objects.exists():
+        DistancePricing.objects.create(distance=3, price=150)
         return 150
-    elif distance_km <= 4:
-        return 160
-    elif distance_km <= 5:
-        return 170
-    elif distance_km <= 6:
-        return 190
-    elif distance_km <= 7:
-        return 210
-    elif distance_km <= 8:
-        return 220
-    elif distance_km <= 9:
-        return 230
-    elif distance_km <= 10:
-        return 250
-    elif distance_km <= 11:
-        return 270
-    elif distance_km <= 12:
-        return 320
-    elif distance_km <= 13:
-        return 350
-    elif distance_km <= 14:
-        return 370
-    elif distance_km <= 15:
-        return 380
-    else:
-        return 380
+    if distance_km <= 3:
+        return DistancePricing.objects.aggregate(Min('price'))['price__min']
+    try:
+        pricing = DistancePricing.objects.get(distance=distance_km)
+        return pricing.price
+    except ObjectDoesNotExist:
+        return DistancePricing.objects.filter(distance__lte=distance_km).aggregate(Max('price'))['price__max']
+
+
+def calculate_delivery_fee(raw_distance_km):
+    rounded_distance = math.ceil(raw_distance_km)
+    return get_price_from_db(rounded_distance)
+
+

@@ -8,6 +8,7 @@ from apps.orders.models import Restaurant
 from apps.services.calculate_delivery_fee import calculate_delivery_fee
 from apps.services.calculate_distance import get_distance_between_locations
 from .serializers import OrderSerializer
+from ...services.generate_message import generate_order_message
 
 
 class CreateOrderView(generics.CreateAPIView):
@@ -28,7 +29,7 @@ class CreateOrderView(generics.CreateAPIView):
         for restaurant in Restaurant.objects.all():
             if restaurant.latitude and restaurant.longitude:
                 restaurant_location = (restaurant.latitude, restaurant.longitude)
-                distance = get_distance_between_locations('AIzaSyCWbO5aOn8hS3EWJycj73dHqH8fHHfO4w4',user_location, restaurant_location)
+                distance = get_distance_between_locations(user_location, restaurant_location)
                 if distance is not None and distance < min_distance:
                     min_distance = distance
                     nearest_restaurant = restaurant
@@ -45,8 +46,16 @@ class CreateOrderView(generics.CreateAPIView):
 
             self.perform_create(serializer)
 
+            order = serializer.instance
+
+            # Формирование сообщения для Telegram
+            message = generate_order_message(order)
+            print(message)
+
+            # Отправка сообщения в Telegram
+            # send_telegram_message(TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, message)
+
             headers = self.get_success_headers(serializer.data)
             return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
         else:
             return Response({"error": "No available restaurants found."}, status=status.HTTP_400_BAD_REQUEST)
-

@@ -27,6 +27,7 @@ class ProductListByCategorySlugView(generics.ListAPIView):
             'sets': set_serializer.data
         })
 
+
 class SetListView(generics.ListAPIView):
     serializer_class = SetSerializer
 

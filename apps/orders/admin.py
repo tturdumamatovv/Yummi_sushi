@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Restaurant, Delivery, Order, OrderItem
+from .models import Restaurant, Delivery, Order, OrderItem, DistancePricing
 
 
 @admin.register(Restaurant)
@@ -16,10 +16,10 @@ class DeliveryAdmin(admin.ModelAdmin):
     list_filter = ('delivery_time', 'restaurant')
 
 
-
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
     extra = 0
+
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
@@ -29,3 +29,13 @@ class OrderAdmin(admin.ModelAdmin):
     list_filter = ('order_time', 'order_status', 'restaurant', 'is_pickup')
     list_display_links = ('id', 'user')
     inlines = [OrderItemInline]
+
+    def total_amount(self, obj):
+        return obj.get_total_amount()
+
+    total_amount.short_description = 'Общая сумма'
+
+
+@admin.register(DistancePricing)
+class DistancePricingInline(admin.ModelAdmin):
+    pass

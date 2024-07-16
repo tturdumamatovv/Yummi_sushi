@@ -1,4 +1,4 @@
-# serializers.py
+
 from rest_framework import serializers
 from apps.orders.models import Order, OrderItem, Delivery
 from apps.product.models import ProductSize, Set
@@ -7,6 +7,8 @@ from apps.authentication.models import UserAddress
 
 class ProductOrderItemSerializer(serializers.ModelSerializer):
     product_size_id = serializers.IntegerField(write_only=True)
+    topping_ids = serializers.ListField(child=serializers.IntegerField(), write_only=True, required=False)
+    excluded_ingredient_ids = serializers.ListField(child=serializers.IntegerField(), write_only=True, required=False)
 
     class Meta:
         model = OrderItem
