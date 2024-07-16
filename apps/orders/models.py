@@ -4,7 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from geopy.distance import geodesic
 
 from apps.authentication.models import UserAddress
-from apps.product.models import ProductSize, Set
+from apps.product.models import ProductSize, Set, Ingredient, Topping
 
 
 class Restaurant(models.Model):
@@ -84,6 +84,8 @@ class Order(models.Model):
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='order_items', verbose_name=_('Заказ'))
     product_size = models.ForeignKey(ProductSize, on_delete=models.CASCADE, verbose_name=_('Размер продукта'))
+    topping = models.ManyToManyField(Topping, blank=True, null=True, verbose_name=_('Добавки'))
+    excluded_ingredient = models.ManyToManyField(Ingredient, blank=True, null=True, verbose_name=_('Исключенные ингредиенты'))
     set = models.ForeignKey(Set, on_delete=models.CASCADE, blank=True, null=True, verbose_name=_('Сет'))
     quantity = models.PositiveIntegerField(verbose_name=_('Количество'))
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Общая сумма'))
@@ -95,6 +97,12 @@ class OrderItem(models.Model):
     def __str__(self):
         return f"{self.product_size.product.name} ({self.product_size.size.name}) - {self.quantity} шт."
 
+    def calculate_total_amount(self):
+        total = self.quantity * (self.product_size.price if self.product_size else self.set.price)
+        for topping in self.topping.all():
+            total += topping.price * self.quantity
+        self.total_amount = total
+
     def save(self, *args, **kwargs):
         if self.product_size:
             self.total_amount = self.quantity * self.product_size.price
@@ -103,3 +111,11 @@ class OrderItem(models.Model):
         super().save(*args, **kwargs)
         self.order.total_amount = self.order.get_total_amount()
         self.order.save()
+
+
+class DistancePricing(models.Model):
+    distance = models.IntegerField(verbose_name="Расстояние (км)")
+    price = models.IntegerField(verbose_name="Цена")
+
+    def __str__(self):
+        return f"{self.distance} км - {self.price} сом"
