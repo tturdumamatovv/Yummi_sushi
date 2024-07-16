@@ -1,4 +1,5 @@
 # serializers.py
+from django.db import transaction
 from rest_framework import serializers
 from apps.orders.models import Order, OrderItem, Delivery, Topping, Ingredient
 from apps.product.models import ProductSize, Set
@@ -64,38 +65,39 @@ class OrderSerializer(serializers.ModelSerializer):
         nearest_restaurant = self.context['nearest_restaurant']
         delivery_fee = self.context['delivery_fee']
 
-        delivery = Delivery.objects.create(
-            restaurant=nearest_restaurant,
-            user_address=user_address,
-            delivery_time=delivery_data['delivery_time'],
-            delivery_fee=delivery_fee
-        )
+        with transaction.atomic():
+            delivery = Delivery.objects.create(
+                restaurant=nearest_restaurant,
+                user_address=user_address,
+                delivery_time=delivery_data['delivery_time'],
+                delivery_fee=delivery_fee
+            )
 
-        order = Order.objects.create(
-            delivery=delivery,
-            user=user,
-            restaurant=nearest_restaurant,
-            **validated_data
-        )
+            order = Order.objects.create(
+                delivery=delivery,
+                user=user,
+                restaurant=nearest_restaurant,
+                **validated_data
+            )
 
-        for product_data in products_data:
-            topping_ids = product_data.pop('topping_ids', [])
-            excluded_ingredient_ids = product_data.pop('excluded_ingredient_ids', [])
+            for product_data in products_data:
+                topping_ids = product_data.pop('topping_ids', [])
+                excluded_ingredient_ids = product_data.pop('excluded_ingredient_ids', [])
 
-            order_item = OrderItem.objects.create(order=order, product_size_id=product_data['product_size_id'],
-                                                  quantity=product_data['quantity'])
+                order_item = OrderItem(order=order, product_size_id=product_data['product_size_id'],
+                                       quantity=product_data['quantity'])
+                order_item.save()  # Сохраняем объект, чтобы получить ID
 
-            if topping_ids:
-                toppings = Topping.objects.filter(id__in=topping_ids)
-                order_item.topping.set(toppings)
+                if topping_ids:
+                    toppings = Topping.objects.filter(id__in=topping_ids)
+                    order_item.topping.set(toppings)  # Устанавливаем отношения многие-ко-многим
 
-            if excluded_ingredient_ids:
-                excluded_ingredients = Ingredient.objects.filter(id__in=excluded_ingredient_ids)
-                order_item.excluded_ingredient.set(excluded_ingredients)
+                if excluded_ingredient_ids:
+                    excluded_ingredients = Ingredient.objects.filter(id__in=excluded_ingredient_ids)
+                    order_item.excluded_ingredient.set(excluded_ingredients)
 
-            order_item.save()
-
-        for set_data in sets_data:
-            OrderItem.objects.create(order=order, set_id=set_data['set_id'], quantity=set_data['quantity'])
+            for set_data in sets_data:
+                set_order_item = OrderItem(order=order, set_id=set_data['set_id'], quantity=set_data['quantity'])
+                set_order_item.save()
 
         return order
