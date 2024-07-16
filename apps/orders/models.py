@@ -83,7 +83,7 @@ class Order(models.Model):
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='order_items', verbose_name=_('Заказ'))
-    product_size = models.ForeignKey(ProductSize, on_delete=models.CASCADE, verbose_name=_('Размер продукта'))
+    product_size = models.ForeignKey(ProductSize, on_delete=models.CASCADE, verbose_name=_('Размер продукта'), blank=True, null=True)
     topping = models.ManyToManyField(Topping, blank=True, null=True, verbose_name=_('Добавки'))
     excluded_ingredient = models.ManyToManyField(Ingredient, blank=True, null=True, verbose_name=_('Исключенные ингредиенты'))
     set = models.ForeignKey(Set, on_delete=models.CASCADE, blank=True, null=True, verbose_name=_('Сет'))

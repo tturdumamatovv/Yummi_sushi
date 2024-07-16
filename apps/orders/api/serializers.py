@@ -1,6 +1,6 @@
-
+# serializers.py
 from rest_framework import serializers
-from apps.orders.models import Order, OrderItem, Delivery
+from apps.orders.models import Order, OrderItem, Delivery, Topping, Ingredient
 from apps.product.models import ProductSize, Set
 from apps.authentication.models import UserAddress
 
@@ -12,7 +12,7 @@ class ProductOrderItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OrderItem
-        fields = ['product_size_id', 'quantity']
+        fields = ['product_size_id', 'quantity', 'topping_ids', 'excluded_ingredient_ids']
 
     def validate(self, data):
         if data.get('product_size_id') == 0:
@@ -77,12 +77,23 @@ class OrderSerializer(serializers.ModelSerializer):
         )
 
         for product_data in products_data:
-            if product_data.get('product_size_id'):
-                OrderItem.objects.create(order=order, product_size_id=product_data['product_size_id'],
-                                         quantity=product_data['quantity'])
+            topping_ids = product_data.pop('topping_ids', [])
+            excluded_ingredient_ids = product_data.pop('excluded_ingredient_ids', [])
+
+            order_item = OrderItem.objects.create(order=order, product_size_id=product_data['product_size_id'],
+                                                  quantity=product_data['quantity'])
+
+            if topping_ids:
+                toppings = Topping.objects.filter(id__in=topping_ids)
+                order_item.topping.set(toppings)
+
+            if excluded_ingredient_ids:
+                excluded_ingredients = Ingredient.objects.filter(id__in=excluded_ingredient_ids)
+                order_item.excluded_ingredient.set(excluded_ingredients)
+
+            order_item.save()
 
         for set_data in sets_data:
-            if set_data.get('set_id'):
-                OrderItem.objects.create(order=order, set_id=set_data['set_id'], quantity=set_data['quantity'])
+            OrderItem.objects.create(order=order, set_id=set_data['set_id'], quantity=set_data['quantity'])
 
         return order
