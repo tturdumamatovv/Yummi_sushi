@@ -12,7 +12,7 @@ class Restaurant(models.Model):
     address = models.CharField(max_length=255, verbose_name=_('Адрес'))
     phone_number = models.CharField(max_length=15, verbose_name=_('Телефонный номер'), blank=True, null=True)
     email = models.EmailField(verbose_name=_('Электронная почта'), blank=True, null=True)
-    opening_hours = models.CharField(max_length=100, verbose_name=_('Часы работы'), blank=True, null=True)
+    opening_hours = models.TimeField(verbose_name=_('Часы работы'), blank=True, null=True)
     latitude = models.DecimalField(max_digits=9, decimal_places=6, verbose_name=_('Широта'), blank=True, null=True)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, verbose_name=_('Долгота'), blank=True, null=True)
 
@@ -51,6 +51,16 @@ class Order(models.Model):
                                        null=True)
     user = models.ForeignKey('authentication.User', on_delete=models.CASCADE, verbose_name=_('Пользователь'))
     is_pickup = models.BooleanField(default=False, verbose_name=_('Самовывоз'))
+    payment_method = models.CharField(
+        max_length=255,
+        choices=[('card', 'Карта'),
+                 ('cash', 'Наличные'),
+                 ('online', 'Онлайн'),
+                 ],
+        default='card',
+        verbose_name=_('Способ оплаты')
+    )
+    change = models.IntegerField(verbose_name=_('Сдача'), blank=True, null=True)
 
     order_status = models.CharField(
         max_length=20,
@@ -83,9 +93,11 @@ class Order(models.Model):
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='order_items', verbose_name=_('Заказ'))
-    product_size = models.ForeignKey(ProductSize, on_delete=models.CASCADE, verbose_name=_('Размер продукта'), blank=True, null=True)
+    product_size = models.ForeignKey(ProductSize, on_delete=models.CASCADE, verbose_name=_('Размер продукта'),
+                                     blank=True, null=True)
     topping = models.ManyToManyField(Topping, blank=True, null=True, verbose_name=_('Добавки'))
-    excluded_ingredient = models.ManyToManyField(Ingredient, blank=True, null=True, verbose_name=_('Исключенные ингредиенты'))
+    excluded_ingredient = models.ManyToManyField(Ingredient, blank=True, null=True,
+                                                 verbose_name=_('Исключенные ингредиенты'))
     set = models.ForeignKey(Set, on_delete=models.CASCADE, blank=True, null=True, verbose_name=_('Сет'))
     quantity = models.PositiveIntegerField(verbose_name=_('Количество'))
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Общая сумма'))
@@ -95,7 +107,7 @@ class OrderItem(models.Model):
         verbose_name_plural = "Элементы заказа"
 
     def __str__(self):
-        return f"{self.product_size.product.name} ({self.product_size.size.name}) - {self.quantity} шт."
+        return f"{self.product_size.product.name if self.product_size else self.set.name} ({self.product_size.size.name if self.product_size else 'Сет'}) - {self.quantity} шт."
 
     def calculate_total_amount(self):
         total = self.quantity * (self.product_size.price if self.product_size else self.set.price)

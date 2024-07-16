@@ -3,7 +3,7 @@ from rest_framework import generics
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
-from apps.product.api.serializers import ProductSerializer, SetSerializer
+from apps.product.api.serializers import ProductSerializer, SetSerializer, CategoryProductSerializer
 from apps.product.models import Category, Product, Set
 
 
@@ -19,8 +19,8 @@ class ProductListByCategorySlugView(generics.ListAPIView):
         products = Product.objects.filter(category=category)
         sets = Set.objects.filter(category=category)
 
-        product_serializer = ProductSerializer(products, many=True)
-        set_serializer = SetSerializer(sets, many=True)
+        product_serializer = ProductSerializer(products, many=True, context={'request': request})
+        set_serializer = SetSerializer(sets, many=True, context={'request': request})
 
         return Response({
             'products': product_serializer.data,
@@ -37,3 +37,12 @@ class SetListView(generics.ListAPIView):
             'products__product__toppings',
             'products__size'
         )
+
+
+class CategoryListView(generics.ListAPIView):
+    serializer_class = CategoryProductSerializer
+
+    def get(self, request, *args, **kwargs):
+        categories = Category.objects.prefetch_related('products', 'sets').all()
+        serializer = CategoryProductSerializer(categories, many=True, context={'request': request})
+        return Response(serializer.data)

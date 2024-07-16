@@ -1,6 +1,6 @@
 # serializers.py
 from rest_framework import serializers
-from apps.product.models import Product, ProductSize, Ingredient, Topping, Set
+from apps.product.models import Product, ProductSize, Ingredient, Topping, Set, Category
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -42,9 +42,35 @@ class SizeProductSerializer(serializers.ModelSerializer):
         fields = ['product', 'size', 'price']
 
 
+class SetProductSerializer(serializers.ModelSerializer):
+    ingredients = IngredientSerializer(many=True)
+
+    class Meta:
+        model = Product
+        fields = ['id', 'name', 'description', 'photo', 'ingredients',]
+
+
+class ComboProductSerializer(serializers.ModelSerializer):
+    product = SetProductSerializer()
+    size = serializers.StringRelatedField()
+
+    class Meta:
+        model = ProductSize
+        fields = ['product', 'size', 'price']
+
+
 class SetSerializer(serializers.ModelSerializer):
-    products = SizeProductSerializer(many=True)
+    products = ComboProductSerializer(many=True)
 
     class Meta:
         model = Set
         fields = ['id', 'name', 'description', 'photo', 'products', 'price', 'bonuses']
+
+
+class CategoryProductSerializer(serializers.ModelSerializer):
+    products = ProductSerializer(many=True, read_only=True)
+    sets = SetSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Category
+        fields = ['id', 'name', 'description', 'slug', 'image', 'products', 'sets']

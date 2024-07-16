@@ -1,9 +1,9 @@
-from django.urls import path, include
-
-from apps.product.api.views import ProductListByCategorySlugView, SetListView
+from apps.product.api.views import ProductListByCategorySlugView, SetListView, CategoryListView
+from django.urls import path
 
 urlpatterns = [
     path('category/<slug:slug>/', ProductListByCategorySlugView.as_view(), name='category'),
     path('sets/', SetListView.as_view(), name='set-list'),
+    path('categories/', CategoryListView.as_view(), name='category-list'),
 
 ]
