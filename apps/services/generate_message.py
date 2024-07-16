@@ -66,5 +66,4 @@ def generate_order_message(order, delivery_distance_km, delivery_fee):
 
     )
 
-
     return message
