@@ -44,9 +44,8 @@ def generate_order_message(order, delivery_distance_km, delivery_fee):
 
     message += (
         f"Адрес доставки: {order.delivery.user_address if not order.is_pickup else 'Самовывоз'}\n"
-        f"Статус: {order.get_order_status_display()}\n"
+        f"Статус: {order.get_order_status_display()}\n \n"
         f"{delivery_info}\n"
-        f"{delivery_fee_info if not order.is_pickup else ''}\n"
         f"{payment_info}\n"
         f"Общая сумма: {order.total_amount}\n"
 

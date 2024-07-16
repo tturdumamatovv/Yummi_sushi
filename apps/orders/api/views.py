@@ -34,7 +34,7 @@ class CreateOrderView(generics.CreateAPIView):
             for restaurant in Restaurant.objects.all():
                 if restaurant.latitude and restaurant.longitude:
                     restaurant_location = (restaurant.latitude, restaurant.longitude)
-                    distance = get_distance_between_locations(user_location, restaurant_location)
+                    distance = get_distance_between_locations('AIzaSyCWbO5aOn8hS3EWJycj73dHqH8fHHfO4w4', user_location, restaurant_location)
                     if distance is not None and distance < min_distance and is_restaurant_open(restaurant, order_time):
                         min_distance = distance
                         nearest_restaurant = restaurant

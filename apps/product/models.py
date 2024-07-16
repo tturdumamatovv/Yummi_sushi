@@ -41,8 +41,8 @@ class Product(models.Model):
     name = models.CharField(max_length=100, verbose_name=_('Название'))
     description = models.TextField(verbose_name=_('Описание'), blank=True, null=True)
     photo = models.ImageField(upload_to='topping_photos/', verbose_name=_('Фото'), blank=True, null=True)
-    ingredients = models.ManyToManyField('Ingredient', related_name='products', verbose_name=_('Ингредиенты'))
-    toppings = models.ManyToManyField('Topping', related_name='products', verbose_name=_('Добавки'))
+    ingredients = models.ManyToManyField('Ingredient', related_name='products', verbose_name=_('Ингредиенты'), blank=True, null=True)
+    toppings = models.ManyToManyField('Topping', related_name='products', verbose_name=_('Добавки'), blank=True, null=True)
     bonuses = models.BooleanField(default=False, verbose_name=_('Можно оптатить бонусами'))
 
     class Meta:
