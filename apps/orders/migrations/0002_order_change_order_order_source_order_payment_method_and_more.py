@@ -16,11 +16,6 @@ class Migration(migrations.Migration):
             field=models.CharField(choices=[('mobile', 'Мобильное приложение'), ('web', 'Веб-сайт'), ('unknown', 'Неизвестно')], default='unknown', max_length=10, verbose_name='Источник заказа'),
         ),
         migrations.AddField(
-            model_name='order',
-            name='payment_method',
-            field=models.CharField(choices=[('card', 'Карта'), ('cash', 'Наличные'), ('online', 'Онлайн')], default='card', max_length=255, verbose_name='Способ оплаты'),
-        ),
-        migrations.AddField(
             model_name='orderitem',
             name='is_bonus',
             field=models.BooleanField(default=False, verbose_name='Бонусный продукт'),
