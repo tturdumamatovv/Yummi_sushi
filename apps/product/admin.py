@@ -4,6 +4,7 @@ from modeltranslation.admin import TranslationAdmin
 from .models import Size, Category, Product, ProductSize, Ingredient, Topping, Set
 from .forms import ProductSizeForm
 
+
 class ExcludeBaseFieldsMixin:
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
@@ -13,11 +14,13 @@ class ExcludeBaseFieldsMixin:
                 del form.base_fields[field_name]
         return form
 
+
 @admin.register(Size)
 class SizeAdmin(ExcludeBaseFieldsMixin, TranslationAdmin):
     list_display = ('name', 'description')
     search_fields = ('name',)
     exclude_base_fields = ('name', 'description')
+
 
 @admin.register(Category)
 class CategoryAdmin(ExcludeBaseFieldsMixin, TranslationAdmin):
@@ -25,10 +28,12 @@ class CategoryAdmin(ExcludeBaseFieldsMixin, TranslationAdmin):
     search_fields = ('name',)
     exclude_base_fields = ('name', 'description')
 
+
 class ProductSizeInline(admin.TabularInline):
     model = ProductSize
     form = ProductSizeForm
-    extra = 1
+    extra = 0
+
 
 @admin.register(Product)
 class ProductAdmin(ExcludeBaseFieldsMixin, TranslationAdmin):
@@ -39,17 +44,20 @@ class ProductAdmin(ExcludeBaseFieldsMixin, TranslationAdmin):
     inlines = [ProductSizeInline]
     exclude_base_fields = ('name', 'description')
 
+
 @admin.register(Ingredient)
 class IngredientAdmin(ExcludeBaseFieldsMixin, TranslationAdmin):
     list_display = ('name',)
     search_fields = ('name',)
     exclude_base_fields = ('name',)
 
+
 @admin.register(Topping)
 class ToppingAdmin(ExcludeBaseFieldsMixin, TranslationAdmin):
     list_display = ('name', 'price')
     search_fields = ('name',)
     exclude_base_fields = ('name',)
+
 
 @admin.register(Set)
 class SetAdmin(ExcludeBaseFieldsMixin, TranslationAdmin):

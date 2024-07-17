@@ -14,6 +14,7 @@ from rest_framework.response import Response
 from .serializers import OrderSerializer, OrderPreviewSerializer
 from ...product.models import ProductSize, Set, Topping, Ingredient
 from ...services.bonuces import calculate_bonus_points, apply_bonus_points
+from ...services.calculate_bonus import calculate_and_apply_bonus
 
 
 class CreateOrderView(generics.CreateAPIView):
@@ -73,6 +74,12 @@ class CreateOrderView(generics.CreateAPIView):
         self.perform_create(serializer)
 
         order = serializer.instance
+        try:
+            total_order_amount = calculate_and_apply_bonus(user, order, serializer.validated_data['products'], serializer.validated_data['sets'])
+            order.total_amount = total_order_amount + delivery_fee
+            order.save()
+        except ValueError as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
         # Начисление бонусов
         bonus_points = calculate_bonus_points(Decimal(order.total_amount), Decimal(delivery_fee), order_source)
@@ -143,7 +150,7 @@ class OrderPreviewView(generics.GenericAPIView):
 
             try:
                 product_size = ProductSize.objects.get(id=product_size_id)
-                item_total = product_size.price * quantity
+                item_total = product_size.get_price() * quantity
                 total_amount += item_total
                 order_items_details.append({
                     "product": product_size.product.name,
@@ -164,7 +171,7 @@ class OrderPreviewView(generics.GenericAPIView):
 
             try:
                 set_item = Set.objects.get(id=set_id)
-                item_total = set_item.price * quantity
+                item_total = set_item.get_price() * quantity
                 total_amount += item_total
                 order_items_details.append({
                     "set": set_item.name,

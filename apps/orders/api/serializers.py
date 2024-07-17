@@ -19,7 +19,7 @@ class ProductOrderItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OrderItem
-        fields = ['product_size_id', 'quantity', 'topping_ids', 'excluded_ingredient_ids']
+        fields = ['product_size_id', 'quantity', 'topping_ids', 'excluded_ingredient_ids', 'is_bonus']
 
     def validate(self, data):
         if data.get('product_size_id') == 0:
@@ -32,7 +32,7 @@ class SetOrderItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OrderItem
-        fields = ['set_id', 'quantity']
+        fields = ['set_id', 'quantity', 'is_bonus']
 
     def validate(self, data):
         if data.get('set_id') == 0:

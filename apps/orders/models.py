@@ -111,6 +111,8 @@ class OrderItem(models.Model):
     set = models.ForeignKey(Set, on_delete=models.CASCADE, blank=True, null=True, verbose_name=_('Сет'))
     quantity = models.PositiveIntegerField(verbose_name=_('Количество'))
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Общая сумма'))
+    is_bonus = models.BooleanField(default=False, verbose_name=_('Бонусный продукт'))
+
 
     class Meta:
         verbose_name = "Элемент заказа"
@@ -120,7 +122,7 @@ class OrderItem(models.Model):
         return f"{self.product_size.product.name if self.product_size else self.set.name} ({self.product_size.size.name if self.product_size else 'Сет'}) - {self.quantity} шт."
 
     def calculate_total_amount(self):
-        total = self.quantity * (self.product_size.price if self.product_size else self.set.price)
+        total = self.quantity * (self.product_size.get_price() if self.product_size else self.set.get_price())
         for topping in self.topping.all():
             total += topping.price * self.quantity
         return total

@@ -71,4 +71,3 @@ class UserAddress(models.Model):
 
     def __str__(self):
         return f'{self.city} - {self.street} {self.house_number}'
-

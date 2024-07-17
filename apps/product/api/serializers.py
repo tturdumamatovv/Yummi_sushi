@@ -12,7 +12,7 @@ class IngredientSerializer(serializers.ModelSerializer):
 class ToppingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Topping
-        fields = ['name', 'price', 'photo', 'bonuses']
+        fields = ['name', 'price', 'photo',]
 
 
 class ProductSizeSerializer(serializers.ModelSerializer):
@@ -20,7 +20,7 @@ class ProductSizeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProductSize
-        fields = ['id', 'size', 'price']
+        fields = ['id', 'size', 'price', 'discounted_price']
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -39,7 +39,7 @@ class SizeProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProductSize
-        fields = ['product', 'size', 'price']
+        fields = ['product', 'size', 'price', 'discounted_price']
 
 
 class SetProductSerializer(serializers.ModelSerializer):
@@ -56,7 +56,7 @@ class ComboProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProductSize
-        fields = ['product', 'size', 'price']
+        fields = ['product', 'size', 'price', 'discounted_price']
 
 
 class SetSerializer(serializers.ModelSerializer):
@@ -64,7 +64,7 @@ class SetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Set
-        fields = ['id', 'name', 'description', 'photo', 'products', 'price', 'bonuses']
+        fields = ['id', 'name', 'description', 'photo', 'products', 'price', 'discounted_price', 'bonuses']
 
 
 class CategoryProductSerializer(serializers.ModelSerializer):

@@ -41,8 +41,10 @@ class Product(models.Model):
     name = models.CharField(max_length=100, verbose_name=_('Название'))
     description = models.TextField(verbose_name=_('Описание'), blank=True, null=True)
     photo = models.ImageField(upload_to='topping_photos/', verbose_name=_('Фото'), blank=True, null=True)
-    ingredients = models.ManyToManyField('Ingredient', related_name='products', verbose_name=_('Ингредиенты'), blank=True, null=True)
-    toppings = models.ManyToManyField('Topping', related_name='products', verbose_name=_('Добавки'), blank=True, null=True)
+    ingredients = models.ManyToManyField('Ingredient', related_name='products', verbose_name=_('Ингредиенты'),
+                                         blank=True, null=True)
+    toppings = models.ManyToManyField('Topping', related_name='products', verbose_name=_('Добавки'), blank=True,
+                                      null=True)
     bonuses = models.BooleanField(default=False, verbose_name=_('Можно оптатить бонусами'))
 
     class Meta:
@@ -58,13 +60,18 @@ class ProductSize(models.Model):
                                 verbose_name=_('Продукт'))
     size = models.ForeignKey(Size, on_delete=models.CASCADE, related_name='product_sizes', verbose_name=_('Размер'))
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Цена'))
+    discounted_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Цена со скидкой'),
+                                           blank=True, null=True)
 
     class Meta:
         verbose_name = "Цена продукта по размеру"
         verbose_name_plural = "Цены продуктов по размерам"
 
     def __str__(self):
-        return f"{self.product.name} - {self.size.name} - {self.price}"
+        return f"{self.product.name} - {self.size.name} - {self.get_price()}"
+
+    def get_price(self):
+        return self.discounted_price if self.discounted_price else self.price
 
 
 class Ingredient(models.Model):
@@ -101,6 +108,8 @@ class Set(models.Model):
     products = models.ManyToManyField(ProductSize, related_name='sets', verbose_name=_('Продукты'))
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Цена'))
     bonuses = models.BooleanField(default=False, verbose_name=_('Можно оптатить бонусами'))
+    discounted_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Цена со скидкой'),
+                                           blank=True, null=True)
 
     class Meta:
         verbose_name = "Сет"
@@ -108,3 +117,6 @@ class Set(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_price(self):
+        return self.discounted_price if self.discounted_price else self.price
