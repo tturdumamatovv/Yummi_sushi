@@ -12,11 +12,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name='order',
-            name='change',
-            field=models.IntegerField(blank=True, null=True, verbose_name='Сдача'),
-        ),
-        migrations.AddField(
-            model_name='order',
             name='order_source',
             field=models.CharField(choices=[('mobile', 'Мобильное приложение'), ('web', 'Веб-сайт'), ('unknown', 'Неизвестно')], default='unknown', max_length=10, verbose_name='Источник заказа'),
         ),
