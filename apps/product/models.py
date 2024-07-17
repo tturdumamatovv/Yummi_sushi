@@ -84,7 +84,6 @@ class Topping(models.Model):
     name = models.CharField(max_length=100, verbose_name=_('Название'))
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Цена'))
     photo = models.ImageField(upload_to='topping_photos/', verbose_name=_('Фото'), blank=True, null=True)
-    bonuses = models.BooleanField(default=False, verbose_name=_('Можно оптатить бонусами'))
 
     class Meta:
         verbose_name = "Добавка"

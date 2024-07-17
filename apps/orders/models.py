@@ -73,6 +73,16 @@ class Order(models.Model):
         default='pending',
         verbose_name=_('Статус заказа')
     )
+    order_source = models.CharField(
+        max_length=10,
+        choices=[
+            ('mobile', 'Мобильное приложение'),
+            ('web', 'Веб-сайт'),
+            ('unknown', 'Неизвестно')
+        ],
+        default='unknown',
+        verbose_name=_('Источник заказа')
+    )
 
     class Meta:
         verbose_name = "Заказ"
@@ -113,13 +123,13 @@ class OrderItem(models.Model):
         total = self.quantity * (self.product_size.price if self.product_size else self.set.price)
         for topping in self.topping.all():
             total += topping.price * self.quantity
-        self.total_amount = total
+        return total
 
     def save(self, *args, **kwargs):
-        if self.product_size:
-            self.total_amount = self.quantity * self.product_size.price
-        elif self.set:
-            self.total_amount = self.quantity * self.set.price
+        if not self.id:
+            self.total_amount = 0
+            super().save(*args, **kwargs)
+        self.total_amount = self.calculate_total_amount()
         super().save(*args, **kwargs)
         self.order.total_amount = self.order.get_total_amount()
         self.order.save()
