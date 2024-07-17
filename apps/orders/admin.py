@@ -1,5 +1,13 @@
 from django.contrib import admin
-from .models import Restaurant, Delivery, Order, OrderItem, DistancePricing
+from .models import Restaurant, Delivery, Order, OrderItem, DistancePricing, TelegramBotToken
+
+
+@admin.register(TelegramBotToken)
+class TelegramBotTokenAdmin(admin.ModelAdmin):
+    list_display = ['bot_token']
+    fieldsets = (
+        (None, {'fields': ('bot_token',)}),
+    )
 
 
 @admin.register(Restaurant)

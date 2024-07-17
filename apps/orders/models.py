@@ -1,10 +1,32 @@
 import math
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.core.exceptions import ValidationError
 from geopy.distance import geodesic
+from django.core.validators import MinLengthValidator
 
 from apps.authentication.models import UserAddress
 from apps.product.models import ProductSize, Set, Ingredient, Topping
+
+
+class TelegramBotToken(models.Model):
+    bot_token = models.CharField(max_length=200, unique=True)
+
+    def clean(self):
+        # Проверка на существование только одного экземпляра
+        if TelegramBotToken.objects.exists() and not self.pk:
+            raise ValidationError(_('Может существовать только один экземпляр модели TelegramBotToken.'))
+
+    def save(self, *args, **kwargs):
+        self.pk = 1  # Гарантирует, что всегда существует только один экземпляр
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return "Токен бота Telegram"
+
+    class Meta:
+        verbose_name = "Токен бота Telegram"
+        verbose_name_plural = "Токены бота Telegram"
 
 
 class Restaurant(models.Model):
@@ -15,6 +37,7 @@ class Restaurant(models.Model):
     opening_hours = models.TimeField(verbose_name=_('Часы работы'), blank=True, null=True)
     latitude = models.DecimalField(max_digits=9, decimal_places=6, verbose_name=_('Широта'), blank=True, null=True)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, verbose_name=_('Долгота'), blank=True, null=True)
+    telegram_chat_ids = models.TextField(verbose_name=_('Telegram Chat IDs'), validators=[MinLengthValidator(1)], help_text=_('Введите чат-айди через запятую'), blank=True, null=True)
 
     class Meta:
         verbose_name = "Ресторан"
@@ -22,6 +45,11 @@ class Restaurant(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_telegram_chat_ids(self):
+        if self.telegram_chat_ids:
+            return [chat_id.strip() for chat_id in self.telegram_chat_ids.split(',') if chat_id.strip()]
+        return []
 
     def distance_to(self, user_lat, user_lon):
         restaurant_location = (self.latitude, self.longitude)

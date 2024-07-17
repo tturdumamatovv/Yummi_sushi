@@ -3,7 +3,7 @@ from datetime import datetime
 from decimal import Decimal
 
 from apps.authentication.models import UserAddress
-from apps.orders.models import Restaurant
+from apps.orders.models import Restaurant, TelegramBotToken
 from apps.services.calculate_delivery_fee import calculate_delivery_fee
 from apps.services.calculate_distance import get_distance_between_locations
 from apps.services.generate_message import generate_order_message
@@ -15,6 +15,9 @@ from .serializers import OrderSerializer, OrderPreviewSerializer
 from ...product.models import ProductSize, Set, Topping, Ingredient
 from ...services.bonuces import calculate_bonus_points, apply_bonus_points
 from ...services.calculate_bonus import calculate_and_apply_bonus
+
+from telegram import Bot
+from asgiref.sync import async_to_sync
 
 
 class CreateOrderView(generics.CreateAPIView):
@@ -86,7 +89,15 @@ class CreateOrderView(generics.CreateAPIView):
 
         message = generate_order_message(order, min_distance, delivery_fee)
         print(message)
-        # send_telegram_message(TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, message)
+        bot_token_instance = TelegramBotToken.objects.first()
+        if bot_token_instance:
+            telegram_bot_token = bot_token_instance.bot_token
+            telegram_chat_ids = nearest_restaurant.get_telegram_chat_ids()
+            bot = Bot(token=telegram_bot_token)
+            for chat_id in telegram_chat_ids:
+                async_to_sync(bot.send_message)(chat_id=chat_id, text=message)
+        else:
+            return Response({"error": "Не установлен токен бота Telegram."}, status=status.HTTP_400_BAD_REQUEST)
 
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
