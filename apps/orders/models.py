@@ -34,6 +34,7 @@ class Delivery(models.Model):
     user_address = models.ForeignKey(UserAddress, on_delete=models.CASCADE, verbose_name=_('Адрес пользователя'))
     delivery_time = models.DateTimeField(verbose_name=_('Время доставки'))
     delivery_fee = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Стоимость доставки'))
+    order = models.OneToOneField('Order', on_delete=models.CASCADE, verbose_name=_('Заказ'), blank=True, null=True)
 
     class Meta:
         verbose_name = "Доставка"
@@ -49,6 +50,7 @@ class Order(models.Model):
     order_time = models.DateTimeField(auto_now_add=True, verbose_name=_('Время заказа'))
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Общая сумма'), blank=True,
                                        null=True)
+    total_bonus_amount = models.IntegerField(verbose_name=_('Общая сумма бонусов'), blank=True, null=True)
     user = models.ForeignKey('authentication.User', on_delete=models.CASCADE, verbose_name=_('Пользователь'))
     is_pickup = models.BooleanField(default=False, verbose_name=_('Самовывоз'))
     payment_method = models.CharField(
@@ -93,9 +95,18 @@ class Order(models.Model):
 
     def get_total_amount(self):
         total_amount = self.delivery.delivery_fee
-        for order_item in self.order_items.all():
+        for order_item in self.order_items.filter(is_bonus=False):
             total_amount += order_item.total_amount
         return total_amount
+
+    def get_total_bonus_amount(self):
+        total_bonus_amount = self.total_bonus_amount
+        if total_bonus_amount is None:
+            total_bonus_amount = 0
+        for order_item in self.order_items.filter(is_bonus=True):
+            total_bonus_amount += order_item.total_amount
+
+        return total_bonus_amount
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
@@ -134,6 +145,8 @@ class OrderItem(models.Model):
         self.total_amount = self.calculate_total_amount()
         super().save(*args, **kwargs)
         self.order.total_amount = self.order.get_total_amount()
+        if self.is_bonus:
+            self.order.total_bonus_amount = self.order.get_total_bonus_amount()
         self.order.save()
 
 

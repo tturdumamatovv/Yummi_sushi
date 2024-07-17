@@ -93,13 +93,15 @@ class OrderSerializer(serializers.ModelSerializer):
                 excluded_ingredient_ids = product_data.pop('excluded_ingredient_ids', [])
 
                 order_item = OrderItem(order=order, product_size_id=product_data['product_size_id'],
-                                       quantity=product_data['quantity'])
-                order_item.save()
+                                       quantity=product_data['quantity'], is_bonus=product_data['is_bonus'])
 
                 if topping_ids:
                     toppings = Topping.objects.filter(id__in=topping_ids)
-                    order_item.topping.set(toppings)
-                order_item.save()
+                    order_item.save()  # Сохраняем объект перед установкой связей ManyToMany
+                    order_item.topping.set(toppings)  # Устанавливаем начинки
+
+                else:
+                    order_item.save()
                 if excluded_ingredient_ids:
                     excluded_ingredients = Ingredient.objects.filter(id__in=excluded_ingredient_ids)
                     order_item.excluded_ingredient.set(excluded_ingredients)

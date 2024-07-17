@@ -75,17 +75,15 @@ class CreateOrderView(generics.CreateAPIView):
 
         order = serializer.instance
         try:
-            total_order_amount = calculate_and_apply_bonus(user, order, serializer.validated_data['products'], serializer.validated_data['sets'])
+            total_order_amount = calculate_and_apply_bonus(order)
             order.total_amount = total_order_amount + delivery_fee
             order.save()
         except ValueError as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Начисление бонусов
         bonus_points = calculate_bonus_points(Decimal(order.total_amount), Decimal(delivery_fee), order_source)
         apply_bonus_points(user, bonus_points)
 
-        # Формирование и отправка сообщения в Telegram
         message = generate_order_message(order, min_distance, delivery_fee)
         print(message)
         # send_telegram_message(TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID, message)
