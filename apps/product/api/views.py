@@ -1,13 +1,21 @@
 from django.shortcuts import render
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
+from apps.product.api.filters import ProductFilter
 from apps.product.api.serializers import ProductSerializer, SetSerializer, CategoryProductSerializer
 from apps.product.models import Category, Product, Set
 
 
-# Create your views here.
+class ProductSearchView(generics.ListAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = ProductFilter
+
+
 class ProductListByCategorySlugView(generics.ListAPIView):
     def get(self, request, *args, **kwargs):
         slug = self.kwargs['slug']
