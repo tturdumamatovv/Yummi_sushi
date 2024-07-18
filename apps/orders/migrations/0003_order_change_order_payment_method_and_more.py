@@ -12,11 +12,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name='order',
-            name='payment_method',
-            field=models.CharField(choices=[('card', 'Карта'), ('cash', 'Наличные'), ('online', 'Онлайн')], default='card', max_length=255, verbose_name='Способ оплаты'),
-        ),
-        migrations.AddField(
-            model_name='order',
             name='total_bonus_amount',
             field=models.IntegerField(blank=True, null=True, verbose_name='Общая сумма бонусов'),
         ),
