@@ -15,12 +15,22 @@ from .serializers import (
     UserProfileSerializer,
     UserAddressSerializer,
     UserAddressUpdateSerializer,
-    NotificationSerializer
+    NotificationSerializer,
+    UserBonusSerializer
 )
 from apps.authentication.utils import (
     send_sms,
     generate_confirmation_code
 )
+
+
+class UserBonusView(generics.GenericAPIView):
+    serializer_class = UserBonusSerializer
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        serializer = self.get_serializer(user)
+        return Response(serializer.data)
 
 
 class UserLoginView(generics.CreateAPIView):
