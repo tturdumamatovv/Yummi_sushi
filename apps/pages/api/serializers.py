@@ -30,7 +30,7 @@ class MainPageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MainPage
-        fields = ['meta_title', 'meta_description', 'meta_image', 'order_types',
+        fields = ['icon', 'phone', 'meta_title', 'meta_description', 'meta_image', 'order_types',
                   'delivery_conditions', 'methods_of_payment']
 
 

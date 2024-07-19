@@ -90,5 +90,5 @@ class MethodsOfPaymentInline(admin.TabularInline):
 
 @admin.register(MainPage)
 class MainPageAdmin(admin.ModelAdmin):
-    list_display = ('title', 'description', 'meta_title', 'meta_description')
+    list_display = ('phone', 'icon', 'meta_title', 'meta_description', 'meta_image')
     inlines = [OrderTypesInline, DeliveryConditionsInline, MethodsOfPaymentInline]

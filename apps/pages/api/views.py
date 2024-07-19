@@ -14,9 +14,8 @@ class HomePageView(generics.GenericAPIView):
         categories = Category.objects.all()
         banners = Banner.objects.filter(is_active=True)
         main_page = MainPage.objects.first()
-        phones = Phone.objects.all()
 
-        serializer = self.get_serializer({'categories': categories, 'banners': banners, 'main_page': main_page, 'phones': phones})
+        serializer = self.get_serializer({'categories': categories, 'banners': banners, 'main_page': main_page})
         return Response(serializer.data)
 
 

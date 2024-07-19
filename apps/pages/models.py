@@ -20,16 +20,33 @@ class SingletonModel(models.Model):
 
 
 class MainPage(SingletonModel):
-    title = models.CharField(max_length=255, verbose_name=_("Заголовок"))
-    description = models.TextField(verbose_name=_("Описание"))
+    icon = models.ImageField(
+        upload_to="images/icons",
+        verbose_name=_("Иконка"),
+        help_text=_("Иконка для главной страницы.")
+    )
+    phone = models.CharField(
+        max_length=20,
+        verbose_name=_("Телефон"),
+        help_text=_("Контактный телефон для главной страницы.")
+    )
     meta_title = models.CharField(
-        max_length=255, verbose_name=_("Мета заголовок"), blank=True, null=True
+        max_length=255,
+        verbose_name=_("Мета заголовок"),
+        blank=True,
+        null=True
     )
     meta_description = models.CharField(
-        max_length=255, verbose_name=_("Мета описание"), blank=True, null=True
+        max_length=255,
+        verbose_name=_("Мета описание"),
+        blank=True,
+        null=True
     )
     meta_image = models.ImageField(
-        verbose_name=_("Мета изображение"), upload_to="images/meta", blank=True, null=True
+        upload_to="images/meta",
+        verbose_name=_("Мета изображение"),
+        blank=True,
+        null=True
     )
 
     class Meta:
@@ -37,7 +54,7 @@ class MainPage(SingletonModel):
         verbose_name_plural = _("Главная страница")
 
     def __str__(self):
-        return f"{self.title}"
+        return self.phone
 
 
 class OrderTypes(models.Model):
