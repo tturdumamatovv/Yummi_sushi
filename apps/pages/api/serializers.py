@@ -24,7 +24,7 @@ class OrderTypesSerializer(serializers.ModelSerializer):
 
 
 class MainPageSerializer(serializers.ModelSerializer):
-    order_types = OrderTypesSerializer(many=True)
+    order_types = OrderTypesSerializer(many=True, source='ordertypes_set')
     delivery_conditions = OrderTypesSerializer(many=True, source='deliveryconditions_set')
     methods_of_payment = OrderTypesSerializer(many=True, source='methodsofpayment_set')
 
@@ -34,17 +34,16 @@ class MainPageSerializer(serializers.ModelSerializer):
                   'delivery_conditions', 'methods_of_payment']
 
 
-class PhoneSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Phone
-        fields = ['phone']
-
-
 class HomePageSerializer(serializers.Serializer):
     categories = CategorySerializer(many=True)
     banners = BannerSerializer(many=True)
     main_page = MainPageSerializer()
-    phones = PhoneSerializer(many=True)
+
+
+class PhoneSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Phone
+        fields = ['phone']
 
 
 class EmailSerializer(serializers.ModelSerializer):
