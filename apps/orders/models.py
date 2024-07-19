@@ -160,10 +160,16 @@ class OrderItem(models.Model):
         return f"{self.product_size.product.name if self.product_size else self.set.name} ({self.product_size.size.name if self.product_size else 'Сет'}) - {self.quantity} шт."
 
     def calculate_total_amount(self):
-        total = self.quantity * (self.product_size.get_price() if self.product_size else self.set.get_price())
-        for topping in self.topping.all():
-            total += topping.price * self.quantity
-        return total
+        if not self.is_bonus:
+            total = self.quantity * (self.product_size.get_price() if self.product_size else self.set.get_price())
+            for topping in self.topping.all():
+                total += topping.price * self.quantity
+            return total
+        else:
+            total = self.quantity * (self.product_size.bonus_price if self.product_size else self.set.bonus_price)
+            for topping in self.topping.all():
+                total += topping.price * self.quantity
+            return total
 
     def save(self, *args, **kwargs):
         if not self.id:

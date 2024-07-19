@@ -16,6 +16,11 @@ class ProductSearchView(generics.ListAPIView):
     filterset_class = ProductFilter
 
 
+class ProductBonusView(generics.ListAPIView):
+    queryset = Product.objects.filter(bonuses=True)
+    serializer_class = ProductSerializer
+
+
 class ProductListByCategorySlugView(generics.ListAPIView):
     def get(self, request, *args, **kwargs):
         slug = self.kwargs['slug']

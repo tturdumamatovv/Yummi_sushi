@@ -62,6 +62,7 @@ class ProductSize(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Цена'))
     discounted_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Цена со скидкой'),
                                            blank=True, null=True)
+    bonus_price = models.DecimalField(default=0, max_digits=10, decimal_places=2, verbose_name=_('Цена бонусами'))
 
     class Meta:
         verbose_name = "Цена продукта по размеру"
@@ -107,6 +108,7 @@ class Set(models.Model):
     photo = models.ImageField(upload_to='topping_photos/', verbose_name=_('Фото'), blank=True, null=True)
     products = models.ManyToManyField(ProductSize, related_name='sets', verbose_name=_('Продукты'))
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Цена'))
+    bonus_price = models.DecimalField(default=0, max_digits=10, decimal_places=2, verbose_name=_('Цена бонусами'))
     bonuses = models.BooleanField(default=False, verbose_name=_('Можно оптатить бонусами'))
     discounted_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Цена со скидкой'),
                                            blank=True, null=True)
