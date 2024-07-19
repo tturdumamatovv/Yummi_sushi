@@ -10,9 +10,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='order',
-            name='payment_method',
-            field=models.CharField(choices=[('card', 'Карта'), ('cash', 'Наличные'), ('online', 'Онлайн')], default='card', max_length=255, verbose_name='Способ оплаты'),
-        ),
+
     ]
