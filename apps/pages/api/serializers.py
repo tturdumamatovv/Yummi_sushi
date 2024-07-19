@@ -34,16 +34,17 @@ class MainPageSerializer(serializers.ModelSerializer):
                   'delivery_conditions', 'methods_of_payment']
 
 
-class HomePageSerializer(serializers.Serializer):
-    categories = CategorySerializer(many=True)
-    banners = BannerSerializer(many=True)
-    main_page = MainPageSerializer()
-
-
 class PhoneSerializer(serializers.ModelSerializer):
     class Meta:
         model = Phone
         fields = ['phone']
+
+
+class HomePageSerializer(serializers.Serializer):
+    categories = CategorySerializer(many=True)
+    banners = BannerSerializer(many=True)
+    main_page = MainPageSerializer()
+    phones = PhoneSerializer(many=True)
 
 
 class EmailSerializer(serializers.ModelSerializer):

@@ -8,7 +8,8 @@ from apps.authentication.api.views import (
     UserAddressUpdateAPIView,
     UserAddressDeleteAPIView,
     UserDeleteAPIView,
-    NotificationSettingsAPIView
+    NotificationSettingsAPIView,
+    UserBonusView
     )
 
 urlpatterns = [
@@ -20,4 +21,5 @@ urlpatterns = [
     path('addresses/<int:pk>/delete/', UserAddressDeleteAPIView.as_view(), name='delete_address'),
     path('user-delete/', UserDeleteAPIView.as_view(), name='user-delete'),
     path('notification-settings/', NotificationSettingsAPIView.as_view(), name='notification-settings'),
+    path('bonus/', UserBonusView.as_view(), name='user-bonus'),
 ]

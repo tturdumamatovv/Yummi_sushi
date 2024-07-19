@@ -7,6 +7,12 @@ from apps.authentication.models import (
 from config.settings import base
 
 
+class UserBonusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['bonus']
+
+
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User

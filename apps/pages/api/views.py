@@ -2,7 +2,7 @@ from rest_framework import generics
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 
-from apps.pages.models import Banner, MainPage, Contacts, StaticPage
+from apps.pages.models import Banner, MainPage, Contacts, StaticPage, Phone
 from apps.product.models import Category
 from apps.pages.api.serializers import HomePageSerializer, ContactsSerializer, StaticPageSerializer
 
@@ -14,8 +14,9 @@ class HomePageView(generics.GenericAPIView):
         categories = Category.objects.all()
         banners = Banner.objects.filter(is_active=True)
         main_page = MainPage.objects.first()
+        phones = Phone.objects.all()
 
-        serializer = self.get_serializer({'categories': categories, 'banners': banners, 'main_page': main_page})
+        serializer = self.get_serializer({'categories': categories, 'banners': banners, 'main_page': main_page, 'phones': phones})
         return Response(serializer.data)
 
 
