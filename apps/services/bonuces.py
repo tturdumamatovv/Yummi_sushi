@@ -2,11 +2,11 @@ from decimal import Decimal
 
 from apps.orders.models import PercentCashback
 
-percents = PercentCashback.objects.get(id=1)
+percents = PercentCashback.objects.all().first()
 if not percents:
-    percents = PercentCashback.objects.create(mobile_percelnt=5, web_percelnt=3)
+    percents = PercentCashback.objects.create(mobile_percent=5, web_percent=3)
 
-BONUS_PERCENTAGE_MOBILE = percents.mobile_percelnt
+BONUS_PERCENTAGE_MOBILE = percents.mobile_percent
 BONUS_PERCENTAGE_WEB = percents.web_percent
 
 

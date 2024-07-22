@@ -3,6 +3,7 @@ from rest_framework import serializers
 from apps.pages.models import Banner, OrderTypes, MainPage, Phone, Email, SocialLink, Address, PaymentMethod, Contacts, \
     StaticPage
 from apps.product.models import Category
+from apps.orders.models import PercentCashback
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -38,6 +39,16 @@ class HomePageSerializer(serializers.Serializer):
     categories = CategorySerializer(many=True)
     banners = BannerSerializer(many=True)
     main_page = MainPageSerializer()
+    cash_back = serializers.SerializerMethodField()
+
+    def get_cash_back(self, obj):
+        percents = PercentCashback.objects.all().first()
+        if not percents:
+            percents = PercentCashback.objects.create(mobile_percent=5, web_percent=3)
+        return {
+            'web': percents.web_percent,
+            'mobile': percents.mobile_percent,
+        }
 
 
 class PhoneSerializer(serializers.ModelSerializer):
