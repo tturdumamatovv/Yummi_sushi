@@ -1,6 +1,7 @@
 # views.py
 from datetime import datetime
 from decimal import Decimal
+import requests
 
 from apps.authentication.models import UserAddress
 from apps.orders.models import Restaurant, TelegramBotToken, Report
@@ -259,14 +260,32 @@ class ReportCreateView(generics.CreateAPIView):
         # Инициализация бота
         telegram_bot_token = bot_token_instance.bot_token
         telegram_chat_ids = bot_token_instance.report_channels.split(',')
-        bot = Bot(token=telegram_bot_token)
 
         # Формирование сообщения
         message = f"Новый репорт:\nОписание: {report.description}\nКонтактный номер: {report.contact_number}"
 
         # Отправка сообщения и изображения в каждый чат
         for chat_id in telegram_chat_ids:
-            async_to_sync(bot.send_message)(chat_id=chat_id.strip(), text=message)
+            chat_id = chat_id.strip()
+            message_url = f"https://api.telegram.org/bot{telegram_bot_token}/sendMessage"
+            photo_url = f"https://api.telegram.org/bot{telegram_bot_token}/sendPhoto"
+
+            # Отправка сообщения
+            message_payload = {
+                'chat_id': chat_id,
+                'text': message
+            }
+            response = requests.post(message_url, data=message_payload)
+            if response.status_code != 200:
+                print(f"Ошибка при отправке сообщения в чат {chat_id}: {response.text}")
+
+            # Отправка фотографии
             if report.image:
                 with report.image.open('rb') as image_file:
-                    async_to_sync(bot.send_photo)(chat_id=chat_id.strip(), photo=image_file)
+                    files = {'photo': image_file}
+                    photo_payload = {'chat_id': chat_id}
+                    response = requests.post(photo_url, data=photo_payload, files=files)
+                    if response.status_code == 200:
+                        print(f"Фотография отправлена в чат {chat_id}")
+                    else:
+                        print(f"Ошибка при отправке фотографии в чат {chat_id}: {response.text}")
