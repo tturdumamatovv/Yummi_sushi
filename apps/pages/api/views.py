@@ -4,7 +4,7 @@ from rest_framework.response import Response
 
 from apps.pages.models import Banner, MainPage, Contacts, StaticPage, Phone
 from apps.product.models import Category
-from apps.pages.api.serializers import HomePageSerializer, ContactsSerializer, StaticPageSerializer
+from apps.pages.api.serializers import HomePageSerializer, ContactsSerializer, StaticPageSerializer, LayOutSerializer
 
 
 class HomePageView(generics.GenericAPIView):
@@ -69,3 +69,8 @@ class StaticPageDetailView(generics.RetrieveAPIView):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
+
+
+class LayOutView(generics.ListAPIView):
+    queryset = MainPage.objects.all()
+    serializer_class = LayOutSerializer

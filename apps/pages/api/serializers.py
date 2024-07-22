@@ -99,3 +99,9 @@ class StaticPageSerializer(serializers.ModelSerializer):
         model = StaticPage
         fields = ['title', 'slug', 'description', 'meta_title',
                   'meta_description', ]
+
+
+class LayOutSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MainPage
+        fields = ['icon', 'phone']
