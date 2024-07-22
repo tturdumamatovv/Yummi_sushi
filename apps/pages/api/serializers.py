@@ -24,9 +24,9 @@ class OrderTypesSerializer(serializers.ModelSerializer):
 
 
 class MainPageSerializer(serializers.ModelSerializer):
-    order_types = OrderTypesSerializer(many=True, source='ordertypes_set')
-    delivery_conditions = OrderTypesSerializer(many=True, source='deliveryconditions_set')
-    methods_of_payment = OrderTypesSerializer(many=True, source='methodsofpayment_set')
+    order_types = OrderTypesSerializer(many=True, read_only=True)
+    delivery_conditions = OrderTypesSerializer(many=True, read_only=True)
+    methods_of_payment = OrderTypesSerializer(many=True, read_only=True)
 
     class Meta:
         model = MainPage

@@ -64,12 +64,18 @@ class OrderTypes(models.Model):
     description = models.TextField(verbose_name=_("Описание"))
 
 
-class DeliveryConditions(OrderTypes):
-    pass
+class DeliveryConditions(models.Model):
+    page = models.ForeignKey(MainPage, related_name='delivery_conditions', on_delete=models.CASCADE)
+    image = models.ImageField(verbose_name=_("Изображение"), blank=True, null=True)
+    title = models.CharField(max_length=255, verbose_name=_("Заголовок"))
+    description = models.TextField(verbose_name=_("Описание"))
 
 
-class MethodsOfPayment(OrderTypes):
-    pass
+class MethodsOfPayment(models.Model):
+    page = models.ForeignKey(MainPage, related_name='methods_of_payment', on_delete=models.CASCADE)
+    image = models.ImageField(verbose_name=_("Изображение"), blank=True, null=True)
+    title = models.CharField(max_length=255, verbose_name=_("Заголовок"))
+    description = models.TextField(verbose_name=_("Описание"))
 
 
 class StaticPage(models.Model):

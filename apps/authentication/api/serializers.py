@@ -4,7 +4,7 @@ from apps.authentication.models import (
     User,
     UserAddress
 )
-from config.settings import base
+from config import settings
 
 
 class UserBonusSerializer(serializers.ModelSerializer):
@@ -42,9 +42,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         if not ret['profile_picture']:
             if request is not None:
-                ret['profile_picture'] = request.build_absolute_uri(base.MEDIA_URL + 'profile_pictures/default-user.jpg')
+                ret['profile_picture'] = request.build_absolute_uri(settings.MEDIA_URL + 'profile_pictures/default-user.jpg')
             else:
-                ret['profile_picture'] = base.MEDIA_URL + 'profile_pictures/default-user.jpg'
+                ret['profile_picture'] = settings.MEDIA_URL + 'profile_pictures/default-user.jpg'
         return ret
 
     def get_has_profile_picture(self, instance):
