@@ -199,7 +199,7 @@ class PercentCashback(SingletonModel):
 
 
 class Report(models.Model):
-    image = models.ImageField(upload_to='reports/')
+    image = models.ImageField(upload_to='reports/', blank=True, null=True)
     description = models.TextField()
     contact_number = models.CharField(max_length=15)
 

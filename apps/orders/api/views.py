@@ -43,7 +43,8 @@ class CreateOrderView(generics.CreateAPIView):
             for restaurant in Restaurant.objects.all():
                 if restaurant.latitude and restaurant.longitude:
                     restaurant_location = (restaurant.latitude, restaurant.longitude)
-                    distance = get_distance_between_locations('AIzaSyCWbO5aOn8hS3EWJycj73dHqH8fHHfO4w4', user_location, restaurant_location)
+                    distance = get_distance_between_locations('AIzaSyCWbO5aOn8hS3EWJycj73dHqH8fHHfO4w4', user_location,
+                                                              restaurant_location)
                     if distance is not None and distance < min_distance and is_restaurant_open(restaurant, order_time):
                         min_distance = distance
                         nearest_restaurant = restaurant
@@ -219,24 +220,53 @@ class OrderPreviewView(generics.GenericAPIView):
 
 
 class ReportCreateView(generics.CreateAPIView):
-    queryset = Report.objects.all()
     serializer_class = ReportSerializer
 
-    def perform_create(self, serializer):
-        instance = serializer.save()
-        self.send_report_to_telegram(instance)
+    def create(self, request, *args, **kwargs):
+        # Получение данных из запроса
+        description = request.data.get('description')
+        contact_number = request.data.get('contact_number')
+        image = request.FILES.get('image') if 'image' in request.FILES else None
 
-    def send_report_to_telegram(report):
-        try:
-            token_instance = TelegramBotToken.objects.get(pk=1)
-            bot = Bot(token=token_instance.bot_token)
-            channels = token_instance.report_channels.split(',')
-            message = f"Новый репорт:\nОписание: {report.description}\nКонтактный номер: {report.contact_number}"
+        # Подготовка данных для сериализации
+        report_data = {
+            'description': description,
+            'contact_number': contact_number,
+            'image': image
+        }
 
-            for chat_id in channels:
-                bot.send_message(chat_id=chat_id.strip(), text=message)
-                if report.image:
-                    image_path = report.image.path
-                    bot.send_photo(chat_id=chat_id.strip(), photo=open(image_path, 'rb'))
-        except TelegramBotToken.DoesNotExist:
+        # Валидация данных с помощью сериализатора
+        serializer = self.get_serializer(data=report_data)
+        serializer.is_valid(raise_exception=True)
+
+        # Сохранение объекта report
+        report = serializer.save()
+
+        # Отправка репорта в Telegram
+        self.send_report_to_telegram(report)
+
+        # Возврат успешного ответа с данными репорта
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def send_report_to_telegram(self, report):
+        # Получение экземпляра настроек бота
+        bot_token_instance = TelegramBotToken.objects.first()
+        if not bot_token_instance:
             print("Токен бота Telegram не настроен.")
+            return
+
+        # Инициализация бота
+        telegram_bot_token = bot_token_instance.bot_token
+        telegram_chat_ids = bot_token_instance.report_channels.split(',')
+        bot = Bot(token=telegram_bot_token)
+
+        # Формирование сообщения
+        message = f"Новый репорт:\nОписание: {report.description}\nКонтактный номер: {report.contact_number}"
+
+        # Отправка сообщения и изображения в каждый чат
+        for chat_id in telegram_chat_ids:
+            async_to_sync(bot.send_message)(chat_id=chat_id.strip(), text=message)
+            if report.image:
+                with report.image.open('rb') as image_file:
+                    async_to_sync(bot.send_photo)(chat_id=chat_id.strip(), photo=image_file)
