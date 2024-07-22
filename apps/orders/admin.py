@@ -6,7 +6,7 @@ from .models import Restaurant, Delivery, Order, OrderItem, DistancePricing, Tel
 class TelegramBotTokenAdmin(admin.ModelAdmin):
     list_display = ['bot_token']
     fieldsets = (
-        (None, {'fields': ('bot_token',)}),
+        (None, {'fields': ('bot_token', 'report_channels')}),
     )
 
 
