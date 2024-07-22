@@ -1,7 +1,13 @@
 from decimal import Decimal
 
-BONUS_PERCENTAGE_MOBILE = 5  # Процент бонусов для мобильных приложений
-BONUS_PERCENTAGE_WEB = 3  # Процент бонусов для веб-сайта
+from apps.orders.models import PercentCashback
+
+percents = PercentCashback.objects.get(id=1)
+if not percents:
+    percents = PercentCashback.objects.create(mobile_percelnt=5, web_percelnt=3)
+
+BONUS_PERCENTAGE_MOBILE = percents.mobile_percelnt
+BONUS_PERCENTAGE_WEB = percents.web_percent
 
 
 def calculate_bonus_points(order_total, delivery_fee, order_source):
@@ -11,7 +17,7 @@ def calculate_bonus_points(order_total, delivery_fee, order_source):
     elif order_source == 'web':
         bonus_percentage = BONUS_PERCENTAGE_WEB
     else:
-        bonus_percentage = Decimal('0.0')  # Если источник заказа неизвестен, бонусы не начисляются
+        bonus_percentage = Decimal('0.0')
 
     bonus_points = total_order_amount * (bonus_percentage / Decimal('100'))
     return bonus_points

@@ -1,9 +1,6 @@
 # services/bonus_products.py
 from decimal import Decimal
 
-from apps.orders.models import OrderItem
-from apps.product.models import Ingredient, Topping
-
 
 def calculate_and_apply_bonus(order):
     total_order_amount = Decimal('0.00')

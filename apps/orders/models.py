@@ -6,6 +6,7 @@ from geopy.distance import geodesic
 from django.core.validators import MinLengthValidator
 
 from apps.authentication.models import UserAddress
+from apps.pages.models import SingletonModel
 from apps.product.models import ProductSize, Set, Ingredient, Topping
 
 
@@ -189,3 +190,11 @@ class DistancePricing(models.Model):
 
     def __str__(self):
         return f"{self.distance} км - {self.price} сом"
+
+
+class PercentCashback(SingletonModel):
+    mobile_percelnt = models.IntegerField(verbose_name="Процент за мобильное приложение")
+    web_percent = models.IntegerField(verbose_name="Процент за веб-сайт")
+    def __str__(self):
+        'Кешбек в процентах'
+

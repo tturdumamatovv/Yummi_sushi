@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Restaurant, Delivery, Order, OrderItem, DistancePricing, TelegramBotToken
+from .models import Restaurant, Delivery, Order, OrderItem, DistancePricing, TelegramBotToken, PercentCashback
 
 
 @admin.register(TelegramBotToken)
@@ -46,4 +46,8 @@ class OrderAdmin(admin.ModelAdmin):
 
 @admin.register(DistancePricing)
 class DistancePricingInline(admin.ModelAdmin):
+    pass
+
+@admin.register(PercentCashback)
+class PercentCashbackAdmin(admin.ModelAdmin):
     pass
