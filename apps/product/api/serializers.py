@@ -12,7 +12,7 @@ class IngredientSerializer(serializers.ModelSerializer):
 class ToppingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Topping
-        fields = ['name', 'price', 'photo',]
+        fields = ['id', 'name', 'price', 'photo',]
 
 
 class ProductSizeSerializer(serializers.ModelSerializer):
