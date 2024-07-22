@@ -12,6 +12,7 @@ from apps.product.models import ProductSize, Set, Ingredient, Topping
 
 class TelegramBotToken(models.Model):
     bot_token = models.CharField(max_length=200, unique=True)
+    report_channels = models.TextField(max_length=200, blank=True, null=True)
 
     def clean(self):
         # Проверка на существование только одного экземпляра
@@ -195,3 +196,12 @@ class DistancePricing(models.Model):
 class PercentCashback(SingletonModel):
     mobile_percent = models.IntegerField(verbose_name="Процент за мобильное приложение")
     web_percent = models.IntegerField(verbose_name="Процент за веб-сайт")
+
+
+class Report(models.Model):
+    image = models.ImageField(upload_to='reports/')
+    description = models.TextField()
+    contact_number = models.CharField(max_length=15)
+
+    def __str__(self):
+        return f"Report {self.id}"

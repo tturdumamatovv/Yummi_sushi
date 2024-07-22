@@ -1,9 +1,9 @@
 # serializers.py
 from django.db import transaction
 from rest_framework import serializers
-from apps.orders.models import Order, OrderItem, Delivery, Topping, Ingredient, Restaurant
-from apps.product.models import ProductSize, Set
+
 from apps.authentication.models import UserAddress
+from apps.orders.models import Order, OrderItem, Delivery, Topping, Ingredient, Restaurant, Report
 
 
 class RestaurantSerializer(serializers.ModelSerializer):
@@ -133,3 +133,9 @@ class OrderPreviewSerializer(serializers.Serializer):
                                                       ('online', 'Онлайн'), ])
     products = ProductOrderItemPreviewSerializer(many=True, required=False)
     sets = SetOrderItemPreviewSerializer(many=True, required=False)
+
+
+class ReportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Report
+        fields = ['image', 'description', 'contact_number']

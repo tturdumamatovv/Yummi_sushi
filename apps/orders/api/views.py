@@ -3,7 +3,7 @@ from datetime import datetime
 from decimal import Decimal
 
 from apps.authentication.models import UserAddress
-from apps.orders.models import Restaurant, TelegramBotToken
+from apps.orders.models import Restaurant, TelegramBotToken, Report
 from apps.services.calculate_delivery_fee import calculate_delivery_fee
 from apps.services.calculate_distance import get_distance_between_locations
 from apps.services.generate_message import generate_order_message
@@ -11,7 +11,7 @@ from apps.services.is_restaurant_open import is_restaurant_open
 from rest_framework import generics
 from rest_framework import status
 from rest_framework.response import Response
-from .serializers import OrderSerializer, OrderPreviewSerializer
+from .serializers import OrderSerializer, OrderPreviewSerializer, ReportSerializer
 from ...product.models import ProductSize, Set, Topping, Ingredient
 from ...services.bonuces import calculate_bonus_points, apply_bonus_points
 from ...services.calculate_bonus import calculate_and_apply_bonus
@@ -216,3 +216,27 @@ class OrderPreviewView(generics.GenericAPIView):
         }
 
         return Response(response_data, status=status.HTTP_200_OK)
+
+
+class ReportCreateView(generics.CreateAPIView):
+    queryset = Report.objects.all()
+    serializer_class = ReportSerializer
+
+    def perform_create(self, serializer):
+        instance = serializer.save()
+        self.send_report_to_telegram(instance)
+
+    def send_report_to_telegram(report):
+        try:
+            token_instance = TelegramBotToken.objects.get(pk=1)
+            bot = Bot(token=token_instance.bot_token)
+            channels = token_instance.report_channels.split(',')
+            message = f"Новый репорт:\nОписание: {report.description}\nКонтактный номер: {report.contact_number}"
+
+            for chat_id in channels:
+                bot.send_message(chat_id=chat_id.strip(), text=message)
+                if report.image:
+                    image_path = report.image.path
+                    bot.send_photo(chat_id=chat_id.strip(), photo=open(image_path, 'rb'))
+        except TelegramBotToken.DoesNotExist:
+            print("Токен бота Telegram не настроен.")
