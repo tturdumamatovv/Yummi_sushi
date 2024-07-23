@@ -12,7 +12,12 @@ class IngredientSerializer(serializers.ModelSerializer):
 class ToppingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Topping
-        fields = ['id', 'name', 'price', 'photo',]
+        fields = ['id', 'name', 'price', 'photo']
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['price'] = float(representation['price'])
+        return representation
 
 
 class ProductSizeSerializer(serializers.ModelSerializer):
