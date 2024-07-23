@@ -9,7 +9,8 @@ from apps.orders.models import Order, OrderItem, Delivery, Topping, Ingredient, 
 class RestaurantSerializer(serializers.ModelSerializer):
     class Meta:
         model = Restaurant
-        fields = "__all__"
+        fields = ['name', 'address', 'phone_number', 'email', 'opening_hours', 'closing_hours',
+                  'latitude', 'longitude', 'self_pickup_available']
 
 
 class ProductOrderItemSerializer(serializers.ModelSerializer):
