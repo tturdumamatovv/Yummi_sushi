@@ -75,6 +75,13 @@ class ComboProductSerializer(serializers.ModelSerializer):
         model = ProductSize
         fields = ['product', 'size', 'price', 'discounted_price']
 
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['price'] = float(representation['price'])
+        representation['discounted_price'] = float(representation['discounted_price']) if representation[
+                                                                                              'discounted_price'] is not None else None
+        return representation
+
 
 class SetSerializer(serializers.ModelSerializer):
     products = ComboProductSerializer(many=True)
@@ -82,6 +89,13 @@ class SetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Set
         fields = ['id', 'name', 'description', 'photo', 'products', 'price', 'discounted_price', 'bonuses']
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['price'] = float(representation['price'])
+        representation['discounted_price'] = float(representation['discounted_price']) if representation[
+                                                                                              'discounted_price'] is not None else None
+        return representation
 
 
 class CategoryProductSerializer(serializers.ModelSerializer):
