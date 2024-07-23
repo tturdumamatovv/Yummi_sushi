@@ -1,5 +1,6 @@
+# serializers.py
 from rest_framework import serializers
-from apps.product.models import Product, ProductSize, Ingredient, Topping, Set, Category
+from apps.product.models import Product, ProductSize, Ingredient, Topping, Category # Set,
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -63,7 +64,7 @@ class SetProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ['id', 'name', 'description', 'photo', 'ingredients',]
+        fields = ['id', 'name', 'description', 'photo', 'ingredients', ]
 
 
 class ComboProductSerializer(serializers.ModelSerializer):
@@ -82,12 +83,12 @@ class ComboProductSerializer(serializers.ModelSerializer):
         return representation
 
 
-class SetSerializer(serializers.ModelSerializer):
-    products = ComboProductSerializer(many=True)
-
-    class Meta:
-        model = Set
-        fields = ['id', 'name', 'description', 'photo', 'products', 'price', 'discounted_price', 'bonuses']
+# class SetSerializer(serializers.ModelSerializer):
+#     products = ComboProductSerializer(many=True)
+#
+#     class Meta:
+#         model = Set
+#         fields = ['id', 'name', 'description', 'photo', 'products', 'price', 'discounted_price', 'bonuses']
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -99,8 +100,10 @@ class SetSerializer(serializers.ModelSerializer):
 
 class CategoryProductSerializer(serializers.ModelSerializer):
     products = ProductSerializer(many=True, read_only=True)
-    sets = SetSerializer(many=True, read_only=True)
+
+    # sets = SetSerializer(many=True, read_only=True)
 
     class Meta:
         model = Category
-        fields = ['id', 'name', 'description', 'slug', 'image', 'products', 'sets']
+        fields = ['id', 'name', 'description', 'slug', 'image', 'products', ]  #'sets']
+

@@ -7,7 +7,7 @@ from django.core.validators import MinLengthValidator
 
 from apps.authentication.models import UserAddress
 from apps.pages.models import SingletonModel
-from apps.product.models import ProductSize, Set, Ingredient, Topping
+from apps.product.models import ProductSize, Ingredient, Topping # Set,
 
 
 class TelegramBotToken(models.Model):
@@ -150,7 +150,7 @@ class OrderItem(models.Model):
     topping = models.ManyToManyField(Topping, blank=True, verbose_name=_('Добавки'))
     excluded_ingredient = models.ManyToManyField(Ingredient, blank=True,
                                                  verbose_name=_('Исключенные ингредиенты'))
-    set = models.ForeignKey(Set, on_delete=models.CASCADE, blank=True, null=True, verbose_name=_('Сет'))
+    # set = models.ForeignKey(Set, on_delete=models.CASCADE, blank=True, null=True, verbose_name=_('Сет'))
     quantity = models.PositiveIntegerField(verbose_name=_('Количество'))
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Общая сумма'))
     is_bonus = models.BooleanField(default=False, verbose_name=_('Бонусный продукт'))

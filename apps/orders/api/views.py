@@ -13,7 +13,7 @@ from rest_framework import generics
 from rest_framework import status
 from rest_framework.response import Response
 from .serializers import OrderSerializer, OrderPreviewSerializer, ReportSerializer, RestaurantSerializer
-from ...product.models import ProductSize, Set, Topping, Ingredient
+from ...product.models import ProductSize, Topping, Ingredient  # Set,
 from ...services.bonuces import calculate_bonus_points, apply_bonus_points
 from ...services.calculate_bonus import calculate_and_apply_bonus
 

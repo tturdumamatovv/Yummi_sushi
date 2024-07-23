@@ -28,18 +28,18 @@ class ProductOrderItemSerializer(serializers.ModelSerializer):
         return data
 
 
-class SetOrderItemSerializer(serializers.ModelSerializer):
-    set_id = serializers.IntegerField(write_only=True)
-
-    class Meta:
-        model = OrderItem
-        fields = ['set_id', 'quantity', 'is_bonus']
-
-    def validate(self, data):
-        if data.get('set_id') == 0:
-            raise serializers.ValidationError("Invalid set_id.")
-        return data
-
+# class SetOrderItemSerializer(serializers.ModelSerializer):
+#     set_id = serializers.IntegerField(write_only=True)
+#
+#     class Meta:
+#         model = OrderItem
+#         fields = ['set_id', 'quantity', 'is_bonus']
+#
+#     def validate(self, data):
+#         if data.get('set_id') == 0:
+#             raise serializers.ValidationError("Invalid set_id.")
+#         return data
+#
 
 class DeliverySerializer(serializers.ModelSerializer):
     user_address_id = serializers.IntegerField(write_only=True)
@@ -51,7 +51,7 @@ class DeliverySerializer(serializers.ModelSerializer):
 
 class OrderSerializer(serializers.ModelSerializer):
     products = ProductOrderItemSerializer(many=True, required=False)
-    sets = SetOrderItemSerializer(many=True, required=False)
+    # sets = SetOrderItemSerializer(many=True, required=False)
     restaurant_id = serializers.IntegerField(required=False, allow_null=True)
     delivery = DeliverySerializer()
 
@@ -59,7 +59,7 @@ class OrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = [
             'id', 'user', 'delivery', 'order_time', 'total_amount', 'is_pickup',
-            'order_status', 'products', 'sets', 'payment_method', 'change', 'restaurant_id',
+            'order_status', 'products', 'payment_method', 'change', 'restaurant_id',  # 'sets',
         ]
         read_only_fields = ['total_amount', 'order_time', 'order_status']
 
@@ -121,9 +121,9 @@ class ProductOrderItemPreviewSerializer(serializers.Serializer):
     quantity = serializers.IntegerField()
 
 
-class SetOrderItemPreviewSerializer(serializers.Serializer):
-    set_id = serializers.IntegerField(write_only=True)
-    quantity = serializers.IntegerField()
+# class SetOrderItemPreviewSerializer(serializers.Serializer):
+#     set_id = serializers.IntegerField(write_only=True)
+#     quantity = serializers.IntegerField()
 
 
 class OrderPreviewSerializer(serializers.Serializer):
@@ -133,7 +133,7 @@ class OrderPreviewSerializer(serializers.Serializer):
                                                       ('cash', 'Наличные'),
                                                       ('online', 'Онлайн'), ])
     products = ProductOrderItemPreviewSerializer(many=True, required=False)
-    sets = SetOrderItemPreviewSerializer(many=True, required=False)
+    # sets = SetOrderItemPreviewSerializer(many=True, required=False)
 
 
 class ReportSerializer(serializers.ModelSerializer):

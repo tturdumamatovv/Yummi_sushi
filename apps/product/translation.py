@@ -1,6 +1,6 @@
 # translation.py
 from modeltranslation.translator import register, TranslationOptions
-from .models import Category, Product, Ingredient, Topping, Set, Size
+from .models import Category, Product, Ingredient, Topping, Size  # Set,
 
 
 @register(Category)
@@ -23,11 +23,12 @@ class ToppingTranslationOptions(TranslationOptions):
     fields = ('name',)
 
 
-@register(Set)
-class SetTranslationOptions(TranslationOptions):
-    fields = ('name', 'description')
-
-
 @register(Size)
 class SizeTranslationOptions(TranslationOptions):
     fields = ('name', 'description')
+
+
+# @register(Set)
+# class SetTranslationOptions(TranslationOptions):
+#     fields = ('name', 'description')
+

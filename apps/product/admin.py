@@ -1,7 +1,7 @@
 # admin.py
 from django.contrib import admin
 from modeltranslation.admin import TranslationAdmin
-from .models import Size, Category, Product, ProductSize, Ingredient, Topping, Set
+from .models import Size, Category, Product, ProductSize, Ingredient, Topping # Set
 from .forms import ProductSizeForm
 
 
@@ -59,10 +59,10 @@ class ToppingAdmin(ExcludeBaseFieldsMixin, TranslationAdmin):
     exclude_base_fields = ('name',)
 
 
-@admin.register(Set)
-class SetAdmin(ExcludeBaseFieldsMixin, TranslationAdmin):
-    list_display = ('name', 'description')
-    search_fields = ('name', 'description')
-    filter_horizontal = ('products',)
-    list_filter = ('products',)
-    exclude_base_fields = ('name', 'description')
+# @admin.register(Set)
+# class SetAdmin(ExcludeBaseFieldsMixin, TranslationAdmin):
+#     list_display = ('name', 'description')
+#     search_fields = ('name', 'description')
+#     filter_horizontal = ('products',)
+#     list_filter = ('products',)
+#     exclude_base_fields = ('name', 'description')
