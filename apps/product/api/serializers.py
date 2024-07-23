@@ -1,4 +1,3 @@
-# serializers.py
 from rest_framework import serializers
 from apps.product.models import Product, ProductSize, Ingredient, Topping, Set, Category
 
