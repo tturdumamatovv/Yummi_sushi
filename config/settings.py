@@ -173,7 +173,7 @@ SIMPLEUI_DEFAULT_THEME = 'simpleui.css'
 SIMPLEUI_INDEX = '#'
 SIMPLEUI_LOGO = '/static/icons/LOGO.svg'
 SIMPLEUI_CONFIG = {
-    'system_keep': False,
+    'system_keep': True,
     'menus': [
         {
             'name': 'Пользователь',
@@ -291,7 +291,7 @@ SIMPLEUI_CONFIG = {
                 {
                     'name': 'Тарифы на расстояние',
                     'icon': 'fa fa-ticket ',
-                    'url': '/admin/orders/percentcashback/'
+                    'url': '/admin/orders/distancepricing/'
                 },
             ]
         },
