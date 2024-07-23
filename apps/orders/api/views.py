@@ -12,7 +12,7 @@ from apps.services.is_restaurant_open import is_restaurant_open
 from rest_framework import generics
 from rest_framework import status
 from rest_framework.response import Response
-from .serializers import OrderSerializer, OrderPreviewSerializer, ReportSerializer
+from .serializers import OrderSerializer, OrderPreviewSerializer, ReportSerializer, RestaurantSerializer
 from ...product.models import ProductSize, Set, Topping, Ingredient
 from ...services.bonuces import calculate_bonus_points, apply_bonus_points
 from ...services.calculate_bonus import calculate_and_apply_bonus
@@ -289,3 +289,8 @@ class ReportCreateView(generics.CreateAPIView):
                         print(f"Фотография отправлена в чат {chat_id}")
                     else:
                         print(f"Ошибка при отправке фотографии в чат {chat_id}: {response.text}")
+
+
+class RestaurantListView(generics.ListAPIView):
+    queryset = Restaurant.objects.all()
+    serializer_class = RestaurantSerializer

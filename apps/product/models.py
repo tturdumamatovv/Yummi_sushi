@@ -53,6 +53,10 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+    def get_min_price(self):
+        prices = [size.discounted_price if size.discounted_price else size.price for size in self.product_sizes.all()]
+        return min(prices) if prices else None
+
 
 class ProductSize(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_sizes',

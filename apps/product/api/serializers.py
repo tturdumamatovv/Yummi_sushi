@@ -22,15 +22,27 @@ class ProductSizeSerializer(serializers.ModelSerializer):
         model = ProductSize
         fields = ['id', 'size', 'price', 'discounted_price']
 
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['price'] = float(representation['price'])
+        representation['discounted_price'] = float(representation['discounted_price']) if representation[
+                                                                                              'discounted_price'] is not None else None
+        return representation
+
 
 class ProductSerializer(serializers.ModelSerializer):
     ingredients = IngredientSerializer(many=True)
     toppings = ToppingSerializer(many=True)
     product_sizes = ProductSizeSerializer(many=True)
+    min_price = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
-        fields = ['id', 'name', 'description', 'photo', 'ingredients', 'toppings', 'product_sizes', 'bonuses']
+        fields = ['id', 'name', 'description', 'photo', 'ingredients', 'toppings', 'min_price', 'bonuses',
+                  'product_sizes']
+
+    def get_min_price(self, obj):
+        return obj.get_min_price()
 
 
 class SizeProductSerializer(serializers.ModelSerializer):

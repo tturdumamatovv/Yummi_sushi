@@ -1,10 +1,10 @@
 
 from django.urls import path
-from .views import CreateOrderView, OrderPreviewView, ReportCreateView
+from .views import CreateOrderView, OrderPreviewView, ReportCreateView, RestaurantListView
 
 urlpatterns = [
     path('create-order/', CreateOrderView.as_view(), name='create-order'),
     path('order-preview/', OrderPreviewView.as_view(), name='order-preview'),
     path('reports/', ReportCreateView.as_view(), name='create-report'),
-
+    path('restaurants/', RestaurantListView.as_view(), name='restaurant-list'),
 ]

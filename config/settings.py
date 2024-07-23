@@ -173,86 +173,127 @@ SIMPLEUI_DEFAULT_THEME = 'simpleui.css'
 SIMPLEUI_INDEX = '#'
 SIMPLEUI_LOGO = '/static/icons/LOGO.svg'
 SIMPLEUI_CONFIG = {
-    'system_keep': True,
-    # 'menus': [
-    #     {
-    #         'name': 'О сайте',
-    #         'icon': 'fa fa-database',
-    #         'url': '/admin/about_us/siteinfo/'
-    #     },
-    #     {
-    #         'name': 'Страницы',
-    #         'icon': 'fa fa-book',
-    #         'models': [
-    #             {
-    #                 'name': 'О нас',
-    #                 'icon': 'fa fa-info-circle',
-    #                 'models': [
-    #                     {
-    #                         'name': 'Страница О нас',
-    #                         'icon': 'fa fa-file-text',
-    #                         'url': '/admin/about_us/aboutpage/'
-    #                     },
-    #                     {
-    #                         'name': 'Блоки',
-    #                         'icon': 'fa fa-cubes',
-    #                         'url': '/admin/about_us/contentblock/'
-    #                     },
-    #                 ]
-    #             },
-    #             {
-    #                 'name': 'Портфолио',
-    #                 'icon': 'fa fa-folder',
-    #                 'models': [
-    #                     {
-    #                         'name': 'Страница Портфолио',
-    #                         'icon': 'fa fa-file-text',
-    #                         'url': '/admin/portfolio/portfoliopage/'
-    #                     },
-    #                     {
-    #                         'name': 'Направление',
-    #                         'icon': 'fa fa-arrows',
-    #                         'url': '/admin/portfolio/portfolioduration/'
-    #                     },
-    #                     {
-    #                         'name': 'Проекты',
-    #                         'icon': 'fa fa-industry',
-    #                         'url': '/admin/portfolio/portfolioproject/'
-    #                     },
-    #                 ]
-    #             },
-    #             {
-    #                 'name': 'Услуги',
-    #                 'icon': 'fa fa-user',
-    #                 'models': [
-    #                     {
-    #                         'name': 'Страница Услуг',
-    #                         'icon': 'fa fa-file-text',
-    #                         'url': '/admin/services/servicepage/'
-    #                     },
-    #                     {
-    #                         'name': 'Услуги',
-    #                         'icon': 'fa fa-cube',
-    #                         'url': '/admin/services/service/'
-    #                     },
-    #                     {
-    #                         'name': 'Блоки сервисов',
-    #                         'icon': 'fa fa-cubes',
-    #                         'url': '/admin/services/contentblock/'
-    #                     },
-    #                 ]
-    #             },
-    #             {
-    #                 'name': 'Контакты',
-    #                 'icon': 'fa fa-address-book',
-    #                 'url': '/admin/contacts/contact/'
-    #             },
-    #         ]
-    #     },
-    #     {
-    #         'name': 'Заявки',
-    #         'icon': 'fa fa-list',
-    #         'url': '/admin/contacts/application/'
-    #     },
-    # ]
+    'system_keep': False,
+    'menus': [
+        {
+            'name': 'Пользователь',
+            'icon': 'fa fa-user',
+            'models': [
+                {
+                    'name': 'Адрес Пользователя',
+                    'icon': 'fa fa-home',
+                    'url': '/admin/authentication/useraddress/'
+                },
+                {
+                    'name': 'Пользователь',
+                    'icon': 'fa fa-user',
+                    'url': '/admin/authentication/user/'
+                },
+            ]
+        },
+        {
+            'name': 'Рестораны',
+            'icon': 'fa fas fa-utensils',
+            'models': [
+                {
+                    'name': 'Рестораны',
+                    'icon': 'fa fas fa-coffee',
+                    'url': '/admin/orders/restaurant/'
+                },
+                {
+                    'name': 'Заказы',
+                    'icon': 'fa fas fa-archive',
+                    'url': '/admin/orders/order/'
+                },
+                {
+                    'name': 'Доставки',
+                    'icon': 'fa fas fa-truck',
+                    'url': '/admin/orders/delivery/'
+                },
+                {
+                    'name': 'Отчеты',
+                    'icon': 'fa fa-file',
+                    'url': '/admin/orders/delivery/'
+                },
+            ]
+        },
+        {
+            'name': 'Продукты',
+            'icon': 'fa fas fa-hamburger',
+            'models': [
+                {
+                    'name': 'Продукты',
+                    'icon': 'fa fas fa-hamburger',
+                    'url': '/admin/product/product/'
+                },
+                {
+                    'name': 'Сеты',
+                    'icon': 'fa fas fa-pizza-slice',
+                    'url': '/admin/product/set/'
+                },
+                {
+                    'name': 'Добавки',
+                    'icon': 'fa fas fa-bacon',
+                    'url': '/admin/product/topping/'
+                },
+                {
+                    'name': 'Ингредиенты',
+                    'icon': 'fa fas fa-egg',
+                    'url': '/admin/product/ingredient/'
+                },
+                {
+                    'name': 'Размеры',
+                    'icon': 'fa fas fa-drumstick-bite',
+                    'url': '/admin/product/size/'
+                },
+            ]
+        },
+        {
+            'name': 'Страницы',
+            'icon': 'fa fa-list',
+            'models': [
+                {
+                    'name': 'Главная страница',
+                    'icon': 'fa fas fa-file',
+                    'url': '/admin/pages/mainpage/'
+                },
+                {
+                    'name': 'Статические страницы',
+                    'icon': 'fa far fa-file-alt',
+                    'url': '/admin/pages/staticpage/'
+                },
+                {
+                    'name': 'Баннеры',
+                    'icon': 'fa fas fa-clone',
+                    'url': '/admin/pages/banner/'
+                },
+                {
+                    'name': 'Контакты',
+                    'icon': 'fa fas fa-phone',
+                    'url': '/admin/pages/contacts/'
+                },
+            ]
+        },
+        {
+            'name': 'Настройки',
+            'icon': 'fa fa-cog',
+            'models': [
+                {
+                    'name': 'Телеграмм',
+                    'icon': 'fa fab fa-telegram',
+                    'url': '/admin/orders/telegrambottoken/'
+                },
+                {
+                    'name': 'Кэшбек',
+                    'icon': 'fa fa-percent',
+                    'url': '/admin/orders/percentcashback/'
+                },
+                {
+                    'name': 'Тарифы на расстояние',
+                    'icon': 'fa fa-ticket ',
+                    'url': '/admin/orders/percentcashback/'
+                },
+            ]
+        },
+    ]
 }

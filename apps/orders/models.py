@@ -11,8 +11,8 @@ from apps.product.models import ProductSize, Set, Ingredient, Topping
 
 
 class TelegramBotToken(models.Model):
-    bot_token = models.CharField(max_length=200, unique=True)
-    report_channels = models.TextField(max_length=200, blank=True, null=True)
+    bot_token = models.CharField(max_length=200, unique=True, verbose_name=_("Телеграм Бот Токен"))
+    report_channels = models.TextField(max_length=200, blank=True, null=True, verbose_name=_("Айди каналов"))
 
     def clean(self):
         # Проверка на существование только одного экземпляра
@@ -27,8 +27,8 @@ class TelegramBotToken(models.Model):
         return "Токен бота Telegram"
 
     class Meta:
-        verbose_name = "Токен бота Telegram"
-        verbose_name_plural = "Токены бота Telegram"
+        verbose_name = _("Токен бота Telegram")
+        verbose_name_plural = _("Токены бота Telegram")
 
 
 class Restaurant(models.Model):
@@ -36,14 +36,16 @@ class Restaurant(models.Model):
     address = models.CharField(max_length=255, verbose_name=_('Адрес'))
     phone_number = models.CharField(max_length=15, verbose_name=_('Телефонный номер'), blank=True, null=True)
     email = models.EmailField(verbose_name=_('Электронная почта'), blank=True, null=True)
-    opening_hours = models.TimeField(verbose_name=_('Часы работы'), blank=True, null=True)
+    opening_hours = models.TimeField(verbose_name=_('Время открытия'), blank=True, null=True)
+    closing_hours = models.TimeField(verbose_name=_('Время закрытия'), blank=True, null=True)
     latitude = models.DecimalField(max_digits=9, decimal_places=6, verbose_name=_('Широта'), blank=True, null=True)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, verbose_name=_('Долгота'), blank=True, null=True)
     telegram_chat_ids = models.TextField(verbose_name=_('Telegram Chat IDs'), validators=[MinLengthValidator(1)], help_text=_('Введите чат-айди через запятую'), blank=True, null=True)
+    self_pickup_available = models.BooleanField(default=False, verbose_name=_('Самовывоз доступен'))
 
     class Meta:
-        verbose_name = "Ресторан"
-        verbose_name_plural = "Рестораны"
+        verbose_name = _("Ресторан")
+        verbose_name_plural = _("Рестораны")
 
     def __str__(self):
         return self.name
@@ -66,8 +68,8 @@ class Delivery(models.Model):
     delivery_fee = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Стоимость доставки'))
 
     class Meta:
-        verbose_name = "Доставка"
-        verbose_name_plural = "Доставки"
+        verbose_name = _("Доставка")
+        verbose_name_plural = _("Доставки")
 
     def __str__(self):
         return f"Доставка в {self.user_address.city}, {self.user_address.street} от {self.restaurant.name}"
@@ -116,8 +118,8 @@ class Order(models.Model):
     )
 
     class Meta:
-        verbose_name = "Заказ"
-        verbose_name_plural = "Заказы"
+        verbose_name = _("Заказ")
+        verbose_name_plural = _("Заказы")
 
     def __str__(self):
         return f"Заказ #{self.id} от {self.user.full_name}"
@@ -153,10 +155,9 @@ class OrderItem(models.Model):
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Общая сумма'))
     is_bonus = models.BooleanField(default=False, verbose_name=_('Бонусный продукт'))
 
-
     class Meta:
-        verbose_name = "Элемент заказа"
-        verbose_name_plural = "Элементы заказа"
+        verbose_name = _("Элемент заказа")
+        verbose_name_plural = _("Элементы заказа")
 
     def __str__(self):
         return f"{self.product_size.product.name if self.product_size else self.set.name} ({self.product_size.size.name if self.product_size else 'Сет'}) - {self.quantity} шт."
@@ -186,22 +187,37 @@ class OrderItem(models.Model):
 
 
 class DistancePricing(models.Model):
-    distance = models.IntegerField(verbose_name="Расстояние (км)")
-    price = models.IntegerField(verbose_name="Цена")
+    distance = models.IntegerField(verbose_name=_("Расстояние (км)"))
+    price = models.IntegerField(verbose_name=_("Цена"))
 
     def __str__(self):
         return f"{self.distance} км - {self.price} сом"
 
+    class Meta:
+        verbose_name = _("Тариф на расстояние")
+        verbose_name_plural = _("Тарифы на расстояния")
+
 
 class PercentCashback(SingletonModel):
-    mobile_percent = models.IntegerField(verbose_name="Процент за мобильное приложение")
-    web_percent = models.IntegerField(verbose_name="Процент за веб-сайт")
+    mobile_percent = models.IntegerField(verbose_name=_("Процент за мобильное приложение"))
+    web_percent = models.IntegerField(verbose_name=_("Процент за веб-сайт"))
+
+    def __str__(self):
+        return f"Процент кэшбека № {self.id}"
+
+    class Meta:
+        verbose_name = _("Процент кэшбэка")
+        verbose_name_plural = _("Проценты кэшбэка")
 
 
 class Report(models.Model):
-    image = models.ImageField(upload_to='reports/', blank=True, null=True)
-    description = models.TextField()
-    contact_number = models.CharField(max_length=15)
+    image = models.ImageField(upload_to='reports/', blank=True, null=True, verbose_name=_("Картинка"))
+    description = models.TextField(verbose_name=_("Описание"))
+    contact_number = models.CharField(max_length=15, verbose_name=_("Контактный номер"))
 
     def __str__(self):
-        return f"Report {self.id}"
+        return f"Отчет № {self.id}"
+
+    class Meta:
+        verbose_name = _("Отчет")
+        verbose_name_plural = _("Отчеты")
