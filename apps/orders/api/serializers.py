@@ -9,7 +9,7 @@ from apps.orders.models import Order, OrderItem, Delivery, Topping, Ingredient, 
 class RestaurantSerializer(serializers.ModelSerializer):
     class Meta:
         model = Restaurant
-        fields = ['name', 'address', 'phone_number', 'email', 'opening_hours', 'closing_hours',
+        fields = ['id', 'name', 'address', 'phone_number', 'email', 'opening_hours', 'closing_hours',
                   'latitude', 'longitude', 'self_pickup_available']
 
 
@@ -140,5 +140,3 @@ class ReportSerializer(serializers.ModelSerializer):
     class Meta:
         model = Report
         fields = ['image', 'description', 'contact_number']
-
-
