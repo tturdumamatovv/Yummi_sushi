@@ -58,7 +58,7 @@ class MainPage(SingletonModel):
 
 
 class OrderTypes(models.Model):
-    page = models.ForeignKey(MainPage, on_delete=models.CASCADE)
+    page = models.ForeignKey(MainPage, on_delete=models.CASCADE, related_name='order_types')
     image = models.ImageField(verbose_name=_("Изображение"), blank=True, null=True)
     title = models.CharField(max_length=255, verbose_name=_("Заголовок"))
     description = models.TextField(verbose_name=_("Описание"))

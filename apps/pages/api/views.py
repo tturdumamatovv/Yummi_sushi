@@ -78,7 +78,7 @@ class LayOutView(generics.ListAPIView):
 
 
 class BannersView(ListAPIView):
-    queryset = Banner.objects.all()
+    queryset = Banner.objects.filter(is_active=True).order_by('-created_at')
 
     def get_serializer(self, *args, **kwargs):
         return BannerSerializer(*args, **kwargs, context={'request': self.request})
