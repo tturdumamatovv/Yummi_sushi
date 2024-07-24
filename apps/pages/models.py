@@ -63,6 +63,10 @@ class OrderTypes(models.Model):
     title = models.CharField(max_length=255, verbose_name=_("Заголовок"))
     description = models.TextField(verbose_name=_("Описание"))
 
+    class Meta:
+        verbose_name = _("Тип заказа")
+        verbose_name_plural = _("Типы заказа")
+
 
 class DeliveryConditions(models.Model):
     page = models.ForeignKey(MainPage, related_name='delivery_conditions', on_delete=models.CASCADE)
@@ -70,12 +74,20 @@ class DeliveryConditions(models.Model):
     title = models.CharField(max_length=255, verbose_name=_("Заголовок"))
     description = models.TextField(verbose_name=_("Описание"))
 
+    class Meta:
+        verbose_name = _("Условия доставки")
+        verbose_name_plural = _("Условия доставки")
+
 
 class MethodsOfPayment(models.Model):
     page = models.ForeignKey(MainPage, related_name='methods_of_payment', on_delete=models.CASCADE)
     image = models.ImageField(verbose_name=_("Изображение"), blank=True, null=True)
     title = models.CharField(max_length=255, verbose_name=_("Заголовок"))
     description = models.TextField(verbose_name=_("Описание"))
+
+    class Meta:
+        verbose_name = _("Способ оплаты")
+        verbose_name_plural = _("Способы оплаты")
 
 
 class StaticPage(models.Model):

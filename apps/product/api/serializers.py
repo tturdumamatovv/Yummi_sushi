@@ -1,12 +1,12 @@
 # serializers.py
 from rest_framework import serializers
-from apps.product.models import Product, ProductSize, Ingredient, Topping, Category # Set,
+from apps.product.models import Product, ProductSize, Topping, Category  # Set, Ingredient
 
 
-class IngredientSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Ingredient
-        fields = ['name', 'photo', 'possibly_remove']
+# class IngredientSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Ingredient
+#         fields = ['name', 'photo', 'possibly_remove']
 
 
 class ToppingSerializer(serializers.ModelSerializer):
@@ -36,7 +36,7 @@ class ProductSizeSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    ingredients = IngredientSerializer(many=True)
+    # ingredients = IngredientSerializer(many=True)
     toppings = ToppingSerializer(many=True)
     product_sizes = ProductSizeSerializer(many=True)
     min_price = serializers.SerializerMethodField()
@@ -60,11 +60,11 @@ class SizeProductSerializer(serializers.ModelSerializer):
 
 
 class SetProductSerializer(serializers.ModelSerializer):
-    ingredients = IngredientSerializer(many=True)
+    # ingredients = IngredientSerializer(many=True)
 
     class Meta:
         model = Product
-        fields = ['id', 'name', 'description', 'photo', 'ingredients', ]
+        fields = ['id', 'name', 'description', 'photo', ]  # 'ingredients', ]
 
 
 class ComboProductSerializer(serializers.ModelSerializer):
@@ -90,12 +90,12 @@ class ComboProductSerializer(serializers.ModelSerializer):
 #         model = Set
 #         fields = ['id', 'name', 'description', 'photo', 'products', 'price', 'discounted_price', 'bonuses']
 
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        representation['price'] = float(representation['price'])
-        representation['discounted_price'] = float(representation['discounted_price']) if representation[
-                                                                                              'discounted_price'] is not None else None
-        return representation
+# def to_representation(self, instance):
+#     representation = super().to_representation(instance)
+#     representation['price'] = float(representation['price'])
+#     representation['discounted_price'] = float(representation['discounted_price']) if representation[
+#                                                                                           'discounted_price'] is not None else None
+#     return representation
 
 
 class CategoryProductSerializer(serializers.ModelSerializer):
@@ -105,5 +105,4 @@ class CategoryProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = ['id', 'name', 'description', 'slug', 'image', 'products', ]  #'sets']
-
+        fields = ['id', 'name', 'description', 'slug', 'image', 'products', ]  # 'sets']

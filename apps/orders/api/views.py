@@ -13,7 +13,7 @@ from rest_framework import generics
 from rest_framework import status
 from rest_framework.response import Response
 from .serializers import OrderSerializer, OrderPreviewSerializer, ReportSerializer, RestaurantSerializer
-from ...product.models import ProductSize, Topping, Ingredient  # Set,
+from ...product.models import ProductSize, Topping  # Set, Ingredient
 from ...services.bonuces import calculate_bonus_points, apply_bonus_points
 from ...services.calculate_bonus import calculate_and_apply_bonus
 
@@ -98,7 +98,11 @@ class CreateOrderView(generics.CreateAPIView):
             telegram_chat_ids = nearest_restaurant.get_telegram_chat_ids()
             bot = Bot(token=telegram_bot_token)
             for chat_id in telegram_chat_ids:
+                if chat_id is None:
+                    continue
                 async_to_sync(bot.send_message)(chat_id=chat_id, text=message)
+
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response({"error": "Не установлен токен бота Telegram."}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -169,8 +173,8 @@ class OrderPreviewView(generics.GenericAPIView):
                     "size": product_size.size.name,
                     "quantity": quantity,
                     "toppings": [topping.name for topping in Topping.objects.filter(id__in=topping_ids)],
-                    "excluded_ingredients": [ingredient.name for ingredient in
-                                             Ingredient.objects.filter(id__in=excluded_ingredient_ids)],
+                    # "excluded_ingredients": [ingredient.name for ingredient in
+                    #                          Ingredient.objects.filter(id__in=excluded_ingredient_ids)],
                     "total": item_total
                 })
             except ProductSize.DoesNotExist:

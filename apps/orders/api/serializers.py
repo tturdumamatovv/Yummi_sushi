@@ -3,7 +3,7 @@ from django.db import transaction
 from rest_framework import serializers
 
 from apps.authentication.models import UserAddress
-from apps.orders.models import Order, OrderItem, Delivery, Topping, Ingredient, Restaurant, Report
+from apps.orders.models import Order, OrderItem, Delivery, Topping, Restaurant, Report  # Ingredient
 
 
 class RestaurantSerializer(serializers.ModelSerializer):
@@ -103,13 +103,13 @@ class OrderSerializer(serializers.ModelSerializer):
 
                 else:
                     order_item.save()
-                if excluded_ingredient_ids:
-                    excluded_ingredients = Ingredient.objects.filter(id__in=excluded_ingredient_ids)
-                    order_item.excluded_ingredient.set(excluded_ingredients)
+                # if excluded_ingredient_ids:
+                #     excluded_ingredients = Ingredient.objects.filter(id__in=excluded_ingredient_ids)
+                #     order_item.excluded_ingredient.set(excluded_ingredients)
 
-            for set_data in sets_data:
-                set_order_item = OrderItem(order=order, set_id=set_data['set_id'], quantity=set_data['quantity'])
-                set_order_item.save()
+            # for set_data in sets_data:
+            #     set_order_item = OrderItem(order=order, set_id=set_data['set_id'], quantity=set_data['quantity'])
+            #     set_order_item.save()
 
         return order
 

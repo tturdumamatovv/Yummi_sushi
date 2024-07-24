@@ -1,3 +1,4 @@
+from colorfield.fields import ColorField
 from django.db import models
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
@@ -35,16 +36,31 @@ class Category(models.Model):
         super().save(*args, **kwargs)
 
 
+class Tag(models.Model):
+    name = models.CharField(max_length=100, verbose_name=_('Название'))
+    text_color = ColorField(default='#FF0000', format='hex', verbose_name=_('Цвет текста'))
+    background_color = ColorField(default='#FF0000', format='hex', verbose_name=_('Цвет фона'))
+
+    class Meta:
+        verbose_name = "Тег"
+        verbose_name_plural = "Теги"
+
+    def __str__(self):
+        return self.name
+
+
 class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name=_('Категория'),
                                  related_name='products', blank=True, null=True)
     name = models.CharField(max_length=100, verbose_name=_('Название'))
     description = models.TextField(verbose_name=_('Описание'), blank=True, null=True)
     photo = models.ImageField(upload_to='product_photos/', verbose_name=_('Фото'), blank=True, null=True)
-    ingredients = models.ManyToManyField('Ingredient', related_name='products', verbose_name=_('Ингредиенты'),
-                                         blank=True)
     toppings = models.ManyToManyField('Topping', related_name='products', verbose_name=_('Добавки'), blank=True)
     bonuses = models.BooleanField(default=False, verbose_name=_('Можно оптатить бонусами'))
+    tags = models.ManyToManyField('Tag', related_name='products', verbose_name=_('Теги'), blank=True)
+
+    # ingredients = models.ManyToManyField('Ingredient', related_name='products', verbose_name=_('Ингредиенты'),
+    #                                      blank=True)
 
     class Meta:
         verbose_name = "Продукт"
@@ -76,19 +92,6 @@ class ProductSize(models.Model):
 
     def get_price(self):
         return self.discounted_price if self.discounted_price else self.price
-
-
-class Ingredient(models.Model):
-    name = models.CharField(max_length=100, verbose_name=_('Название'))
-    photo = models.ImageField(upload_to='topping_photos/', verbose_name=_('Фото'), blank=True, null=True)
-    possibly_remove = models.BooleanField(default=False, verbose_name=_('Возможность удаления'))
-
-    class Meta:
-        verbose_name = "Ингредиент"
-        verbose_name_plural = "Ингредиенты"
-
-    def __str__(self):
-        return self.name
 
 
 class Topping(models.Model):
@@ -125,3 +128,16 @@ class Set(models.Model):
 
     def get_price(self):
         return self.discounted_price if self.discounted_price else self.price
+
+
+class Ingredient(models.Model):
+    name = models.CharField(max_length=100, verbose_name=_('Название'))
+    photo = models.ImageField(upload_to='topping_photos/', verbose_name=_('Фото'), blank=True, null=True)
+    possibly_remove = models.BooleanField(default=False, verbose_name=_('Возможность удаления'))
+
+    class Meta:
+        verbose_name = "Ингредиент"
+        verbose_name_plural = "Ингредиенты"
+
+    def __str__(self):
+        return self.name

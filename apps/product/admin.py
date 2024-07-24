@@ -1,7 +1,7 @@
 # admin.py
 from django.contrib import admin
 from modeltranslation.admin import TranslationAdmin
-from .models import Size, Category, Product, ProductSize, Ingredient, Topping # Set
+from .models import Size, Category, Product, ProductSize, Topping, Tag  # Set, Ingredient
 from .forms import ProductSizeForm
 
 
@@ -28,6 +28,11 @@ class CategoryAdmin(ExcludeBaseFieldsMixin, TranslationAdmin):
     search_fields = ('name',)
     exclude_base_fields = ('name', 'description')
 
+@admin.register(Tag)
+class TagAdmin(ExcludeBaseFieldsMixin, TranslationAdmin):
+    list_display = ('name',)
+    search_fields = ('name',)
+    exclude_base_fields = ('name')
 
 class ProductSizeInline(admin.TabularInline):
     model = ProductSize
@@ -40,16 +45,9 @@ class ProductAdmin(ExcludeBaseFieldsMixin, TranslationAdmin):
     list_display = ('name', 'category', 'description')
     search_fields = ('name',)
     list_filter = ('category',)
-    filter_horizontal = ('toppings', 'ingredients')
+    filter_horizontal = ('toppings', 'tags',)  #'ingredients')
     inlines = [ProductSizeInline]
     exclude_base_fields = ('name', 'description')
-
-
-@admin.register(Ingredient)
-class IngredientAdmin(ExcludeBaseFieldsMixin, TranslationAdmin):
-    list_display = ('name',)
-    search_fields = ('name',)
-    exclude_base_fields = ('name',)
 
 
 @admin.register(Topping)
@@ -58,7 +56,6 @@ class ToppingAdmin(ExcludeBaseFieldsMixin, TranslationAdmin):
     search_fields = ('name',)
     exclude_base_fields = ('name',)
 
-
 # @admin.register(Set)
 # class SetAdmin(ExcludeBaseFieldsMixin, TranslationAdmin):
 #     list_display = ('name', 'description')
@@ -66,3 +63,10 @@ class ToppingAdmin(ExcludeBaseFieldsMixin, TranslationAdmin):
 #     filter_horizontal = ('products',)
 #     list_filter = ('products',)
 #     exclude_base_fields = ('name', 'description')
+
+
+# @admin.register(Ingredient)
+# class IngredientAdmin(ExcludeBaseFieldsMixin, TranslationAdmin):
+#     list_display = ('name',)
+#     search_fields = ('name',)
+#     exclude_base_fields = ('name',)

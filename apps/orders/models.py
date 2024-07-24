@@ -7,7 +7,7 @@ from django.core.validators import MinLengthValidator
 
 from apps.authentication.models import UserAddress
 from apps.pages.models import SingletonModel
-from apps.product.models import ProductSize, Ingredient, Topping # Set,
+from apps.product.models import ProductSize, Topping  # Set,Ingredient
 
 
 class TelegramBotToken(models.Model):
@@ -116,6 +116,7 @@ class Order(models.Model):
         default='unknown',
         verbose_name=_('Источник заказа')
     )
+    comment = models.TextField(verbose_name=_('Комментарий'), blank=True, null=True)
 
     class Meta:
         verbose_name = _("Заказ")
@@ -148,12 +149,12 @@ class OrderItem(models.Model):
     product_size = models.ForeignKey(ProductSize, on_delete=models.CASCADE, verbose_name=_('Размер продукта'),
                                      blank=True, null=True)
     topping = models.ManyToManyField(Topping, blank=True, verbose_name=_('Добавки'))
-    excluded_ingredient = models.ManyToManyField(Ingredient, blank=True,
-                                                 verbose_name=_('Исключенные ингредиенты'))
-    # set = models.ForeignKey(Set, on_delete=models.CASCADE, blank=True, null=True, verbose_name=_('Сет'))
     quantity = models.PositiveIntegerField(verbose_name=_('Количество'))
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Общая сумма'))
     is_bonus = models.BooleanField(default=False, verbose_name=_('Бонусный продукт'))
+    # excluded_ingredient = models.ManyToManyField(Ingredient, blank=True,
+    #                                              verbose_name=_('Исключенные ингредиенты'))
+    # set = models.ForeignKey(Set, on_delete=models.CASCADE, blank=True, null=True, verbose_name=_('Сет'))
 
     class Meta:
         verbose_name = _("Элемент заказа")

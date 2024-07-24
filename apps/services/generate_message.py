@@ -48,10 +48,10 @@ def generate_order_message(order, delivery_distance_km, delivery_fee):
             for topping in item.topping.all():
                 item_details += f" - {topping.name}\n"
 
-        if item.excluded_ingredient.exists():
-            item_details += "Исключенные ингредиенты:\n"
-            for ingredient in item.excluded_ingredient.all():
-                item_details += f" - {ingredient.name}\n"
+        # if item.excluded_ingredient.exists():
+        #     item_details += "Исключенные ингредиенты:\n"
+        #     for ingredient in item.excluded_ingredient.all():
+        #         item_details += f" - {ingredient.name}\n"
 
         message += item_details + "-----------------\n"
     message += "===============\n"
@@ -61,12 +61,23 @@ def generate_order_message(order, delivery_distance_km, delivery_fee):
     address = (
         f"Город: {user_address.city}\n"
         f"Адрес: {user_address.street} {user_address.house_number}\n"
-        f"Квартира: {user_address.apartment_number}\n"
-        f"Подъезд: {user_address.entrance}\n"
-        f"Этаж: {user_address.floor}\n"
-        f"Домофон: {user_address.intercom}\n"
-        f"Комментарии: {user_address.comment}\n"
+        f"Комментарии: {user_address.comment if user_address.comment else 'Без комментария'}\n"
     )
+
+    if user_address.apartment_number:
+        address += f"Квартира: {user_address.apartment_number}\n"
+
+    if user_address.entrance:
+        address += f"Подъезд: {user_address.entrance}\n"
+
+    if user_address.floor:
+        address += f"Этаж: {user_address.floor}\n"
+
+    if user_address.intercom:
+        address += f"Домофон: {user_address.intercom}\n"
+
+    if user_address.comment:
+        address += f"Комментарии: {user_address.comment}\n"
 
     message += (
         f"Адрес доставки:\n{address if not order.is_pickup else 'Самовывоз'}\n"

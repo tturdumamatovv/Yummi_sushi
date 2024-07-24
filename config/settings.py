@@ -40,6 +40,7 @@ THIRD_PARTY_APPS = [
     'corsheaders',
     'drf_spectacular',
     'modeltranslation',
+    'colorfield',
 
 ]
 
@@ -166,14 +167,14 @@ SPECTACULAR_SETTINGS = {
     "GENERATE_UNIQUE_PARAMETER_NAMES": True,
 }
 
-SIMPLEUI_HOME_INFO = True
+SIMPLEUI_HOME_INFO = False
 SIMPLEUI_HOME_ACTION = False
 SIMPLEUI_HOME_QUICK = True
 SIMPLEUI_DEFAULT_THEME = 'simpleui.css'
 SIMPLEUI_INDEX = '#'
 SIMPLEUI_LOGO = '/static/icons/LOGO.svg'
 SIMPLEUI_CONFIG = {
-    'system_keep': False,
+    'system_keep': True,
     'menus': [
         {
             'name': 'Пользователь',
@@ -223,28 +224,33 @@ SIMPLEUI_CONFIG = {
             'models': [
                 {
                     'name': 'Продукты',
-                    'icon': 'fa fas fa-hamburger',
+                    'icon': 'fa fas fa-pizza-slice',
                     'url': '/admin/product/product/'
                 },
-                {
-                    'name': 'Сеты',
-                    'icon': 'fa fas fa-pizza-slice',
-                    'url': '/admin/product/set/'
-                },
+                # {
+                #     'name': 'Сеты',
+                #     'icon': 'fa fas fa-pizza-slice',
+                #     'url': '/admin/product/set/'
+                # },
                 {
                     'name': 'Добавки',
                     'icon': 'fa fas fa-bacon',
                     'url': '/admin/product/topping/'
                 },
-                {
-                    'name': 'Ингредиенты',
-                    'icon': 'fa fas fa-egg',
-                    'url': '/admin/product/ingredient/'
-                },
+                # {
+                #     'name': 'Ингредиенты',
+                #     'icon': 'fa fas fa-egg',
+                #     'url': '/admin/product/ingredient/'
+                # },
                 {
                     'name': 'Размеры',
                     'icon': 'fa fas fa-drumstick-bite',
                     'url': '/admin/product/size/'
+                },
+                {
+                    'name': 'Тэги',
+                    'icon': 'fa fas fa-tags',
+                    'url': '/admin/product/tags/'
                 },
             ]
         },
