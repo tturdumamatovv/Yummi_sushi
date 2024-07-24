@@ -1,6 +1,6 @@
 # serializers.py
 from rest_framework import serializers
-from apps.product.models import Product, ProductSize, Topping, Category  # Set, Ingredient
+from apps.product.models import Product, ProductSize, Topping, Category, Tag  # Set, Ingredient
 
 
 # class IngredientSerializer(serializers.ModelSerializer):
@@ -20,6 +20,11 @@ class ToppingSerializer(serializers.ModelSerializer):
         return representation
 
 
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = ['id', 'name', 'text_color', 'background_color']
+
 class ProductSizeSerializer(serializers.ModelSerializer):
     size = serializers.StringRelatedField()
 
@@ -38,12 +43,13 @@ class ProductSizeSerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     # ingredients = IngredientSerializer(many=True)
     toppings = ToppingSerializer(many=True)
+    tags = TagSerializer(many=True)
     product_sizes = ProductSizeSerializer(many=True)
     min_price = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
-        fields = ['id', 'name', 'description', 'photo', 'ingredients', 'toppings', 'min_price', 'bonuses',
+        fields = ['id', 'name', 'description', 'photo', 'tags', 'toppings', 'min_price', 'bonuses',
                   'product_sizes']
 
     def get_min_price(self, obj):
