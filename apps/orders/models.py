@@ -64,8 +64,8 @@ class Restaurant(models.Model):
 class Delivery(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, verbose_name=_('Ресторан'))
     user_address = models.ForeignKey(UserAddress, on_delete=models.CASCADE, verbose_name=_('Адрес пользователя'))
-    delivery_time = models.DateTimeField(verbose_name=_('Время доставки'))
-    delivery_fee = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Стоимость доставки'))
+    delivery_time = models.DateTimeField(verbose_name=_('Время доставки'), blank=True, null=True)
+    delivery_fee = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Стоимость доставки'), blank=True, null=True)
 
     class Meta:
         verbose_name = _("Доставка")
@@ -82,7 +82,7 @@ class Order(models.Model):
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Общая сумма'), blank=True,
                                        null=True)
     total_bonus_amount = models.IntegerField(verbose_name=_('Общая сумма бонусов'), blank=True, null=True)
-    user = models.ForeignKey('authentication.User', on_delete=models.CASCADE, verbose_name=_('Пользователь'))
+    user = models.ForeignKey('authentication.User', on_delete=models.CASCADE, verbose_name=_('Пользователь'), blank=True, null=True)
     is_pickup = models.BooleanField(default=False, verbose_name=_('Самовывоз'))
     payment_method = models.CharField(
         max_length=255,

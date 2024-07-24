@@ -68,7 +68,7 @@ class OrderSerializer(serializers.ModelSerializer):
         products_data = validated_data.pop('products', [])
         sets_data = validated_data.pop('sets', [])
         delivery_data = validated_data.pop('delivery')
-        user = validated_data.pop('user')
+        # user = validated_data.pop('user')
 
         user_address = UserAddress.objects.get(id=delivery_data['user_address_id'])
         nearest_restaurant = self.context['nearest_restaurant']
@@ -78,13 +78,13 @@ class OrderSerializer(serializers.ModelSerializer):
             delivery = Delivery.objects.create(
                 restaurant=nearest_restaurant,
                 user_address=user_address,
-                delivery_time=delivery_data['delivery_time'],
+                delivery_time=delivery_data['delivery_time'] if 'delivery_time' in delivery_data else None,
                 delivery_fee=delivery_fee
             )
 
             order = Order.objects.create(
                 delivery=delivery,
-                user=user,
+                # user=user,
                 restaurant=nearest_restaurant,
                 **validated_data
             )

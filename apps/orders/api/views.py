@@ -79,6 +79,7 @@ class CreateOrderView(generics.CreateAPIView):
         self.perform_create(serializer)
 
         order = serializer.instance
+        order.user = self.request.user
         try:
             total_order_amount = calculate_and_apply_bonus(order)
             order.total_amount = total_order_amount + delivery_fee
@@ -149,7 +150,7 @@ class OrderPreviewView(generics.GenericAPIView):
 
         total_amount = 0
         products_data = data.get('products', [])
-        sets_data = data.get('sets', [])
+        # sets_data = data.get('sets', [])
 
         order_items_details = []
 
@@ -176,21 +177,21 @@ class OrderPreviewView(generics.GenericAPIView):
                 return Response({"error": f"Product size with id {product_size_id} does not exist."},
                                 status=status.HTTP_400_BAD_REQUEST)
 
-        for set_data in sets_data:
-            set_id = set_data.get('set_id')
-            quantity = set_data.get('quantity', 1)
-
-            try:
-                set_item = Set.objects.get(id=set_id)
-                item_total = set_item.get_price() * quantity
-                total_amount += item_total
-                order_items_details.append({
-                    "set": set_item.name,
-                    "quantity": quantity,
-                    "total": item_total
-                })
-            except Set.DoesNotExist:
-                return Response({"error": f"Set with id {set_id} does not exist."}, status=status.HTTP_400_BAD_REQUEST)
+        # for set_data in sets_data:
+        #     set_id = set_data.get('set_id')
+        #     quantity = set_data.get('quantity', 1)
+        #
+        #     try:
+        #         set_item = Set.objects.get(id=set_id)
+        #         item_total = set_item.get_price() * quantity
+        #         total_amount += item_total
+        #         order_items_details.append({
+        #             "set": set_item.name,
+        #             "quantity": quantity,
+        #             "total": item_total
+        #         })
+        #     except Set.DoesNotExist:
+        #         return Response({"error": f"Set with id {set_id} does not exist."}, status=status.HTTP_400_BAD_REQUEST)
 
         response_data = {
             "user": user.full_name,
