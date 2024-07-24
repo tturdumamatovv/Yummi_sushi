@@ -134,12 +134,6 @@ class ProductOrderItemPreviewSerializer(serializers.Serializer):
 
 class OrderPreviewSerializer(serializers.Serializer):
     user_address_id = serializers.IntegerField()
-    is_pickup = serializers.BooleanField(default=False)
-    payment_method = serializers.ChoiceField(choices=[('card', 'Карта'),
-                                                      ('cash', 'Наличные'),
-                                                      ('online', 'Онлайн'), ])
-    products = ProductOrderItemPreviewSerializer(many=True, required=False)
-    # sets = SetOrderItemPreviewSerializer(many=True, required=False)
 
 
 class ReportSerializer(serializers.ModelSerializer):

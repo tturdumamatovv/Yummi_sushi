@@ -4,7 +4,7 @@ from decimal import Decimal
 import requests
 
 from apps.authentication.models import UserAddress
-from apps.orders.models import Restaurant, TelegramBotToken, Report
+from apps.orders.models import Restaurant, TelegramBotToken, Report, Order
 from apps.services.calculate_delivery_fee import calculate_delivery_fee
 from apps.services.calculate_distance import get_distance_between_locations
 from apps.services.generate_message import generate_order_message
@@ -22,6 +22,12 @@ from asgiref.sync import async_to_sync
 
 from ...services.send_telegram_message import send_telegram_message
 
+class ListOrderView(generics.ListAPIView):
+    serializer_class = OrderSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        return Order.objects.filter(user=user)
 
 class CreateOrderView(generics.CreateAPIView):
     serializer_class = OrderSerializer
@@ -152,77 +158,15 @@ class OrderPreviewView(generics.GenericAPIView):
                                 status=status.HTTP_400_BAD_REQUEST)
 
             delivery_fee = calculate_delivery_fee(min_distance)
-        else:
-            nearest_restaurant = Restaurant.objects.first()  # Use the default restaurant for pickup
-
-        total_amount = 0
-        products_data = data.get('products', [])
-        # sets_data = data.get('sets', [])
-
-        order_items_details = []
-
-        for product_data in products_data:
-            product_size_id = product_data.get('product_size_id')
-            topping_ids = product_data.get('topping_ids', [])
-            excluded_ingredient_ids = product_data.get('excluded_ingredient_ids', [])
-            quantity = product_data.get('quantity', 1)
-
-            try:
-                product_size = ProductSize.objects.get(id=product_size_id)
-                item_total = product_size.get_price() * quantity
-                total_amount += item_total
-                order_items_details.append({
-                    "product": product_size.product.name,
-                    "size": product_size.size.name,
-                    "quantity": quantity,
-                    "toppings": [topping.name for topping in Topping.objects.filter(id__in=topping_ids)],
-                    # "excluded_ingredients": [ingredient.name for ingredient in
-                    #                          Ingredient.objects.filter(id__in=excluded_ingredient_ids)],
-                    "total": item_total
-                })
-            except ProductSize.DoesNotExist:
-                return Response({"error": f"Product size with id {product_size_id} does not exist."},
-                                status=status.HTTP_400_BAD_REQUEST)
-
-        # for set_data in sets_data:
-        #     set_id = set_data.get('set_id')
-        #     quantity = set_data.get('quantity', 1)
-        #
-        #     try:
-        #         set_item = Set.objects.get(id=set_id)
-        #         item_total = set_item.get_price() * quantity
-        #         total_amount += item_total
-        #         order_items_details.append({
-        #             "set": set_item.name,
-        #             "quantity": quantity,
-        #             "total": item_total
-        #         })
-        #     except Set.DoesNotExist:
-        #         return Response({"error": f"Set with id {set_id} does not exist."}, status=status.HTTP_400_BAD_REQUEST)
 
         response_data = {
-            "user": user.full_name,
-            "phone_number": user.phone_number,
-            "restaurant": nearest_restaurant.name if nearest_restaurant else None,
-            "address": {
-                "city": user_address_instance.city,
-                "street": user_address_instance.street,
-                "house_number": user_address_instance.house_number,
-                "apartment_number": user_address_instance.apartment_number,
-                "entrance": user_address_instance.entrance,
-                "floor": user_address_instance.floor,
-                "intercom": user_address_instance.intercom,
-                "comment": user_address_instance.comment
-            } if not is_pickup else "Самовывоз",
+
             "delivery_info": {
                 "distance_km": min_distance,
                 "delivery_fee": delivery_fee
             } if not is_pickup else None,
-            "payment_info": {
-                "method": data.get('payment_method'),
-            },
-            "total_amount": total_amount + delivery_fee,
-            "order_items": order_items_details
+
+
         }
 
         return Response(response_data, status=status.HTTP_200_OK)
