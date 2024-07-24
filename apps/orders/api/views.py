@@ -20,6 +20,8 @@ from ...services.calculate_bonus import calculate_and_apply_bonus
 from telegram import Bot
 from asgiref.sync import async_to_sync
 
+from ...services.send_telegram_message import send_telegram_message
+
 
 class CreateOrderView(generics.CreateAPIView):
     serializer_class = OrderSerializer
@@ -30,6 +32,7 @@ class CreateOrderView(generics.CreateAPIView):
         is_pickup = request.data.get('is_pickup', False)
         restaurant_id = request.data.get('restaurant_id', None)
         order_source = request.data.get('order_source', 'unknown')
+        comment = request.data.get('comment', '')
         order_time = datetime.now()
         user_address_instance = UserAddress.objects.get(id=user_address_id, user=user)
 
@@ -80,6 +83,8 @@ class CreateOrderView(generics.CreateAPIView):
 
         order = serializer.instance
         order.user = self.request.user
+        order.comment = comment
+
         try:
             total_order_amount = calculate_and_apply_bonus(order)
             order.total_amount = total_order_amount + delivery_fee
@@ -88,7 +93,6 @@ class CreateOrderView(generics.CreateAPIView):
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
         bonus_points = calculate_bonus_points(Decimal(order.total_amount), Decimal(delivery_fee), order_source)
-        print(bonus_points)
         apply_bonus_points(user, bonus_points)
 
         message = generate_order_message(order, min_distance, delivery_fee)
@@ -97,11 +101,9 @@ class CreateOrderView(generics.CreateAPIView):
         if bot_token_instance:
             telegram_bot_token = bot_token_instance.bot_token
             telegram_chat_ids = nearest_restaurant.get_telegram_chat_ids()
-            bot = Bot(token=telegram_bot_token)
             for chat_id in telegram_chat_ids:
-                if chat_id is None:
-                    continue
-                async_to_sync(bot.send_message)(chat_id=chat_id, text=message)
+                if chat_id:
+                    send_telegram_message(telegram_bot_token, chat_id, message)
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:

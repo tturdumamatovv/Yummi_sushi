@@ -14,9 +14,10 @@ def generate_order_message(order, delivery_distance_km, delivery_fee):
 
     payment_info = (
         f"Способ оплаты: {order.get_payment_method_display()}\n"
-        f"Сумма наличными: {order.change if order.change else 0} сом\n"
-        f"Сдача: {order.change - order.total_amount if order.change else 0} сом\n"
     )
+    if order.payment_method == 'cash':
+        payment_info += f"Сумма наличными: {order.change if order.change else 0} сом\n"
+        payment_info += f"Сдача: {order.change - order.total_amount if order.change else 0} сом\n"
 
     message = (
         f"Новый заказ #{order.id}\n"
@@ -61,7 +62,6 @@ def generate_order_message(order, delivery_distance_km, delivery_fee):
     address = (
         f"Город: {user_address.city}\n"
         f"Адрес: {user_address.street} {user_address.house_number}\n"
-        f"Комментарии: {user_address.comment if user_address.comment else 'Без комментария'}\n"
     )
 
     if user_address.apartment_number:
@@ -77,14 +77,18 @@ def generate_order_message(order, delivery_distance_km, delivery_fee):
         address += f"Домофон: {user_address.intercom}\n"
 
     if user_address.comment:
-        address += f"Комментарии: {user_address.comment}\n"
+        address += f"Комментарий: {user_address.comment}\n"
+
 
     message += (
-        f"Адрес доставки:\n{address if not order.is_pickup else 'Самовывоз'}\n"
-        f"Статус: {order.get_order_status_display()}\n \n"
+        f"Адрес доставки:\n{address if not order.is_pickup else ''}\n"
+        # f"Статус: {order.get_order_status_display()}\n \n"
         f"{delivery_info}\n"
         f"{payment_info}\n"
         f"Общая сумма: {order.total_amount}\n"
+
     )
+    if order.comment:
+        message += f"Комментарий: {order.comment}\n"
 
     return message
