@@ -5,7 +5,8 @@ from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 from apps.product.api.filters import ProductFilter
-from apps.product.api.serializers import ProductSerializer, CategoryProductSerializer  # , SetSerializer
+from apps.product.api.serializers import ProductSerializer, CategoryProductSerializer, \
+    CategoryOnlySerializer  # , SetSerializer
 from apps.product.models import Category, Product  # Set
 
 
@@ -58,4 +59,13 @@ class CategoryListView(generics.ListAPIView):
     def get(self, request, *args, **kwargs):
         categories = Category.objects.prefetch_related('products', 'sets').all()
         serializer = CategoryProductSerializer(categories, many=True, context={'request': request})
+        return Response(serializer.data)
+
+
+class CategoryOnlyListView(generics.ListAPIView):
+    serializer_class = CategoryOnlySerializer
+
+    def get(self, request, *args, **kwargs):
+        categories = Category.objects.all()
+        serializer = CategoryOnlySerializer(categories, many=True, context={'request': request})
         return Response(serializer.data)

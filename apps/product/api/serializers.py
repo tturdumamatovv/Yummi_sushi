@@ -112,3 +112,9 @@ class CategoryProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ['id', 'name', 'description', 'slug', 'image', 'products', ]  # 'sets']
+
+
+class CategoryOnlySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ['id', 'name', 'description', 'slug', 'image', ]
