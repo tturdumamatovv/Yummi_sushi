@@ -88,6 +88,7 @@ class CreateOrderView(generics.CreateAPIView):
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
         bonus_points = calculate_bonus_points(Decimal(order.total_amount), Decimal(delivery_fee), order_source)
+        print(bonus_points)
         apply_bonus_points(user, bonus_points)
 
         message = generate_order_message(order, min_distance, delivery_fee)

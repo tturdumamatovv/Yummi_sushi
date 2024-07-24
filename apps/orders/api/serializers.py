@@ -16,11 +16,14 @@ class RestaurantSerializer(serializers.ModelSerializer):
 class ProductOrderItemSerializer(serializers.ModelSerializer):
     product_size_id = serializers.IntegerField(write_only=True)
     topping_ids = serializers.ListField(child=serializers.IntegerField(), write_only=True, required=False)
-    excluded_ingredient_ids = serializers.ListField(child=serializers.IntegerField(), write_only=True, required=False)
+    quantity = serializers.IntegerField(default=0)
+    is_bonus = serializers.BooleanField(default=False)
+
+    # excluded_ingredient_ids = serializers.ListField(child=serializers.IntegerField(), write_only=True, required=False)
 
     class Meta:
         model = OrderItem
-        fields = ['product_size_id', 'quantity', 'topping_ids', 'excluded_ingredient_ids', 'is_bonus']
+        fields = ['product_size_id', 'quantity', 'topping_ids', 'is_bonus']  # , 'excluded_ingredient_ids'
 
     def validate(self, data):
         if data.get('product_size_id') == 0:
@@ -46,7 +49,7 @@ class DeliverySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Delivery
-        fields = ['user_address_id', 'delivery_time']
+        fields = ['user_address_id']
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -54,12 +57,15 @@ class OrderSerializer(serializers.ModelSerializer):
     # sets = SetOrderItemSerializer(many=True, required=False)
     restaurant_id = serializers.IntegerField(required=False, allow_null=True)
     delivery = DeliverySerializer()
+    order_source = serializers.ChoiceField(choices=[('web', 'web'), ('mobile', 'mobile')], default='web')
+    change = serializers.IntegerField(default=0)
+    is_pickup = serializers.BooleanField(default=False)
 
     class Meta:
         model = Order
         fields = [
-            'id', 'user', 'delivery', 'order_time', 'total_amount', 'is_pickup',
-            'order_status', 'products', 'payment_method', 'change', 'restaurant_id',  # 'sets',
+            'id', 'delivery', 'order_time', 'total_amount', 'is_pickup',
+            'order_status', 'products', 'payment_method', 'change', 'restaurant_id', 'order_source'  # 'sets',
         ]
         read_only_fields = ['total_amount', 'order_time', 'order_status']
 

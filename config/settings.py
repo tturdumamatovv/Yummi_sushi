@@ -174,7 +174,7 @@ SIMPLEUI_DEFAULT_THEME = 'simpleui.css'
 SIMPLEUI_INDEX = '#'
 SIMPLEUI_LOGO = '/static/icons/LOGO.svg'
 SIMPLEUI_CONFIG = {
-    'system_keep': True,
+    'system_keep': False,
     'menus': [
         {
             'name': 'Пользователь',
@@ -250,7 +250,7 @@ SIMPLEUI_CONFIG = {
                 {
                     'name': 'Тэги',
                     'icon': 'fa fas fa-tags',
-                    'url': '/admin/product/tags/'
+                    'url': '/admin/product/tag/'
                 },
             ]
         },
