@@ -4,11 +4,7 @@ from .models import Restaurant, Delivery, Order, OrderItem, DistancePricing, Tel
 
 @admin.register(TelegramBotToken)
 class TelegramBotTokenAdmin(admin.ModelAdmin):
-    list_display = ['bot_token']
-    fieldsets = (
-        (None, {'fields': ('bot_token', 'report_channels')}),
-    )
-
+    pass
 
 @admin.register(Restaurant)
 class RestaurantAdmin(admin.ModelAdmin):

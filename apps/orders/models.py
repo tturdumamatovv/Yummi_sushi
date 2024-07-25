@@ -13,6 +13,7 @@ from apps.product.models import ProductSize, Topping  # Set,Ingredient
 class TelegramBotToken(models.Model):
     bot_token = models.CharField(max_length=200, unique=True, verbose_name=_("Телеграм Бот Токен"))
     report_channels = models.TextField(max_length=200, blank=True, null=True, verbose_name=_("Айди каналов"))
+    app_download_link = models.CharField(max_length=250, blank=True, null=True, verbose_name=_("Ссылка на приложение"))
 
     def clean(self):
         # Проверка на существование только одного экземпляра

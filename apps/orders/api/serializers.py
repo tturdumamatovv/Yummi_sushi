@@ -3,7 +3,8 @@ from django.db import transaction
 from rest_framework import serializers
 
 from apps.authentication.models import UserAddress
-from apps.orders.models import Order, OrderItem, Delivery, Topping, Restaurant, Report  # Ingredient
+from apps.orders.models import Order, OrderItem, Delivery, Topping, Restaurant, Report, TelegramBotToken  # Ingredient
+
 
 
 class RestaurantSerializer(serializers.ModelSerializer):
@@ -70,11 +71,12 @@ class OrderListSerializer(serializers.ModelSerializer):
     total_amount = serializers.SerializerMethodField()
     order_time = serializers.SerializerMethodField()
     user_address = serializers.SerializerMethodField()
+    app_download_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Order
         fields = ['id', 'total_amount', 'order_time', 'restaurant', 'order_items', 'total_bonus_amount',
-                  'is_pickup', 'user_address']
+                  'is_pickup', 'user_address', 'app_download_url']
 
     def get_total_amount(self, obj):
         return obj.get_total_amount()
@@ -89,6 +91,12 @@ class OrderListSerializer(serializers.ModelSerializer):
             return f'{street} {house_number}'
         else:
             return street
+
+    def get_app_download_url(self, obj):
+        link = TelegramBotToken.objects.first().app_download_link
+        if not link:
+            return None
+        return link
 
 
 class OrderSerializer(serializers.ModelSerializer):
