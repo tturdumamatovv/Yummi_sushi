@@ -38,6 +38,7 @@ class ProductOrderItemSerializer(serializers.ModelSerializer):
             photo_url = request.build_absolute_uri(photo_url)
         return {
             'name': obj.product_size.product.name,
+            'price': obj.product_size.product.description if obj.product_size.product.description else 'Нет описания',
             'image': photo_url
         }
 
@@ -68,16 +69,27 @@ class OrderListSerializer(serializers.ModelSerializer):
     restaurant = RestaurantSerializer()
     total_amount = serializers.SerializerMethodField()
     order_time = serializers.SerializerMethodField()
+    user_address = serializers.SerializerMethodField()
 
     class Meta:
         model = Order
-        fields = ['id', 'delivery', 'total_amount', 'order_time', 'restaurant', 'order_items', 'total_bonus_amount']
+        fields = ['id', 'total_amount', 'order_time', 'restaurant', 'order_items', 'total_bonus_amount',
+                  'is_pickup', 'user_address']
 
     def get_total_amount(self, obj):
         return obj.get_total_amount()
 
     def get_order_time(self, obj):
         return obj.order_time.strftime('%Y-%m-%d %H:%M')
+
+    def get_user_address(self, obj):
+        street = obj.delivery.user_address.street
+        house_number = obj.delivery.user_address.house_number
+        if house_number:
+            return f'{street} {house_number}'
+        else:
+            return street
+
 
 class OrderSerializer(serializers.ModelSerializer):
     products = ProductOrderItemSerializer(many=True, required=False)
@@ -92,7 +104,8 @@ class OrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = [
             'id', 'delivery', 'order_time', 'total_amount', 'is_pickup',
-            'order_status', 'products', 'payment_method', 'change', 'restaurant_id', 'order_source', 'comment' # 'sets',
+            'order_status', 'products', 'payment_method', 'change', 'restaurant_id', 'order_source', 'comment'
+            # 'sets',
         ]
         read_only_fields = ['total_amount', 'order_time', 'order_status']
 
