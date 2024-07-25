@@ -14,6 +14,7 @@ class RestaurantSerializer(serializers.ModelSerializer):
 
 
 class ProductOrderItemSerializer(serializers.ModelSerializer):
+    product = serializers.SerializerMethodField(read_only=True)
     product_size_id = serializers.IntegerField(write_only=True)
     topping_ids = serializers.ListField(child=serializers.IntegerField(), write_only=True, required=False)
     quantity = serializers.IntegerField(default=0)
@@ -23,12 +24,22 @@ class ProductOrderItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OrderItem
-        fields = ['product_size_id', 'quantity', 'topping_ids', 'is_bonus']  # , 'excluded_ingredient_ids'
+        fields = ['product_size_id', 'quantity', 'topping_ids', 'is_bonus', 'product']  # , 'excluded_ingredient_ids'
 
     def validate(self, data):
         if data.get('product_size_id') == 0:
             raise serializers.ValidationError("Invalid product_size_id.")
         return data
+
+    def get_product(self, obj):
+        request = self.context.get('request')
+        photo_url = obj.product_size.product.photo.url if obj.product_size.product.photo else None
+        if photo_url and request:
+            photo_url = request.build_absolute_uri(photo_url)
+        return {
+            'name': obj.product_size.product.name,
+            'image': photo_url
+        }
 
 
 # class SetOrderItemSerializer(serializers.ModelSerializer):
@@ -51,6 +62,22 @@ class DeliverySerializer(serializers.ModelSerializer):
         model = Delivery
         fields = ['user_address_id']
 
+
+class OrderListSerializer(serializers.ModelSerializer):
+    order_items = ProductOrderItemSerializer(many=True, required=False)
+    restaurant = RestaurantSerializer()
+    total_amount = serializers.SerializerMethodField()
+    order_time = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Order
+        fields = ['id', 'delivery', 'total_amount', 'order_time', 'restaurant', 'order_items', 'total_bonus_amount']
+
+    def get_total_amount(self, obj):
+        return obj.get_total_amount()
+
+    def get_order_time(self, obj):
+        return obj.order_time.strftime('%Y-%m-%d %H:%M')
 
 class OrderSerializer(serializers.ModelSerializer):
     products = ProductOrderItemSerializer(many=True, required=False)

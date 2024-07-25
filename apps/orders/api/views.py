@@ -12,7 +12,8 @@ from apps.services.is_restaurant_open import is_restaurant_open
 from rest_framework import generics
 from rest_framework import status
 from rest_framework.response import Response
-from .serializers import OrderSerializer, OrderPreviewSerializer, ReportSerializer, RestaurantSerializer
+from .serializers import OrderSerializer, OrderPreviewSerializer, ReportSerializer, RestaurantSerializer, \
+    OrderListSerializer
 from ...product.models import ProductSize, Topping  # Set, Ingredient
 from ...services.bonuces import calculate_bonus_points, apply_bonus_points
 from ...services.calculate_bonus import calculate_and_apply_bonus
@@ -22,12 +23,21 @@ from asgiref.sync import async_to_sync
 
 from ...services.send_telegram_message import send_telegram_message
 
+
 class ListOrderView(generics.ListAPIView):
-    serializer_class = OrderSerializer
+    serializer_class = OrderListSerializer
 
     def get_queryset(self):
         user = self.request.user
         return Order.objects.filter(user=user)
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context.update({
+            'request': self.request
+        })
+        return context
+
 
 class CreateOrderView(generics.CreateAPIView):
     serializer_class = OrderSerializer
@@ -90,6 +100,9 @@ class CreateOrderView(generics.CreateAPIView):
         order = serializer.instance
         order.user = self.request.user
         order.comment = comment
+        bonus_points = calculate_bonus_points(Decimal(order.total_amount), Decimal(delivery_fee), order_source)
+        apply_bonus_points(user, bonus_points)
+        order.total_bonus_amount = bonus_points
 
         try:
             total_order_amount = calculate_and_apply_bonus(order)
@@ -98,8 +111,6 @@ class CreateOrderView(generics.CreateAPIView):
         except ValueError as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-        bonus_points = calculate_bonus_points(Decimal(order.total_amount), Decimal(delivery_fee), order_source)
-        apply_bonus_points(user, bonus_points)
 
         message = generate_order_message(order, min_distance, delivery_fee)
         print(message)
@@ -165,7 +176,6 @@ class OrderPreviewView(generics.GenericAPIView):
                 "distance_km": min_distance,
                 "delivery_fee": delivery_fee
             } if not is_pickup else None,
-
 
         }
 

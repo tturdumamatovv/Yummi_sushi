@@ -123,7 +123,7 @@ class Order(models.Model):
         verbose_name_plural = _("Заказы")
 
     def __str__(self):
-        return f"Заказ #{self.id} от {self.user.full_name}"
+        return f"Заказ #{self.id}"
 
     def get_total_amount(self):
         total_amount = self.delivery.delivery_fee
