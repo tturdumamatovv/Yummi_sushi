@@ -29,7 +29,7 @@ class ListOrderView(generics.ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        return Order.objects.filter(user=user).order_by('-order_time')
+        return Order.objects.filter(user=user).order_by('-id')
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
