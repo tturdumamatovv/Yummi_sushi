@@ -4,15 +4,9 @@ from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 from apps.product.api.filters import ProductFilter
-from apps.product.api.serializers import (
-    ProductSerializer,
-    CategoryProductSerializer,
-    CategoryOnlySerializer
-)  # , SetSerializer
-from apps.product.models import (
-    Category,
-    Product
-)  # Set
+from apps.product.api.serializers import ProductSerializer, CategoryProductSerializer, \
+    CategoryOnlySerializer, ProductSizeWithBonusSerializer  # , SetSerializer
+from apps.product.models import Category, Product, ProductSize  # Set
 
 
 class ProductSearchView(generics.ListAPIView):
@@ -23,8 +17,11 @@ class ProductSearchView(generics.ListAPIView):
 
 
 class ProductBonusView(generics.ListAPIView):
-    queryset = Product.objects.filter(bonuses=True)
-    serializer_class = ProductSerializer
+    queryset = ProductSize.objects.filter(
+        product__bonuses=True,
+        bonus_price__gt=0
+    )
+    serializer_class = ProductSizeWithBonusSerializer
 
 
 class ProductListByCategorySlugView(generics.ListAPIView):

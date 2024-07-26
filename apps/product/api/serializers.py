@@ -135,3 +135,13 @@ class CategoryOnlySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ['id', 'name', 'description', 'slug', 'image', ]
+
+
+class ProductSizeWithBonusSerializer(serializers.ModelSerializer):
+    product_name = serializers.CharField(source='product.name')
+    product_description = serializers.CharField(source='product.description')
+    product_photo = serializers.ImageField(source='product.photo')
+
+    class Meta:
+        model = ProductSize
+        fields = ['product_name', 'product_description', 'product_photo', 'size', 'bonus_price']
