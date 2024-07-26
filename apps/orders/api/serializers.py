@@ -1,6 +1,8 @@
 # serializers.py
 from django.db import transaction
 from rest_framework import serializers
+import pytz
+from django.conf import settings
 
 from apps.authentication.models import UserAddress
 from apps.orders.models import Order, OrderItem, Delivery, Topping, Restaurant, Report, TelegramBotToken  # Ingredient
@@ -82,7 +84,9 @@ class OrderListSerializer(serializers.ModelSerializer):
         return obj.get_total_amount()
 
     def get_order_time(self, obj):
-        return obj.order_time.strftime('%Y-%m-%d %H:%M')
+        local_tz = pytz.timezone(settings.TIME_ZONE)
+        order_time = obj.order_time.astimezone(local_tz)
+        return order_time.strftime('%Y-%m-%d %H:%M')
 
     def get_user_address(self, obj):
         street = obj.delivery.user_address.street
