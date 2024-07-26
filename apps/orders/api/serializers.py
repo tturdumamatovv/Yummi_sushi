@@ -8,7 +8,6 @@ from apps.authentication.models import UserAddress
 from apps.orders.models import Order, OrderItem, Delivery, Topping, Restaurant, Report, TelegramBotToken  # Ingredient
 
 
-
 class RestaurantSerializer(serializers.ModelSerializer):
     class Meta:
         model = Restaurant
