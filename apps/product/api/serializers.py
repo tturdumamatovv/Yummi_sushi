@@ -142,7 +142,6 @@ class ProductSizeWithBonusSerializer(serializers.ModelSerializer):
     product_description = serializers.CharField(source='product.description')
     product_photo = serializers.ImageField(source='product.photo')
     size = serializers.CharField(source='size.name')
-    size_id = serializers.IntegerField(source='size.id')
 
     def get_bonus_price(self, obj):
         return obj.bonus_price
@@ -154,4 +153,4 @@ class ProductSizeWithBonusSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProductSize
-        fields = ['product_name', 'product_description', 'product_photo', 'size', 'size_id', 'bonus_price']
+        fields = ['product_name', 'product_description', 'product_photo', 'size', 'id', 'bonus_price']
