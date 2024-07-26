@@ -53,14 +53,24 @@ class ProductSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True)
     product_sizes = ProductSizeSerializer(many=True)
     min_price = serializers.SerializerMethodField()
+    bonus_price = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
-        fields = ['id', 'name', 'description', 'photo', 'tags', 'toppings', 'min_price', 'bonuses',
+        fields = ['id', 'name', 'description', 'photo', 'tags', 'toppings', 'min_price', 'bonus_price', 'bonuses',
                   'product_sizes']
 
     def get_min_price(self, obj):
         return obj.get_min_price()
+
+    def get_bonus_price(self, obj):
+        # Логика для вычисления bonus_price
+        # Предположим, что bonus_price - это минимальная бонусная цена среди всех размеров продукта
+        min_bonus_price = None
+        for size in obj.product_sizes.all():
+            if min_bonus_price is None or size.bonus_price < min_bonus_price:
+                min_bonus_price = size.bonus_price
+        return min_bonus_price
 
 
 class SizeProductSerializer(serializers.ModelSerializer):
