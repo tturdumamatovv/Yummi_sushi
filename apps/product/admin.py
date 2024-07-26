@@ -1,4 +1,3 @@
-# admin.py
 from django.contrib import admin
 from modeltranslation.admin import TranslationAdmin
 from .models import Size, Category, Product, ProductSize, Topping, Tag  # Set, Ingredient
@@ -28,11 +27,13 @@ class CategoryAdmin(ExcludeBaseFieldsMixin, TranslationAdmin):
     search_fields = ('name',)
     exclude_base_fields = ('name', 'description')
 
+
 @admin.register(Tag)
 class TagAdmin(ExcludeBaseFieldsMixin, TranslationAdmin):
     list_display = ('name',)
     search_fields = ('name',)
-    exclude_base_fields = ('name')
+    exclude_base_fields = ('name',)
+
 
 class ProductSizeInline(admin.TabularInline):
     model = ProductSize

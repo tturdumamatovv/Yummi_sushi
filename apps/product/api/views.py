@@ -1,13 +1,18 @@
-from django.shortcuts import render
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 
 from apps.product.api.filters import ProductFilter
-from apps.product.api.serializers import ProductSerializer, CategoryProductSerializer, \
-    CategoryOnlySerializer  # , SetSerializer
-from apps.product.models import Category, Product  # Set
+from apps.product.api.serializers import (
+    ProductSerializer,
+    CategoryProductSerializer,
+    CategoryOnlySerializer
+)  # , SetSerializer
+from apps.product.models import (
+    Category,
+    Product
+)  # Set
 
 
 class ProductSearchView(generics.ListAPIView):

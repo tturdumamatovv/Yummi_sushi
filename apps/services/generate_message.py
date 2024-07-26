@@ -1,6 +1,3 @@
-# views.py
-
-
 def generate_order_message(order, delivery_distance_km, delivery_fee):
     if order.is_pickup:
         delivery_info = "Самовывоз"

@@ -1,6 +1,11 @@
-# serializers.py
 from rest_framework import serializers
-from apps.product.models import Product, ProductSize, Topping, Category, Tag  # Set, Ingredient
+from apps.product.models import (
+    Product,
+    ProductSize,
+    Topping,
+    Category,
+    Tag
+)  # Set, Ingredient
 
 
 # class IngredientSerializer(serializers.ModelSerializer):
@@ -24,6 +29,7 @@ class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
         fields = ['id', 'name', 'text_color', 'background_color']
+
 
 class ProductSizeSerializer(serializers.ModelSerializer):
     size = serializers.StringRelatedField()

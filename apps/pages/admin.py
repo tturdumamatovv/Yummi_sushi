@@ -1,10 +1,19 @@
 from django.contrib import admin
 
-from apps.pages.models import Banner, Phone, StaticPage, Email, SocialLink, PaymentMethod, Address, Contacts, \
-    MethodsOfPayment, DeliveryConditions, OrderTypes, MainPage
-
-
-# Register your models here.
+from apps.pages.models import (
+    Banner,
+    Phone,
+    StaticPage,
+    Email,
+    SocialLink,
+    PaymentMethod,
+    Address,
+    Contacts,
+    MethodsOfPayment,
+    DeliveryConditions,
+    OrderTypes,
+    MainPage
+)
 
 
 @admin.register(Banner)

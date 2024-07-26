@@ -1,4 +1,3 @@
-import math
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
@@ -41,7 +40,8 @@ class Restaurant(models.Model):
     closing_hours = models.TimeField(verbose_name=_('Время закрытия'), blank=True, null=True)
     latitude = models.DecimalField(max_digits=9, decimal_places=6, verbose_name=_('Широта'), blank=True, null=True)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, verbose_name=_('Долгота'), blank=True, null=True)
-    telegram_chat_ids = models.TextField(verbose_name=_('Telegram Chat IDs'), validators=[MinLengthValidator(1)], help_text=_('Введите чат-айди через запятую'), blank=True, null=True)
+    telegram_chat_ids = models.TextField(verbose_name=_('Telegram Chat IDs'), validators=[MinLengthValidator(1)],
+                                         help_text=_('Введите чат-айди через запятую'), blank=True, null=True)
     self_pickup_available = models.BooleanField(default=True, verbose_name=_('Самовывоз доступен'))
 
     class Meta:
@@ -66,7 +66,8 @@ class Delivery(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, verbose_name=_('Ресторан'))
     user_address = models.ForeignKey(UserAddress, on_delete=models.CASCADE, verbose_name=_('Адрес пользователя'))
     delivery_time = models.DateTimeField(verbose_name=_('Время доставки'), blank=True, null=True)
-    delivery_fee = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Стоимость доставки'), blank=True, null=True)
+    delivery_fee = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Стоимость доставки')
+                                       , blank=True, null=True)
 
     class Meta:
         verbose_name = _("Доставка")
@@ -83,7 +84,8 @@ class Order(models.Model):
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Общая сумма'), blank=True,
                                        null=True)
     total_bonus_amount = models.IntegerField(verbose_name=_('Общая сумма бонусов'), blank=True, null=True)
-    user = models.ForeignKey('authentication.User', on_delete=models.CASCADE, verbose_name=_('Пользователь'), blank=True, null=True)
+    user = models.ForeignKey('authentication.User', on_delete=models.CASCADE, verbose_name=_('Пользователь')
+                             , blank=True, null=True)
     is_pickup = models.BooleanField(default=False, verbose_name=_('Самовывоз'))
     payment_method = models.CharField(
         max_length=255,

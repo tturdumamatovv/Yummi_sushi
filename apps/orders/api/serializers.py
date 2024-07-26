@@ -1,11 +1,21 @@
-# serializers.py
-from django.db import transaction
-from rest_framework import serializers
 import pytz
+
+from django.db import transaction
 from django.conf import settings
 
+from rest_framework import serializers
+
 from apps.authentication.models import UserAddress
-from apps.orders.models import Order, OrderItem, Delivery, Topping, Restaurant, Report, TelegramBotToken  # Ingredient
+from apps.orders.models import (
+    Order,
+    OrderItem,
+    Delivery,
+    Topping,
+    Restaurant,
+    Report,
+    TelegramBotToken
+
+)  # Ingredient)
 
 
 class RestaurantSerializer(serializers.ModelSerializer):

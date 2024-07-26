@@ -1,5 +1,11 @@
 from django.urls import path
-from .views import HomePageView, ContactsView, StaticPageDetailView, LayOutView, BannersView
+from .views import (
+    HomePageView,
+    ContactsView,
+    StaticPageDetailView,
+    LayOutView,
+    BannersView
+)
 
 urlpatterns = [
     path('home/', HomePageView.as_view(), name='home'),
