@@ -145,7 +145,12 @@ class ProductSizeWithBonusSerializer(serializers.ModelSerializer):
     size_id = serializers.IntegerField(source='size.id')
 
     def get_bonus_price(self, obj):
-        return float(obj.bonus_price)
+        return obj.bonus_price
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['bonus_price'] = float(representation['bonus_price'])
+        return
 
     class Meta:
         model = ProductSize
