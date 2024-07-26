@@ -150,7 +150,7 @@ class ProductSizeWithBonusSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         representation['bonus_price'] = float(representation['bonus_price'])
-        return
+        return representation
 
     class Meta:
         model = ProductSize
