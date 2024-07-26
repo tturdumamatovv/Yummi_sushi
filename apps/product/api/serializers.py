@@ -40,6 +40,7 @@ class ProductSizeSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
+        representation['bonus_price'] = float(representation['bonus_price'])
         representation['price'] = float(representation['price'])
         representation['discounted_price'] = float(representation['discounted_price']) if representation[
                                                                                               'discounted_price'] is not None else None
