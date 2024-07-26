@@ -1,5 +1,5 @@
-# services/is_restaurant_open.py
 from datetime import datetime, time
+
 
 def is_restaurant_open(restaurant, order_time):
     return True

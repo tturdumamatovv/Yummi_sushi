@@ -1,9 +1,19 @@
 from rest_framework import serializers
 
-from apps.pages.models import Banner, OrderTypes, MainPage, Phone, Email, SocialLink, Address, PaymentMethod, Contacts, \
-    StaticPage
 from apps.product.models import Category
 from apps.orders.models import PercentCashback
+from apps.pages.models import (
+    Banner,
+    OrderTypes,
+    MainPage,
+    Phone,
+    Email,
+    SocialLink,
+    Address,
+    PaymentMethod,
+    Contacts,
+    StaticPage
+)
 
 
 class CategorySerializer(serializers.ModelSerializer):

@@ -1,10 +1,20 @@
 from django.contrib import admin
-from .models import Restaurant, Delivery, Order, OrderItem, DistancePricing, TelegramBotToken, PercentCashback, Report
+from .models import (
+    Restaurant,
+    Delivery,
+    Order,
+    OrderItem,
+    DistancePricing,
+    TelegramBotToken,
+    PercentCashback,
+    Report
+)
 
 
 @admin.register(TelegramBotToken)
 class TelegramBotTokenAdmin(admin.ModelAdmin):
     pass
+
 
 @admin.register(Restaurant)
 class RestaurantAdmin(admin.ModelAdmin):

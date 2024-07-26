@@ -1,26 +1,33 @@
-# views.py
-from datetime import datetime
-from decimal import Decimal
 import requests
 
+from datetime import datetime
+from decimal import Decimal
+
 from apps.authentication.models import UserAddress
-from apps.orders.models import Restaurant, TelegramBotToken, Report, Order
 from apps.services.calculate_delivery_fee import calculate_delivery_fee
 from apps.services.calculate_distance import get_distance_between_locations
 from apps.services.generate_message import generate_order_message
 from apps.services.is_restaurant_open import is_restaurant_open
-from rest_framework import generics
-from rest_framework import status
+from rest_framework import generics, status
 from rest_framework.response import Response
-from .serializers import OrderSerializer, OrderPreviewSerializer, ReportSerializer, RestaurantSerializer, \
+from apps.orders.models import (
+    Restaurant,
+    TelegramBotToken,
+    Order
+)
+from .serializers import (
+    OrderSerializer,
+    OrderPreviewSerializer,
+    ReportSerializer,
+    RestaurantSerializer,
     OrderListSerializer
+)
 from ...product.models import ProductSize, Topping  # Set, Ingredient
-from ...services.bonuces import calculate_bonus_points, apply_bonus_points
+from ...services.bonuces import (
+    calculate_bonus_points,
+    apply_bonus_points
+)
 from ...services.calculate_bonus import calculate_and_apply_bonus
-
-from telegram import Bot
-from asgiref.sync import async_to_sync
-
 from ...services.send_telegram_message import send_telegram_message
 
 
