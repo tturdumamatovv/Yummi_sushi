@@ -60,8 +60,6 @@ MIDDLEWARE = [
 
 ]
 
-CORS_ORIGIN_ALLOW_ALL = True
-CORS_ALLOW_HEADERS = "*"
 
 ROOT_URLCONF = 'config.urls'
 
@@ -80,7 +78,6 @@ TEMPLATES = [
         },
     },
 ]
-
 
 DATABASES = {
     'default': {
@@ -170,6 +167,10 @@ SPECTACULAR_SETTINGS = {
     "GENERATE_UNIQUE_PARAMETER_NAMES": True,
 }
 CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_HEADERS = "*"
+CORS_ALLOW_METHODS = [
+    "GET",
+]
 
 SIMPLEUI_HOME_INFO = False
 SIMPLEUI_HOME_ACTION = False
