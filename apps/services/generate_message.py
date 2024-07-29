@@ -57,8 +57,8 @@ def generate_order_message(order, delivery_distance_km, delivery_fee):
     user_address = order.delivery.user_address
 
     address = (
-        f"Город: {user_address.city}\n"
-        f"Адрес: {user_address.street} {user_address.house_number}\n"
+        f"Адрес: {user_address.city}\n"
+        # f"Адрес: {user_address.street} {user_address.house_number}\n"
     )
 
     if user_address.apartment_number:
