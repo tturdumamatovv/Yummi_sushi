@@ -90,7 +90,7 @@ class OrderListSerializer(serializers.ModelSerializer):
                   'is_pickup', 'user_address', 'app_download_url', 'order_status']
 
     def get_total_amount(self, obj):
-        return obj.get_total_amount()
+        return obj.get_total_amount_2()
 
     def get_order_time(self, obj):
         local_tz = pytz.timezone(settings.TIME_ZONE)

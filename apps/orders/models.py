@@ -134,6 +134,12 @@ class Order(models.Model):
             total_amount += order_item.total_amount
         return total_amount
 
+    def get_total_amount_2(self):
+        total_amount = self.total_amount
+        for order_item in self.order_items.all():
+            total_amount += order_item.total_amount
+        return total_amount
+
     def get_total_bonus_amount(self):
         total_bonus_amount = self.total_bonus_amount
         if total_bonus_amount is None:
