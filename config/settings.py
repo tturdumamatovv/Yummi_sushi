@@ -170,6 +170,11 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_HEADERS = "*"
 CORS_ALLOW_METHODS = [
     "GET",
+    "OPTIONS",
+    "POST",
+    "PUT",
+    "PATCH",
+    "DELETE",
 ]
 
 SIMPLEUI_HOME_INFO = False
