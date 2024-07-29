@@ -130,7 +130,7 @@ class Order(models.Model):
 
     def get_total_amount(self):
         total_amount = self.delivery.delivery_fee
-        for order_item in self.order_items.filter(is_bonus=False):
+        for order_item in self.order_items.all():
             total_amount += order_item.total_amount
         return total_amount
 
