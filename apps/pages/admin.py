@@ -37,18 +37,10 @@ class BannerAdmin(admin.ModelAdmin):
 
 @admin.register(StaticPage)
 class StaticPageAdmin(admin.ModelAdmin):
-    list_display = ('title', 'slug',)
-    search_fields = ['title', 'content']
-    prepopulated_fields = {'slug': ('title',)}
-    ordering = ('title',)
-    fieldsets = (
-        (None, {
-            'fields': ('title_ru', 'title_ky', 'description_ru', 'description_ky', 'image')
-        }),
-        ('Расширенные параметры', {
-            'fields': ('slug', 'meta_title', 'meta_description', 'meta_image'),
-        }),
-    )
+    exclude = [
+        'title',
+        'description',
+    ]
 
 
 class PhoneInline(admin.TabularInline):

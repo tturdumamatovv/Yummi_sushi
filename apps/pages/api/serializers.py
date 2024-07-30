@@ -91,23 +91,29 @@ class PaymentMethodSerializer(serializers.ModelSerializer):
         fields = ['link', 'icon']
 
 
+class StaticPageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StaticPage
+        fields = ['title', 'slug']
+
+
 class ContactsSerializer(serializers.ModelSerializer):
     phones = PhoneSerializer(many=True, source='phone_set')
     emails = EmailSerializer(many=True, source='email_set')
     social_links = SocialLinkSerializer(many=True, source='sociallink_set')
     addresses = AddressSerializer(many=True, source='address_set')
     payment_methods = PaymentMethodSerializer(many=True, source='paymentmethod_set')
+    static_pages = StaticPageSerializer(many=True, source='staticpage_set')
 
     class Meta:
         model = Contacts
-        fields = ['phones', 'emails', 'social_links', 'addresses', 'payment_methods']
+        fields = ['phones', 'emails', 'social_links', 'addresses', 'payment_methods', 'static_pages']
 
 
 class StaticPageSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = StaticPage
-        fields = ['title', 'slug', 'description', 'meta_title',
+        fields = ['title', 'slug', 'image', 'description', 'meta_title',
                   'meta_description', ]
 
 

@@ -93,16 +93,11 @@ class MethodsOfPayment(models.Model):
 class StaticPage(models.Model):
     title = models.CharField(max_length=255, verbose_name=_("Заголовок"))
     description = models.TextField(verbose_name=_("Описание"))
-    slug = models.SlugField(unique=True, verbose_name=_("Слоган"), blank=True, null=True)
-    meta_title = models.CharField(
-        max_length=255, verbose_name=_("Мета заголовок"), blank=True, null=True
-    )
-    meta_description = models.CharField(
-        max_length=255, verbose_name=_("Мета описание"), blank=True, null=True
-    )
-    meta_image = models.ImageField(
-        verbose_name=_("Мета изображение"), upload_to="images/meta", blank=True, null=True
-    )
+    slug = models.SlugField(unique=True, verbose_name=_("Слаг"), blank=True, null=True)
+    image = models.FileField(verbose_name=_("Изображение"), upload_to="images/static", blank=True, null=True)
+    meta_title = models.CharField(max_length=255, verbose_name=_("Мета заголовок"), blank=True, null=True)
+    meta_description = models.CharField(max_length=255, verbose_name=_("Мета описание"), blank=True, null=True)
+    meta_image = models.FileField(verbose_name=_("Мета изображение"), upload_to="images/meta", blank=True, null=True)
 
     class Meta:
         verbose_name = _("Статическая страница")
@@ -118,20 +113,12 @@ class StaticPage(models.Model):
 
 
 class Banner(models.Model):
-    title = models.CharField(
-        verbose_name="Заголовок", max_length=123, blank=True, null=True
-    )
-    image_desktop = models.ImageField(
-        verbose_name="Картинка круп", upload_to="images/banners/desktop/%Y/%m/"
-    )
-    image_mobile = models.ImageField(
-        verbose_name="Картинка моб", upload_to="images/banners/mobile/%Y/%m/"
-    )
+    title = models.CharField(verbose_name="Заголовок", max_length=123, blank=True, null=True)
+    image_desktop = models.ImageField(verbose_name="Картинка круп", upload_to="images/banners/desktop/%Y/%m/")
+    image_mobile = models.ImageField(verbose_name="Картинка моб", upload_to="images/banners/mobile/%Y/%m/")
     link = models.URLField(verbose_name="ссылка", max_length=200, blank=True, null=True)
     is_active = models.BooleanField(verbose_name="Активный", default=True)
-    created_at = models.DateTimeField(
-        verbose_name="Дата создания", auto_now_add=True, blank=True, null=True
-    )
+    created_at = models.DateTimeField(verbose_name="Дата создания", auto_now_add=True, blank=True, null=True)
 
     def get_image_desktop(self):
         if self.image_desktop:

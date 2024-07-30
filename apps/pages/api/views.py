@@ -44,6 +44,9 @@ class StaticPageDetailView(generics.RetrieveAPIView):
     serializer_class = StaticPageSerializer
     lookup_field = 'slug'
 
+    def get_serializer(self, *args, **kwargs):
+        return StaticPageSerializer(*args, **kwargs, context={'request': self.request})
+
     def get_object(self):
         slug = self.kwargs['slug']
         instance = None

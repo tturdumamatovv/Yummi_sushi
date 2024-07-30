@@ -54,11 +54,12 @@ class ProductSerializer(serializers.ModelSerializer):
     product_sizes = ProductSizeSerializer(many=True)
     min_price = serializers.SerializerMethodField()
     bonus_price = serializers.SerializerMethodField()
+    category_slug = serializers.CharField(source='category.slug')
 
     class Meta:
         model = Product
         fields = ['id', 'name', 'description', 'photo', 'tags', 'toppings', 'min_price', 'bonus_price', 'bonuses',
-                  'product_sizes']
+                  'product_sizes', 'category_slug']
 
     def get_min_price(self, obj):
         return obj.get_min_price()
