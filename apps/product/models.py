@@ -22,7 +22,7 @@ class Category(models.Model):
     name = models.CharField(max_length=50, verbose_name=_('Название'))
     description = models.CharField(max_length=100, blank=True, verbose_name=_('Описание'))
     slug = models.SlugField(max_length=100, unique=True, verbose_name=_('Ссылка'), blank=True, null=True)
-    image = models.ImageField(upload_to='category_photos/', verbose_name=_('Фото'), blank=True, null=True)
+    image = models.FileField(upload_to='category_photos/', verbose_name=_('Фото'), blank=True, null=True)
 
     class Meta:
         verbose_name = "Категория"
