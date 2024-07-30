@@ -103,11 +103,14 @@ class ContactsSerializer(serializers.ModelSerializer):
     social_links = SocialLinkSerializer(many=True, source='sociallink_set')
     addresses = AddressSerializer(many=True, source='address_set')
     payment_methods = PaymentMethodSerializer(many=True, source='paymentmethod_set')
-    static_pages = StaticPageSerializer(many=True, source='staticpage_set')
+    static_pages = serializers.SerializerMethodField()
 
     class Meta:
         model = Contacts
         fields = ['phones', 'emails', 'social_links', 'addresses', 'payment_methods', 'static_pages']
+
+    def get_static_pages(self, obj):
+        return StaticPageSerializer(StaticPage.objects.all(), many=True).data
 
 
 class StaticPageSerializer(serializers.ModelSerializer):
