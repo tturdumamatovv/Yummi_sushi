@@ -75,7 +75,7 @@ class Delivery(models.Model):
         verbose_name_plural = _("Доставки")
 
     def __str__(self):
-        return f"Доставка в {self.user_address.city}, {self.user_address.street} от {self.restaurant.name}"
+        return f"Доставка в {self.user_address.city} от {self.restaurant.name}"
 
 
 class Order(models.Model):
