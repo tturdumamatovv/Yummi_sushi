@@ -58,6 +58,7 @@ class CreateOrderView(generics.CreateAPIView):
         comment = request.data.get('comment', '')
         order_time = datetime.now()
         user_address_instance = UserAddress.objects.get(id=user_address_id, user=user)
+        token = TelegramBotToken.objects.first()
 
         if not is_pickup and (not user_address_instance.latitude or not user_address_instance.longitude):
             return Response({"error": "User address does not have coordinates."}, status=status.HTTP_400_BAD_REQUEST)
@@ -70,7 +71,7 @@ class CreateOrderView(generics.CreateAPIView):
             for restaurant in Restaurant.objects.all():
                 if restaurant.latitude and restaurant.longitude:
                     restaurant_location = (restaurant.latitude, restaurant.longitude)
-                    distance = get_distance_between_locations('AIzaSyCWbO5aOn8hS3EWJycj73dHqH8fHHfO4w4', user_location,
+                    distance = get_distance_between_locations(token.google_map_api_key, user_location,
                                                               restaurant_location)
                     if distance is not None and distance < min_distance and is_restaurant_open(restaurant, order_time):
                         min_distance = distance

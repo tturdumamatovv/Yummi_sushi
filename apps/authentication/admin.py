@@ -22,7 +22,7 @@ class UserAdmin(admin.ModelAdmin):
         (_('Personal info'), {'fields': ('full_name', 'date_of_birth', 'email', 'profile_picture', 'bonus')}),
         # (_('Permissions'), {'fields': ('is_staff', 'is_superuser', 'groups', 'user_permissions')}),
         (_('Important dates'), {'fields': ('last_login', 'last_order')}),
-        (_('Other'), {'fields': ( 'fcm_token', 'receive_notifications')}),
+        (_('Other'), {'fields': ('fcm_token', 'receive_notifications')}),
     )
     add_fieldsets = (
         (None, {

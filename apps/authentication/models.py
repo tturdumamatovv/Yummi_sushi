@@ -55,9 +55,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class UserAddress(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='addresses', verbose_name=_("Пользователь"))
-    city = models.CharField(max_length=100, verbose_name=_("Город"), null=True, blank=True)
-    street = models.CharField(max_length=100, verbose_name=_("Улица"), null=True, blank=True)
-    house_number = models.CharField(max_length=10, verbose_name=_("Номер дома"), null=True, blank=True)
+    city = models.CharField(max_length=100, verbose_name=_("Адрес"), null=True, blank=True)
+    # street = models.CharField(max_length=100, verbose_name=_("Улица"), null=True, blank=True)
+    # house_number = models.CharField(max_length=10, verbose_name=_("Номер дома"), null=True, blank=True)
     apartment_number = models.CharField(max_length=10, verbose_name=_("Номер квартиры"), null=True, blank=True)
     entrance = models.CharField(max_length=10, verbose_name=_("Подъезд"), null=True, blank=True)
     floor = models.CharField(max_length=10, verbose_name=_("Этаж"), null=True, blank=True)
@@ -74,4 +74,4 @@ class UserAddress(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return f'{self.city} - {self.street} {self.house_number}'
+        return f'{self.city}'  # - {self.street} {self.house_number}'
