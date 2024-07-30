@@ -55,7 +55,7 @@ class Product(models.Model):
                                  related_name='products', blank=True, null=True)
     name = models.CharField(max_length=100, verbose_name=_('Название'))
     description = models.TextField(verbose_name=_('Описание'), blank=True, null=True)
-    photo = models.ImageField(upload_to='product_photos/', verbose_name=_('Фото'), blank=True, null=True)
+    photo = models.FileField(upload_to='product_photos/', verbose_name=_('Фото'), blank=True, null=True)
     toppings = models.ManyToManyField('Topping', related_name='products', verbose_name=_('Добавки'), blank=True)
     bonuses = models.BooleanField(default=False, verbose_name=_('Можно оптатить бонусами'))
     tags = models.ManyToManyField('Tag', related_name='products', verbose_name=_('Теги'), blank=True)
