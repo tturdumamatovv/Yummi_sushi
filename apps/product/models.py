@@ -1,9 +1,11 @@
+from io import BytesIO
+from PIL import Image
+from colorfield.fields import ColorField
+from django.core.files.base import ContentFile
 from django.db import models
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
-
 from unidecode import unidecode
-from colorfield.fields import ColorField
 
 
 class Size(models.Model):
@@ -73,6 +75,15 @@ class Product(models.Model):
     def get_min_price(self):
         prices = [size.discounted_price if size.discounted_price else size.price for size in self.product_sizes.all()]
         return min(prices) if prices else None
+
+    def save(self, *args, **kwargs):
+        if self.photo:
+            image = Image.open(self.photo)
+            image_io = BytesIO()
+            image.save(image_io, format='WEBP')
+            self.photo.save(f"{self.photo.name.split('.')[0]}.webp", ContentFile(image_io.getvalue()), save=False)
+
+        super().save(*args, **kwargs)
 
 
 class ProductSize(models.Model):
