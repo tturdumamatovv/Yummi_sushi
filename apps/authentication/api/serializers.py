@@ -42,7 +42,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         if not ret['profile_picture']:
             if request is not None:
-                ret['profile_picture'] = request.build_absolute_uri(settings.MEDIA_URL + 'profile_pictures/default-user.jpg')
+                ret['profile_picture'] = request.build_absolute_uri(
+                    settings.MEDIA_URL + 'profile_pictures/default-user.jpg')
             else:
                 ret['profile_picture'] = settings.MEDIA_URL + 'profile_pictures/default-user.jpg'
         return ret
@@ -54,7 +55,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 class UserAddressSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserAddress
-        fields = ['id', 'user', 'city', 'street', 'house_number', 'apartment_number', 'entrance',
+        fields = ['id', 'user', 'city', 'apartment_number', 'entrance',
                   'floor', 'intercom', 'created_at', 'is_primary']  # Include 'is_primary'
         read_only_fields = ['user', 'created_at']
 
@@ -71,7 +72,7 @@ class UserAddressUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserAddress
-        fields = ['id', 'user', 'city', 'street', 'house_number', 'apartment_number', 'entrance',
+        fields = ['id', 'user', 'city', 'apartment_number', 'entrance',
                   'floor', 'intercom', 'created_at', 'is_primary']  # Include 'is_primary'
         read_only_fields = ['user', 'created_at']
 
