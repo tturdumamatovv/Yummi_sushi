@@ -98,12 +98,8 @@ class OrderListSerializer(serializers.ModelSerializer):
         return order_time.strftime('%Y-%m-%d %H:%M')
 
     def get_user_address(self, obj):
-        street = obj.delivery.user_address.street
-        house_number = obj.delivery.user_address.house_number
-        if house_number:
-            return f'{street} {house_number}'
-        else:
-            return street
+        return obj.delivery.user_address.city
+
 
     def get_app_download_url(self, obj):
         link = TelegramBotToken.objects.first().app_download_link
