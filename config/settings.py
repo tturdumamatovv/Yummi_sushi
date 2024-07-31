@@ -247,11 +247,11 @@ SIMPLEUI_CONFIG = {
                     'icon': 'fa fas fa-bacon',
                     'url': '/admin/product/topping/'
                 },
-                # {
-                #     'name': 'Ингредиенты',
-                #     'icon': 'fa fas fa-egg',
-                #     'url': '/admin/product/ingredient/'
-                # },
+                {
+                    'name': 'Категории',
+                    'icon': 'fa fas fa-egg',
+                    'url': '/admin/product/category/'
+                },
                 {
                     'name': 'Размеры',
                     'icon': 'fa fas fa-drumstick-bite',

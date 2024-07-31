@@ -50,7 +50,7 @@ class ProductOrderItemSerializer(serializers.ModelSerializer):
             photo_url = request.build_absolute_uri(photo_url)
         return {
             'name': obj.product_size.product.name,
-            'price': obj.product_size.product.description if obj.product_size.product.description else 'Нет описания',
+            'price': obj.product_size.get_price(),
             'image': photo_url
         }
 
