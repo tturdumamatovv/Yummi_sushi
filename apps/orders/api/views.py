@@ -52,13 +52,13 @@ class CreateOrderView(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         user = request.user
         user_address_id = request.data.get('delivery').get('user_address_id')
-        is_pickup = request.data.get('is_pickup', False)
         restaurant_id = request.data.get('restaurant_id', None)
         order_source = request.data.get('order_source', 'unknown')
         comment = request.data.get('comment', '')
         order_time = datetime.now()
         user_address_instance = UserAddress.objects.get(id=user_address_id, user=user)
         token = TelegramBotToken.objects.first()
+        is_pickup = request.data.get('is_pickup', False)
 
         if not is_pickup and (not user_address_instance.latitude or not user_address_instance.longitude):
             return Response({"error": "User address does not have coordinates."}, status=status.HTTP_400_BAD_REQUEST)
@@ -68,14 +68,8 @@ class CreateOrderView(generics.CreateAPIView):
             nearest_restaurant = None
             min_distance = float('inf')
 
-            for restaurant in Restaurant.objects.all():
-                if restaurant.latitude and restaurant.longitude:
-                    restaurant_location = (restaurant.latitude, restaurant.longitude)
-                    distance = get_distance_between_locations(token.google_map_api_key, user_location,
-                                                              restaurant_location)
-                    if distance is not None and distance < min_distance and is_restaurant_open(restaurant, order_time):
-                        min_distance = distance
-                        nearest_restaurant = restaurant
+            min_distance, nearest_restaurant = self.get_nearest_restaurant(min_distance, nearest_restaurant, order_time,
+                                                                           token, user_location)
 
             if not nearest_restaurant:
                 return Response({"error": "No available restaurants found or all are closed."},
@@ -96,12 +90,7 @@ class CreateOrderView(generics.CreateAPIView):
             min_distance = 0
             delivery_fee = 0
 
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        serializer.context['nearest_restaurant'] = nearest_restaurant
-        serializer.context['delivery_fee'] = delivery_fee
-        serializer.context['user'] = user
+        serializer = self.add_setializer_context(delivery_fee, nearest_restaurant, request, user)
 
         self.perform_create(serializer)
 
@@ -119,7 +108,6 @@ class CreateOrderView(generics.CreateAPIView):
         except ValueError as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-
         message = generate_order_message(order, min_distance, delivery_fee)
         print(message)
         bot_token_instance = TelegramBotToken.objects.first()
@@ -135,7 +123,27 @@ class CreateOrderView(generics.CreateAPIView):
             return Response({"error": "Не установлен токен бота Telegram."}, status=status.HTTP_400_BAD_REQUEST)
 
         headers = self.get_success_headers(serializer.data)
+
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def add_setializer_context(self, delivery_fee, nearest_restaurant, request, user):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.context['nearest_restaurant'] = nearest_restaurant
+        serializer.context['delivery_fee'] = delivery_fee
+        serializer.context['user'] = user
+        return serializer
+
+    def get_nearest_restaurant(self, min_distance, nearest_restaurant, order_time, token, user_location):
+        for restaurant in Restaurant.objects.all():
+            if restaurant.latitude and restaurant.longitude:
+                restaurant_location = (restaurant.latitude, restaurant.longitude)
+                distance = get_distance_between_locations(token.google_map_api_key, user_location,
+                                                          restaurant_location)
+                if distance is not None and distance < min_distance and is_restaurant_open(restaurant, order_time):
+                    min_distance = distance
+                    nearest_restaurant = restaurant
+        return min_distance, nearest_restaurant
 
 
 class OrderPreviewView(generics.GenericAPIView):
@@ -194,53 +202,46 @@ class ReportCreateView(generics.CreateAPIView):
     serializer_class = ReportSerializer
 
     def create(self, request, *args, **kwargs):
-        # Получение данных из запроса
+        report, serializer = self.create_report(request)
+
+        self.send_report_to_telegram(report)
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def create_report(self, request):
         description = request.data.get('description')
         contact_number = request.data.get('contact_number')
         image = request.FILES.get('image') if 'image' in request.FILES else None
-
-        # Подготовка данных для сериализации
         report_data = {
             'description': description,
             'contact_number': contact_number,
             'image': image
         }
-
-        # Валидация данных с помощью сериализатора
         serializer = self.get_serializer(data=report_data)
         serializer.is_valid(raise_exception=True)
-
-        # Сохранение объекта report
         report = serializer.save()
-
-        # Отправка репорта в Telegram
-        self.send_report_to_telegram(report)
-
-        # Возврат успешного ответа с данными репорта
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return report, serializer
 
     def send_report_to_telegram(self, report):
-        # Получение экземпляра настроек бота
         bot_token_instance = TelegramBotToken.objects.first()
         if not bot_token_instance:
             print("Токен бота Telegram не настроен.")
             return
 
-        # Инициализация бота
         telegram_bot_token = bot_token_instance.bot_token
         telegram_chat_ids = bot_token_instance.report_channels.split(',')
 
-        # Формирование сообщения
         message = f"Новый репорт:\nОписание: {report.description}\nКонтактный номер: {report.contact_number}"
 
-        # Отправка сообщения и изображения в каждый чат
+        self.send_report_to_chats(message, report, telegram_bot_token, telegram_chat_ids)
+
+    def send_report_to_chats(self, message, report, telegram_bot_token, telegram_chat_ids):
         for chat_id in telegram_chat_ids:
             chat_id = chat_id.strip()
             message_url = f"https://api.telegram.org/bot{telegram_bot_token}/sendMessage"
             photo_url = f"https://api.telegram.org/bot{telegram_bot_token}/sendPhoto"
 
-            # Отправка сообщения
             message_payload = {
                 'chat_id': chat_id,
                 'text': message
@@ -249,7 +250,6 @@ class ReportCreateView(generics.CreateAPIView):
             if response.status_code != 200:
                 print(f"Ошибка при отправке сообщения в чат {chat_id}: {response.text}")
 
-            # Отправка фотографии
             if report.image:
                 with report.image.open('rb') as image_file:
                     files = {'photo': image_file}
