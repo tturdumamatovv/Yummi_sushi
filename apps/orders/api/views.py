@@ -1,20 +1,26 @@
-import requests
-
 from datetime import datetime
 from decimal import Decimal
 
-from apps.authentication.models import UserAddress
-from apps.services.calculate_delivery_fee import calculate_delivery_fee
-from apps.services.calculate_distance import get_distance_between_locations
-from apps.services.generate_message import generate_order_message
-from apps.services.is_restaurant_open import is_restaurant_open
+import requests
 from rest_framework import generics, status
 from rest_framework.response import Response
+
+from apps.authentication.models import UserAddress
 from apps.orders.models import (
     Restaurant,
     TelegramBotToken,
     Order
 )
+from apps.services.bonuces import (
+    calculate_bonus_points,
+    apply_bonus_points
+)
+from apps.services.calculate_bonus import calculate_and_apply_bonus
+from apps.services.calculate_delivery_fee import calculate_delivery_fee
+from apps.services.calculate_distance import get_distance_between_locations
+from apps.services.generate_message import generate_order_message
+from apps.services.is_restaurant_open import is_restaurant_open
+from apps.services.send_telegram_message import send_telegram_message
 from .serializers import (
     OrderSerializer,
     OrderPreviewSerializer,
@@ -22,13 +28,6 @@ from .serializers import (
     RestaurantSerializer,
     OrderListSerializer
 )
-from ...product.models import ProductSize, Topping  # Set, Ingredient
-from ...services.bonuces import (
-    calculate_bonus_points,
-    apply_bonus_points
-)
-from ...services.calculate_bonus import calculate_and_apply_bonus
-from ...services.send_telegram_message import send_telegram_message
 
 
 class ListOrderView(generics.ListAPIView):
@@ -112,11 +111,7 @@ class CreateOrderView(generics.CreateAPIView):
         print(message)
         bot_token_instance = TelegramBotToken.objects.first()
         if bot_token_instance:
-            telegram_bot_token = bot_token_instance.bot_token
-            telegram_chat_ids = nearest_restaurant.get_telegram_chat_ids()
-            for chat_id in telegram_chat_ids:
-                if chat_id:
-                    send_telegram_message(telegram_bot_token, chat_id, message)
+            self.send_order(bot_token_instance, message, nearest_restaurant)
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
@@ -125,6 +120,13 @@ class CreateOrderView(generics.CreateAPIView):
         headers = self.get_success_headers(serializer.data)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def send_order(self, bot_token_instance, message, nearest_restaurant):
+        telegram_bot_token = bot_token_instance.bot_token
+        telegram_chat_ids = nearest_restaurant.get_telegram_chat_ids()
+        for chat_id in telegram_chat_ids:
+            if chat_id:
+                send_telegram_message(telegram_bot_token, chat_id, message)
 
     def add_setializer_context(self, delivery_fee, nearest_restaurant, request, user):
         serializer = self.get_serializer(data=request.data)
