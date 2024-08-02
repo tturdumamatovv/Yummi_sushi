@@ -28,6 +28,7 @@ class CategoryAdmin(SortableAdminMixin, ExcludeBaseFieldsMixin, TranslationAdmin
     search_fields = ('name',)
     exclude_base_fields = ('name', 'description')
 
+
 @admin.register(Tag)
 class TagAdmin(ExcludeBaseFieldsMixin, TranslationAdmin):
     list_display = ('name',)
@@ -46,7 +47,7 @@ class ProductAdmin(ExcludeBaseFieldsMixin, TranslationAdmin):
     list_display = ('name', 'category', 'description')
     search_fields = ('name',)
     list_filter = ('category',)
-    filter_horizontal = ('toppings', 'tags',)  #'ingredients')
+    filter_horizontal = ('toppings', 'tags',)  # 'ingredients')
     inlines = [ProductSizeInline]
     exclude_base_fields = ('name', 'description')
 
@@ -56,6 +57,7 @@ class ToppingAdmin(ExcludeBaseFieldsMixin, TranslationAdmin):
     list_display = ('name', 'price')
     search_fields = ('name',)
     exclude_base_fields = ('name',)
+
 
 # @admin.register(Set)
 # class SetAdmin(ExcludeBaseFieldsMixin, TranslationAdmin):
