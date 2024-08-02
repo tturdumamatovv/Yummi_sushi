@@ -25,7 +25,7 @@ class RestaurantAdmin(admin.ModelAdmin):
 
 @admin.register(Delivery)
 class DeliveryAdmin(admin.ModelAdmin):
-    list_display = ('restaurant',  'user_address__city', 'delivery_time', 'delivery_fee')
+    list_display = ('restaurant',  'user_address', 'delivery_time', 'delivery_fee')
     search_fields = ('restaurant__name', 'user_address__city')
     list_filter = ('delivery_time', 'restaurant')
 
