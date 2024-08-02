@@ -97,7 +97,6 @@ class CreateOrderView(generics.CreateAPIView):
         order.user = self.request.user
         order.comment = comment
         bonus_points = calculate_bonus_points(Decimal(order.total_amount), Decimal(delivery_fee), order_source)
-        apply_bonus_points(user, bonus_points)
         order.total_bonus_amount = bonus_points
 
         try:
