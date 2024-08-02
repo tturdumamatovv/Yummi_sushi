@@ -25,7 +25,7 @@ class RestaurantAdmin(admin.ModelAdmin):
 
 @admin.register(Delivery)
 class DeliveryAdmin(admin.ModelAdmin):
-    list_display = ('restaurant', 'delivery_time', 'delivery_fee')
+    list_display = ('restaurant',  'user_address__city', 'delivery_time', 'delivery_fee')
     search_fields = ('restaurant__name', 'user_address__city')
     list_filter = ('delivery_time', 'restaurant')
 
@@ -43,6 +43,7 @@ class OrderAdmin(admin.ModelAdmin):
     list_filter = ('order_time', 'order_status', 'restaurant', 'is_pickup')
     list_display_links = ('id', 'user')
     list_editable = ('order_status',)
+    readonly_fields = ('user', 'delivery', 'order_source', 'id',)
     inlines = [OrderItemInline]
 
     def total_amount(self, obj):

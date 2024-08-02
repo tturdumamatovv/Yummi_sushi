@@ -221,11 +221,11 @@ SIMPLEUI_CONFIG = {
                     'icon': 'fa fas fa-truck',
                     'url': '/admin/orders/delivery/'
                 },
-                {
-                    'name': 'Отчеты',
-                    'icon': 'fa fa-file',
-                    'url': '/admin/orders/delivery/'
-                },
+                # {
+                #     'name': 'Отчеты',
+                #     'icon': 'fa fa-file',
+                #     'url': '/admin/orders/delivery/'
+                # },
             ]
         },
         {
