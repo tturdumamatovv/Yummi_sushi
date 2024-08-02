@@ -25,10 +25,12 @@ class Category(models.Model):
     description = models.CharField(max_length=100, blank=True, verbose_name=_('Описание'))
     slug = models.SlugField(max_length=100, unique=True, verbose_name=_('Ссылка'), blank=True, null=True)
     image = models.FileField(upload_to='category_photos/', verbose_name=_('Фото'), blank=True, null=True)
+    order = models.PositiveIntegerField(default=0, editable=False, db_index=True)
 
     class Meta:
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
+        ordering = ['order']
 
     def __str__(self):
         return self.name

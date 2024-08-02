@@ -42,6 +42,7 @@ THIRD_PARTY_APPS = [
     'drf_spectacular',
     'modeltranslation',
     'colorfield',
+    'adminsortable2',
 
 ]
 

@@ -1,3 +1,4 @@
+from adminsortable2.admin import SortableAdminMixin
 from django.contrib import admin
 from modeltranslation.admin import TranslationAdmin
 from .models import Size, Category, Product, ProductSize, Topping, Tag  # Set, Ingredient
@@ -22,11 +23,10 @@ class SizeAdmin(ExcludeBaseFieldsMixin, TranslationAdmin):
 
 
 @admin.register(Category)
-class CategoryAdmin(ExcludeBaseFieldsMixin, TranslationAdmin):
-    list_display = ('name', 'description')
+class CategoryAdmin(SortableAdminMixin, ExcludeBaseFieldsMixin, TranslationAdmin):
+    list_display = ('name', 'description', 'order')
     search_fields = ('name',)
     exclude_base_fields = ('name', 'description')
-
 
 @admin.register(Tag)
 class TagAdmin(ExcludeBaseFieldsMixin, TranslationAdmin):

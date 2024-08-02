@@ -188,6 +188,11 @@ class OrderPreviewView(generics.GenericAPIView):
 
             delivery_fee = calculate_delivery_fee(min_distance)
 
+        response_data = self.prepare_response(delivery_fee, is_pickup, min_distance)
+
+        return Response(response_data, status=status.HTTP_200_OK)
+
+    def prepare_response(self, delivery_fee, is_pickup, min_distance):
         response_data = {
 
             "delivery_info": {
@@ -196,8 +201,7 @@ class OrderPreviewView(generics.GenericAPIView):
             } if not is_pickup else None,
 
         }
-
-        return Response(response_data, status=status.HTTP_200_OK)
+        return response_data
 
 
 class ReportCreateView(generics.CreateAPIView):
