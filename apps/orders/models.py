@@ -104,6 +104,7 @@ class Order(models.Model):
         choices=[
             ('pending', _('В ожидании')),
             ('in_progress', _('В процессе')),
+            ('delivery', _('Доставка')),
             ('completed', _('Завершено')),
             ('cancelled', _('Отменено'))
         ],

@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from .models import Restaurant, Order
@@ -20,6 +22,8 @@ def check_status_change(sender, instance, **kwargs):
     if instance.pk:
         old_order = sender.objects.get(pk=instance.pk)
         if old_order.order_status != instance.order_status and instance.order_status == 'completed':
+            instance.delivery.delivery_time = datetime.now()
+            instance.delivery.save()
             apply_bonus_points(instance.user, instance.total_bonus_amount)
 
 
