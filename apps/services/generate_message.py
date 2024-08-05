@@ -57,23 +57,23 @@ def generate_order_message(order, delivery_distance_km, delivery_fee):
     user_address = order.delivery.user_address
 
     address = (
-        f"Адрес: {user_address.city}\n"
+        f"Адрес: {user_address.city if user_address else 'Самовывоз'}\n"
         # f"Адрес: {user_address.street} {user_address.house_number}\n"
     )
 
-    if user_address.apartment_number:
+    if user_address and user_address.apartment_number:
         address += f"Квартира: {user_address.apartment_number}\n"
 
-    if user_address.entrance:
+    if user_address and user_address and user_address.entrance:
         address += f"Подъезд: {user_address.entrance}\n"
 
-    if user_address.floor:
+    if user_address and user_address.floor:
         address += f"Этаж: {user_address.floor}\n"
 
-    if user_address.intercom:
+    if user_address and user_address.intercom:
         address += f"Домофон: {user_address.intercom}\n"
 
-    if user_address.comment:
+    if user_address and user_address.comment:
         address += f"Комментарий: {user_address.comment}\n"
 
 

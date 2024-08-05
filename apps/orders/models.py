@@ -65,7 +65,7 @@ class Restaurant(models.Model):
 
 class Delivery(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, verbose_name=_('Ресторан'))
-    user_address = models.ForeignKey(UserAddress, on_delete=models.CASCADE, verbose_name=_('Адрес пользователя'))
+    user_address = models.ForeignKey(UserAddress, on_delete=models.CASCADE, verbose_name=_('Адрес пользователя'), blank=True, null=True)
     delivery_time = models.DateTimeField(verbose_name=_('Время доставки'), blank=True, null=True)
     delivery_fee = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Стоимость доставки')
                                        , blank=True, null=True)
@@ -80,7 +80,7 @@ class Delivery(models.Model):
 
 class Order(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, verbose_name=_('Ресторан'))
-    delivery = models.ForeignKey(Delivery, on_delete=models.CASCADE, verbose_name=_('Доставка'))
+    delivery = models.ForeignKey(Delivery, on_delete=models.CASCADE, verbose_name=_('Доставка'), blank=True, null=True)
     order_time = models.DateTimeField(auto_now_add=True, verbose_name=_('Время заказа'))
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Общая сумма'), blank=True,
                                        null=True)

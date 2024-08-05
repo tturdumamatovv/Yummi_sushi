@@ -50,12 +50,18 @@ class CreateOrderView(generics.CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         user = request.user
-        user_address_id = request.data.get('delivery').get('user_address_id')
+        if request.data.get('delivery'):
+            user_address_id = request.data.get('delivery').get('user_address_id') or None
+        else:
+            user_address_id = None
         restaurant_id = request.data.get('restaurant_id', None)
         order_source = request.data.get('order_source', 'unknown')
         comment = request.data.get('comment', '')
         order_time = datetime.now()
-        user_address_instance = UserAddress.objects.get(id=user_address_id, user=user)
+        if user_address_id:
+            user_address_instance = UserAddress.objects.get(id=user_address_id, user=user)
+        else:
+            user_address_instance = 1
         token = TelegramBotToken.objects.first()
         is_pickup = request.data.get('is_pickup', False)
 

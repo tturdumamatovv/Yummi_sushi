@@ -112,7 +112,7 @@ class OrderSerializer(serializers.ModelSerializer):
     products = ProductOrderItemSerializer(many=True, required=False)
     # sets = SetOrderItemSerializer(many=True, required=False)
     restaurant_id = serializers.IntegerField(required=False, allow_null=True)
-    delivery = DeliverySerializer()
+    delivery = DeliverySerializer(required=False)
     order_source = serializers.ChoiceField(choices=[('web', 'web'), ('mobile', 'mobile')], default='web')
     change = serializers.IntegerField(default=0)
     is_pickup = serializers.BooleanField(default=False)
@@ -130,17 +130,22 @@ class OrderSerializer(serializers.ModelSerializer):
         print(validated_data)
         products_data = validated_data.pop('products', [])
         sets_data = validated_data.pop('sets', [])
-        delivery_data = validated_data.pop('delivery')
+        if validated_data.get('delivery'):
+            delivery_data = validated_data.pop('delivery')
+            user_address = UserAddress.objects.get(id=delivery_data['user_address_id'])
+
+        else:
+            delivery_data = {}
+            user_address = None
         # user = validated_data.pop('user')
 
-        user_address = UserAddress.objects.get(id=delivery_data['user_address_id'])
         nearest_restaurant = self.context['nearest_restaurant']
         delivery_fee = self.context['delivery_fee']
 
         with transaction.atomic():
             delivery = Delivery.objects.create(
                 restaurant=nearest_restaurant,
-                user_address=user_address,
+                user_address=user_address if user_address else None,
                 delivery_time=delivery_data['delivery_time'] if 'delivery_time' in delivery_data else None,
                 delivery_fee=delivery_fee
             )
