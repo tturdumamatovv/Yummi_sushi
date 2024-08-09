@@ -67,7 +67,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -182,7 +182,7 @@ SIMPLEUI_HOME_ACTION = False
 SIMPLEUI_HOME_QUICK = True
 SIMPLEUI_DEFAULT_THEME = 'simpleui.css'
 SIMPLEUI_INDEX = '#'
-SIMPLEUI_LOGO = '/static/icons/LOGO.svg'
+SIMPLEUI_LOGO =  '/static/admin/simpleui-x/img/logo.png'
 SIMPLEUI_CONFIG = {
     'system_keep': False,
     'menus': [
