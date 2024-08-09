@@ -120,11 +120,11 @@
 
                     {% endfor %}
                 {% endif %}
-                <el-button size="small" type="primary" icon="el-icon-search" @click="formSubmit()">{% trans 'Search' %}</el-button>
+                <el-button size="small" type="primary" icon="el-icon-search" @click="formSubmit()">{% trans 'Поиск' %}</el-button>
 
 
             {% if show_result_count %}
-                <span class="small quiet">{% blocktrans count counter=cl.result_count %}{{ counter }} result{% plural %}{{ counter }} results{% endblocktrans %} (<a href="?{% if cl.is_popup %}_popup=1{% endif %}">{% if cl.show_full_result_count %}{% blocktrans with full_result_count=cl.full_result_count %}{{ full_result_count }} total{% endblocktrans %}{% else %}{% trans "Show all" %}{% endif %}</a>)</span>
+                <span class="small quiet">{% blocktrans count counter=cl.result_count %}{{ counter }} result{% plural %}{{ counter }} results{% endblocktrans %} (<a href="?{% if cl.is_popup %}_popup=1{% endif %}">{% if cl.show_full_result_count %}{% blocktrans with full_result_count=cl.full_result_count %}{{ full_result_count }} total{% endblocktrans %}{% else %}{% trans "Показать все" %}{% endif %}</a>)</span>
             {% endif %}
 
                 {% for pair in cl.params.items %}
@@ -171,7 +171,7 @@
         var searchApp = new Vue({
             el: '#toolbar',
             data: {
-                placeholder: '{% trans 'Search' %}{% autoescape off %}{% search_placeholder %}'{% endautoescape %},
+                placeholder: '{% trans 'Поиск' %}{% autoescape off %}{% search_placeholder %}'{% endautoescape %},
                 searchInput: '{{ cl.query }}',
                 {% if cl.has_filters %}
                     {% for spec in cl.filter_specs %}

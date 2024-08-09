@@ -13,7 +13,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     {% block title %}
-        <title>{{ site_title }}-{% trans 'Log in' %}</title>
+        <title>{{ site_title }}-{% trans 'Войти' %}</title>
     {% endblock %}
     {% block icon %}
 {#        <link rel="icon" href="{% static 'admin/simpleui-x/img/favicon.png' %}">#}
@@ -72,9 +72,9 @@
         {% if form.errors and not form.non_field_errors %}
             <p class="errornote">
                 {% if form.errors.items|length == 1 %}
-                    <el-alert title="{% trans "Please correct the error below." %}" type="error"></el-alert>
+                    <el-alert title="{% trans "Пожалуйста, исправьте ошибку ниже." %}" type="error"></el-alert>
                 {% else %}
-                    <el-alert title="{% trans "Please correct the errors below." %}" type="error"></el-alert>
+                    <el-alert title="{% trans "Пожалуйста, исправьте ошибки, указанные ниже." %}" type="error"></el-alert>
                 {% endif %}
             </p>
         {% endif %}
@@ -84,23 +84,23 @@
             {% csrf_token %}
             <div class="simpleui-input-inline">
                 <el-input prefix-icon="fas fa-user" v-model="username" name="username"
-                          placeholder="{% trans 'username' %}" autofocus></el-input>
+                          placeholder="{% trans 'имя пользователя' %}" autofocus></el-input>
             </div>
             <div class="simpleui-input-inline">
-                <el-input prefix-icon="fas fa-lock" type="password" v-model="password" name="password"
+                <el-input prefix-icon="fas fa-lock" type="пароль" v-model="password" name="password"
                           @keyup.enter.native="login()"
-                          placeholder="{% trans 'password' %}" show-password></el-input>
+                          placeholder="{% trans 'пароль' %}" show-password></el-input>
             </div>
             {% url 'admin_password_reset' as password_reset_url %}
               {% if password_reset_url %}
 
              <div class="password-reset-link">
-                <a class="forgot-password" href="{{ password_reset_url }}">{% trans 'Forgotten your password or username?' %}</a>
+                <a class="forgot-password" href="{{ password_reset_url }}">{% trans 'Забыли пароль или имя пользователя?' %}</a>
               </div>
               {% endif %}
             <div class="simpleui-input-inline login-btn">
                 <el-button :icon="loading?'el-icon-loading':''" @click="login()"
-                           type="primary">{% trans 'Log in' %}</el-button>
+                           type="primary">{% trans 'Войти' %}</el-button>
             </div>
 
             <input type="hidden" name="next" value="{{ next }}"/>

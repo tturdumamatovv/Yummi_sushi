@@ -117,7 +117,7 @@ CORS_TRUSTED_METHODS = [
 ]
 AUTH_USER_MODEL = "authentication.User"
 
-LANGUAGE_CODE = 'ru'
+LANGUAGE_CODE = 'ru-ru'
 LANGUAGES = (
     ('ru', _('Russian')),
     ('ky', _('Kyrgyz')),

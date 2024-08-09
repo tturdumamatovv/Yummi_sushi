@@ -235,7 +235,7 @@
                                 <div v-if="loading" class="loading" @dblclick="loading=false">
                                     <div class="center">
                                         <span class="el-icon-loading"></span>
-                                        <span>loading...</span>
+                                        <span>загрузка...</span>
                                     </div>
                                 </div>
                             {% endif %}
@@ -314,11 +314,11 @@
         {% endif %}
         menus.unshift(home);
         window.language = {
-            change_password: '{% trans 'Change password' %}',
-            logout: '{% trans 'Log out' %}',
-            yes: '{% trans 'Yes' %}',
-            no: '{% trans 'No' %}',
-            confirm: '{% trans 'Are you sure?' %}'
+            change_password: '{% trans 'Изменить пароль' %}',
+            logout: '{% trans 'Выйти из системы' %}',
+            yes: '{% trans 'Да' %}',
+            no: '{% trans 'Нет' %}',
+            confirm: '{% trans 'Вы уверены?' %}'
         }
         window.themeUrl = '{% static 'admin/simpleui-x/theme/' %}';
         window.urls = {
