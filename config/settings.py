@@ -181,7 +181,7 @@ SIMPLEUI_HOME_INFO = False
 SIMPLEUI_HOME_ACTION = False
 SIMPLEUI_HOME_QUICK = True
 SIMPLEUI_DEFAULT_THEME = 'simpleui.css'
-SIMPLEUI_INDEX = '#'
+SIMPLEUI_INDEX = 'https://yummisushi.kg/'
 SIMPLEUI_LOGO =  '/static/admin/simpleui-x/img/logo.png'
 SIMPLEUI_CONFIG = {
     'system_keep': False,
