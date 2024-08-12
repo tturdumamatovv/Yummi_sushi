@@ -98,7 +98,7 @@ class OrderListSerializer(serializers.ModelSerializer):
         return order_time.strftime('%Y-%m-%d %H:%M')
 
     def get_user_address(self, obj):
-        return obj.delivery.user_address.city if obj.delivery.user_address else ''
+        return obj.delivery.user_address.city if obj.delivery.user_address else "Самовывоз"
 
 
     def get_app_download_url(self, obj):
