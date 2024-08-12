@@ -310,6 +310,11 @@ SIMPLEUI_CONFIG = {
                     'url': '/admin/orders/telegrambottoken/'
                 },
                 {
+                    'name': 'WhatsApp',
+                    'icon': 'fa fab fa-whatsapp',
+                    'url': '/admin/orders/whatsappchat/'
+                },
+                {
                     'name': 'Кэшбек',
                     'icon': 'fa fa-percent',
                     'url': '/admin/orders/percentcashback/'

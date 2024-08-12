@@ -9,6 +9,16 @@ from apps.pages.models import SingletonModel
 from apps.product.models import ProductSize, Topping  # Set,Ingredient
 
 
+class WhatsAppChat(SingletonModel):
+    whatsapp_number = models.CharField(max_length=200, unique=True, verbose_name=_("Телеграм Бот Токен"))
+    def __str__(self):
+        return "Номер WhatsApp"
+
+    class Meta:
+        verbose_name = _("Номер WhatsApp")
+        verbose_name_plural = _("Номер WhatsApp")
+
+
 class TelegramBotToken(models.Model):
     bot_token = models.CharField(max_length=200, unique=True, verbose_name=_("Телеграм Бот Токен"))
     report_channels = models.TextField(max_length=200, blank=True, null=True, verbose_name=_("Айди каналов"))
@@ -16,7 +26,6 @@ class TelegramBotToken(models.Model):
     google_map_api_key = models.CharField(max_length=250, blank=True, null=True, verbose_name=_("Ключ для карты"))
 
     def clean(self):
-        # Проверка на существование только одного экземпляра
         if TelegramBotToken.objects.exists() and not self.pk:
             raise ValidationError(_('Может существовать только один экземпляр модели TelegramBotToken.'))
 
@@ -65,7 +74,8 @@ class Restaurant(models.Model):
 
 class Delivery(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, verbose_name=_('Ресторан'))
-    user_address = models.ForeignKey(UserAddress, on_delete=models.CASCADE, verbose_name=_('Адрес пользователя'), blank=True, null=True)
+    user_address = models.ForeignKey(UserAddress, on_delete=models.CASCADE, verbose_name=_('Адрес пользователя'),
+                                     blank=True, null=True)
     delivery_time = models.DateTimeField(verbose_name=_('Время доставки'), blank=True, null=True)
     delivery_fee = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Стоимость доставки')
                                        , blank=True, null=True)
@@ -164,6 +174,7 @@ class OrderItem(models.Model):
     quantity = models.PositiveIntegerField(verbose_name=_('Количество'))
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Общая сумма'))
     is_bonus = models.BooleanField(default=False, verbose_name=_('Бонусный продукт'))
+
     # excluded_ingredient = models.ManyToManyField(Ingredient, blank=True,
     #                                              verbose_name=_('Исключенные ингредиенты'))
     # set = models.ForeignKey(Set, on_delete=models.CASCADE, blank=True, null=True, verbose_name=_('Сет'))

@@ -12,13 +12,18 @@ from .models import (
     DistancePricing,
     TelegramBotToken,
     PercentCashback,
-    Report
+    Report, WhatsAppChat
 )
 from apps.services.generate_message import generate_order_message
 
 
 @admin.register(TelegramBotToken)
 class TelegramBotTokenAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(WhatsAppChat)
+class WhatsAppChatAdmin(admin.ModelAdmin):
     pass
 
 
@@ -75,8 +80,9 @@ class OrderAdmin(admin.ModelAdmin):
             f"Общая сумма: {obj.total_amount}"
         )
         url_encoded_message = quote(message)
+        phone = WhatsAppChat.objects.first().whatsapp_number
 
-        link = f'https://wa.me/+996771093265?text={url_encoded_message}'
+        link = f'https://wa.me/{phone}?text={url_encoded_message}'
         return format_html(
             f'<a style="color: white; background-color: orange;" class="button" target="_blank" href="{link}">WhatsApp</a>')
 
