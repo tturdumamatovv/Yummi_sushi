@@ -198,7 +198,7 @@
 
     const playSoundBtn = document.getElementById("play-sound");
 
-    playSoundBtn.addEventListener('click',playSound)
+    {#playSoundBtn.addEventListener('click',playSound)#}
 
     ws.onmessage = function(event) {
         const data = JSON.parse(event.data);
