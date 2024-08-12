@@ -4,6 +4,38 @@
 <html lang="{{ LANGUAGE_CODE|default:'en-us' }}" {% if LANGUAGE_BIDI %}dir="rtl" {% endif %}>
 <head>
     <title>YummySushi</title>
+<style>
+    .food-modal {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 20px;
+        background: #f0f0f0;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        width: 300px;
+        z-index: 1000;
+    }
+
+    .food-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+        font-size: 25px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .food-modal p {
+        margin-top: 15px;
+        font-size: 16px;
+        color: #333;
+        text-align: center;
+    }
+</style>
     {% include 'admin/includes/css-part.html' %}
 
     <link rel="stylesheet" type="text/css" href="{% static 'admin/css/base.css' %}?_=2.7">
@@ -158,6 +190,49 @@
             }
         })
     </script>
+
+
+<script>
+    const ws = new WebSocket('ws://localhost:8000/ws/notification/');
+
+    const playSoundBtn = document.getElementById("play-sound");
+
+    playSoundBtn.addEventListener('click',playSound)
+
+    ws.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        createModal(data.message);
+    };
+
+    function createModal(message) {
+        const modal = document.createElement('div');
+        modal.className = 'food-modal';
+        modal.id = 'food-modal';
+        modal.style.display = 'block';
+
+        const closeButton = document.createElement('span');
+        closeButton.className = 'food-close';
+        closeButton.innerHTML = '&times;';
+        closeButton.onclick = function() {
+            modal.style.display = 'none';
+            document.body.removeChild(modal);
+        };
+
+        const text = document.createElement('p');
+        text.innerText = message;
+
+        modal.appendChild(closeButton);
+        modal.appendChild(text);
+        document.body.appendChild(modal);
+
+    playSound()
+    }
+
+    function playSound() {
+        const sound = new Audio('http://localhost:8000/static/audio/notification.mp3')
+        sound.play();
+    }
+</script>
 
     {% endblock messages %}
 

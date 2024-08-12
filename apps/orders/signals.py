@@ -1,10 +1,13 @@
 from datetime import datetime
 
-from django.db.models.signals import pre_save
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
+from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
-from .models import Restaurant, Order
+
 from apps.services.get_coordinates import get_coordinates
-from ..services.bonuces import calculate_bonus_points, apply_bonus_points
+from .models import Restaurant, Order
+from ..services.bonuces import apply_bonus_points
 
 
 @receiver(pre_save, sender=Restaurant)
@@ -27,3 +30,13 @@ def check_status_change(sender, instance, **kwargs):
             apply_bonus_points(instance.user, instance.total_bonus_amount)
 
 
+@receiver(post_save, sender=Order)
+def order_created(sender, instance, created, **kwargs):
+    if created:
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            "orders_notifications", {
+                "type": "send_notification",
+                "message": f"Новый заказ №: {instance.id}"
+            }
+        )
