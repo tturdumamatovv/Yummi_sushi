@@ -65,7 +65,7 @@ class CreateOrderView(generics.CreateAPIView):
         token = TelegramBotToken.objects.first()
         is_pickup = request.data.get('is_pickup', False)
 
-        if not is_pickup and user_address_instance and (not user_address_instance.latitude or not user_address_instance.longitude):
+        if not is_pickup and user_address_instance == 1:
             return Response({"error": "User address does not have coordinates."}, status=status.HTTP_400_BAD_REQUEST)
 
         if not is_pickup:
