@@ -1,4 +1,6 @@
 def generate_order_message(order, delivery_distance_km, delivery_fee):
+    if delivery_distance_km is None:
+        delivery_distance_km = 0
     if order.is_pickup:
         delivery_info = "Самовывоз"
         delivery_fee_info = ""
@@ -18,8 +20,8 @@ def generate_order_message(order, delivery_distance_km, delivery_fee):
 
     message = (
         f"Новый заказ #{order.id}\n"
-        f"Пользователь: {order.user.full_name if order.user.full_name else 'Имя не указано'}\n"
-        f"Номер: {order.user.phone_number}\n"
+        f"Пользователь: {order.user.full_name if order.user and order.user.full_name else 'Имя не указано'}\n"
+        f"Номер: {order.user.phone_number if order.user and order.user.phone_number else 'Номер не указан'}\n"
 
         f"Ресторан: {order.restaurant.name}\n"
 

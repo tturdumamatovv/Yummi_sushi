@@ -113,6 +113,8 @@ class CreateOrderView(generics.CreateAPIView):
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
         message = generate_order_message(order, min_distance, delivery_fee)
+        order.delivery.distance_km = min_distance
+        order.delivery.save()
         print(message)
         bot_token_instance = TelegramBotToken.objects.first()
         if bot_token_instance:

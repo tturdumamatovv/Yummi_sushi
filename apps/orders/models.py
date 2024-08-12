@@ -69,6 +69,7 @@ class Delivery(models.Model):
     delivery_time = models.DateTimeField(verbose_name=_('Время доставки'), blank=True, null=True)
     delivery_fee = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Стоимость доставки')
                                        , blank=True, null=True)
+    distance_km = models.DateTimeField(verbose_name=_('Расстояние (км)'), blank=True, null=True)
 
     class Meta:
         verbose_name = _("Доставка")
