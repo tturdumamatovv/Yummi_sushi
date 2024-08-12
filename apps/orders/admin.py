@@ -68,7 +68,11 @@ class OrderAdmin(admin.ModelAdmin):
         delivery_fee = obj.delivery.delivery_fee
         message = generate_order_message(obj, distance, delivery_fee)
         url_encoded_message = quote(message)
-        phone = WhatsAppChat.objects.first().whatsapp_number
+        phone = WhatsAppChat.objects.first()
+        if not phone:
+            return format_html('')
+        else:
+            phone.whatsapp_number
 
         link = f'https://wa.me/{phone}?text={url_encoded_message}'
         return format_html(
