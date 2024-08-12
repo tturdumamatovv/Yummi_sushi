@@ -22,6 +22,7 @@ PROJECT_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.humanize',
+    'daphne',
     'django.contrib.staticfiles',
     'django.contrib.sites',
 
@@ -43,6 +44,7 @@ THIRD_PARTY_APPS = [
     'modeltranslation',
     'colorfield',
     'adminsortable2',
+    'channels',
 
 ]
 
@@ -92,6 +94,14 @@ DATABASES = {
 }
 
 WSGI_APPLICATION = 'config.wsgi.application'
+ASGI_APPLICATION = 'config.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
