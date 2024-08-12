@@ -66,19 +66,7 @@ class OrderAdmin(admin.ModelAdmin):
     def order_request_button(self, obj):
         distance = obj.delivery.distance_km
         delivery_fee = obj.delivery.delivery_fee
-        if obj.is_pickup:
-            delivery_info = f"Самовывоз\n"
-        else:
-            delivery_info = f"Адрес доставки: {obj.delivery.user_address}\n Расстояние: {distance} км\n Стоимость доставки: {delivery_fee} сом\n"
-
-        message = (
-            f"Новый заказ #{obj.id}\n"
-            f"Пользователь: {obj.user}\n"
-            f"Номер: {obj.user.phone_number if obj.user and obj.user.phone_number else 'Номер не указан'}\n"
-            f"Ресторан: {obj.restaurant_id}\n"
-            f'{delivery_info}'
-            f"Общая сумма: {obj.total_amount}"
-        )
+        message = generate_order_message(obj, distance, delivery_fee)
         url_encoded_message = quote(message)
         phone = WhatsAppChat.objects.first().whatsapp_number
 
