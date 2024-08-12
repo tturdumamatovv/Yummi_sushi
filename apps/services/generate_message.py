@@ -6,7 +6,7 @@ def generate_order_message(order, delivery_distance_km, delivery_fee):
         delivery_fee_info = ""
     else:
         delivery_info = (
-            f"Расстояние доставки: {delivery_distance_km:.2f} км\n"
+            f"Расстояние доставки: {delivery_distance_km} км\n"
             f"Стоимость доставки: {delivery_fee} сом\n"
         )
         delivery_fee_info = f"Стоимость доставки: {delivery_fee} сом\n"
