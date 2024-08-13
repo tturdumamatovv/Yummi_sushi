@@ -12,7 +12,7 @@ from apps.product.models import ProductSize, Topping  # Set,Ingredient
 class WhatsAppChat(SingletonModel):
     whatsapp_number = models.CharField(max_length=200, unique=True, verbose_name=_("Телеграм Бот Токен"))
     def __str__(self):
-        return "Номер WhatsApp"
+        return f"{self.whatsapp_number}"
 
     class Meta:
         verbose_name = _("Номер WhatsApp")
