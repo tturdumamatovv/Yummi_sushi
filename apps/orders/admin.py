@@ -51,7 +51,7 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = (
         'id', 'restaurant', 'delivery', 'order_time', 'total_amount', 'link_to_user', 'order_status', 'is_pickup',
         'order_request_button')
-    search_fields = ('user',)
+    search_fields = ('user__phone_number',)
     list_filter = ('order_time', 'order_status', 'restaurant', 'is_pickup')
     list_display_links = ('id',)
     list_editable = ('order_status',)
