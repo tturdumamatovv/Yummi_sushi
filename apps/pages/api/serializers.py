@@ -61,6 +61,12 @@ class HomePageSerializer(serializers.Serializer):
         }
 
 
+class MetaDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MainPage
+        fields = ['meta_title', 'meta_description', 'meta_image']
+
+
 class PhoneSerializer(serializers.ModelSerializer):
     class Meta:
         model = Phone

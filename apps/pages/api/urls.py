@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import (
     HomePageView,
+    MetaDataView,
     ContactsView,
     StaticPageDetailView,
     LayOutView,
@@ -9,6 +10,8 @@ from .views import (
 
 urlpatterns = [
     path('home/', HomePageView.as_view(), name='home'),
+    path('meta-data/', MetaDataView.as_view(), name='meta-data'),
+
     path('contacts/', ContactsView.as_view(), name='contacts'),
     path('static-pages/<slug:slug>/', StaticPageDetailView.as_view(), name='static-page-detail'),
     path('banners/', BannersView.as_view(), name='banners'),

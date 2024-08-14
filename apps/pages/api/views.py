@@ -14,7 +14,7 @@ from apps.pages.api.serializers import (
     ContactsSerializer,
     StaticPageSerializer,
     LayOutSerializer,
-    BannerSerializer
+    BannerSerializer, MetaDataSerializer
 )
 
 
@@ -28,6 +28,15 @@ class HomePageView(generics.GenericAPIView):
 
         serializer = self.get_serializer({'categories': categories, 'banners': banners, 'main_page': main_page})
         return Response(serializer.data)
+
+
+class MetaDataView(generics.GenericAPIView):
+    serializer_class = MetaDataSerializer
+
+    def get(self, request, *args, **kwargs):
+        main_page = MainPage.objects.first()
+
+        return Response({})
 
 
 class ContactsView(generics.GenericAPIView):
