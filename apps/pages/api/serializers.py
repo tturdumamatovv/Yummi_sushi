@@ -62,9 +62,23 @@ class HomePageSerializer(serializers.Serializer):
 
 
 class MetaDataSerializer(serializers.ModelSerializer):
+    meta_title = serializers.SerializerMethodField()
+    meta_description = serializers.SerializerMethodField()
+    meta_image = serializers.SerializerMethodField()
+
     class Meta:
         model = MainPage
-        fields = ['meta_title', 'meta_description', 'meta_image']
+        fields = ['meta_title', 'meta_description', 'meta_image', ]
+
+    def get_meta_title(self, obj):
+        print(obj)
+        return obj.meta_title
+
+    def get_meta_description(self, obj):
+        return obj.meta_description
+
+    def get_meta_image(self, obj):
+        return obj.meta_image if obj.meta_image else None
 
 
 class PhoneSerializer(serializers.ModelSerializer):
