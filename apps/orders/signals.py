@@ -27,6 +27,8 @@ def check_status_change(sender, instance, **kwargs):
         if old_order.order_status != instance.order_status and instance.order_status == 'completed':
             instance.delivery.delivery_time = datetime.now()
             instance.delivery.save()
+            instance.user.last_order = datetime.now()
+            instance.user.save()
             apply_bonus_points(instance.user, instance.total_bonus_amount)
 
 

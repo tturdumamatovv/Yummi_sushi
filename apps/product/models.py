@@ -35,6 +35,9 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return f"/admin/product/category/{self.id}/change/"
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(unidecode(self.name))
@@ -74,6 +77,8 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return f"/admin/product/product/{self.id}/change/"
     def get_min_price(self):
         prices = [size.discounted_price if size.discounted_price else size.price for size in self.product_sizes.all()]
         return min(prices) if prices else None

@@ -45,6 +45,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'phone_number'
     REQUIRED_FIELDS = []
 
+    def get_admin_url(self):
+        return f"/admin/authentication/user/{self.id}/change/"
+
     def __str__(self):
         return self.phone_number
 

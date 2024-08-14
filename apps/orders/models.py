@@ -96,7 +96,7 @@ class Order(models.Model):
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Общая сумма'), blank=True,
                                        null=True)
     total_bonus_amount = models.IntegerField(verbose_name=_('Общая сумма бонусов'), blank=True, null=True)
-    user = models.ForeignKey('authentication.User', on_delete=models.CASCADE, verbose_name=_('Пользователь')
+    user = models.ForeignKey('authentication.User', on_delete=models.CASCADE, related_name='orders', verbose_name=_('Пользователь')
                              , blank=True, null=True)
     is_pickup = models.BooleanField(default=False, verbose_name=_('Самовывоз'))
     payment_method = models.CharField(

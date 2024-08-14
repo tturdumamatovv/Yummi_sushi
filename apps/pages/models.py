@@ -1,7 +1,10 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
+
+from apps.product.models import Product, Category
 
 
 class SingletonModel(models.Model):
@@ -113,12 +116,25 @@ class StaticPage(models.Model):
 
 
 class Banner(models.Model):
+    TYPE_CHOICES = (
+        ('category', 'Категория'),
+        ('product', 'Продукт'),
+        ('link', 'Отдельная ссылка'),
+    )
+    type = models.CharField(verbose_name="Тип баннера", max_length=10, choices=TYPE_CHOICES, default='product')
+    product = models.ForeignKey(Product, verbose_name="Продукт", on_delete=models.CASCADE, blank=True, null=True)
+    category = models.ForeignKey(Category, verbose_name="Категория", on_delete=models.CASCADE, blank=True, null=True)
     title = models.CharField(verbose_name="Заголовок", max_length=123, blank=True, null=True)
     image_desktop = models.ImageField(verbose_name="Картинка круп", upload_to="images/banners/desktop/%Y/%m/")
     image_mobile = models.ImageField(verbose_name="Картинка моб", upload_to="images/banners/mobile/%Y/%m/")
     link = models.URLField(verbose_name="ссылка", max_length=200, blank=True, null=True)
     is_active = models.BooleanField(verbose_name="Активный", default=True)
     created_at = models.DateTimeField(verbose_name="Дата создания", auto_now_add=True, blank=True, null=True)
+
+    class Meta:
+        verbose_name = "Баннер"
+        verbose_name_plural = "Баннеры"
+        ordering = ["is_active", "-created_at"]
 
     def get_image_desktop(self):
         if self.image_desktop:
@@ -137,10 +153,23 @@ class Banner(models.Model):
     def __str__(self):
         return f"{self.title}"
 
-    class Meta:
-        verbose_name = "Баннер"
-        verbose_name_plural = "Баннеры"
-        ordering = ["is_active", "-created_at"]
+    def clean(self):
+        if self.type == 'category':
+            if not self.category:
+                raise ValidationError("Для типа 'Категория' необходимо указать категорию.")
+            self.product = None
+            self.link = ''
+        elif self.type == 'product':
+            if not self.product:
+                raise ValidationError("Для типа 'Продукт' необходимо указать продукт.")
+            self.category = None
+            self.link = ''
+        elif self.type == 'link':
+            if not self.link:
+                raise ValidationError("Для типа 'Отдельная ссылка' необходимо указать ссылку.")
+            self.product = None
+            self.category = None
+        super().clean()
 
 
 class Contacts(SingletonModel):

@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.html import format_html
 
 from apps.pages.models import (
     Banner,
@@ -18,13 +19,16 @@ from apps.pages.models import (
 
 @admin.register(Banner)
 class BannerAdmin(admin.ModelAdmin):
-    list_display = ["title", "link", "is_active", "created_at"]
+    list_display = ["title", "type", 'object_link', "is_active", "created_at"]
     list_filter = ["title", "is_active", "created_at"]
     search_fields = ["title", "link", "created_at"]
     date_hierarchy = "created_at"
     fields = (
-        "title",
+        "type",
+        "product",
+        "category",
         "link",
+        "title",
         "image_desktop",
         "get_image_desktop",
         "image_mobile",
@@ -33,6 +37,20 @@ class BannerAdmin(admin.ModelAdmin):
         "created_at",
     )
     readonly_fields = ("get_image_desktop", "get_image_mobile", "created_at")
+
+    def object_link(self, obj):
+        if obj.type == 'category' and obj.category:
+            # Ссылка на категорию, предполагается что у категории есть метод get_absolute_url()
+            return format_html('<a href="{}">{}</a>', obj.category.get_absolute_url(), obj.category)
+        elif obj.type == 'product' and obj.product:
+            # Ссылка на продукт, предполагается что у продукта есть метод get_absolute_url()
+            return format_html('<a href="{}">{}</a>', obj.product.get_absolute_url(), obj.product)
+        elif obj.type == 'link' and obj.link:
+            # Прямая внешняя ссылка
+            return format_html('<a href="{}">{}</a>', obj.link, obj.link)
+        return None  # Возвращаем None, если условия не выполняются
+    object_link.short_description = "Ссылка объекта"
+
 
 
 @admin.register(StaticPage)

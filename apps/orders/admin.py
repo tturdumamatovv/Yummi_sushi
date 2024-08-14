@@ -49,11 +49,11 @@ class OrderItemInline(admin.TabularInline):
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'restaurant', 'delivery', 'order_time', 'total_amount', 'user', 'order_status', 'is_pickup',
+        'id', 'restaurant', 'delivery', 'order_time', 'total_amount', 'link_to_user', 'order_status', 'is_pickup',
         'order_request_button')
     search_fields = ('user',)
     list_filter = ('order_time', 'order_status', 'restaurant', 'is_pickup')
-    list_display_links = ('id', 'user')
+    list_display_links = ('id',)
     list_editable = ('order_status',)
     readonly_fields = ('user', 'delivery', 'order_source', 'id',)
     inlines = [OrderItemInline]
@@ -62,6 +62,12 @@ class OrderAdmin(admin.ModelAdmin):
         return obj.get_total_amount()
 
     total_amount.short_description = 'Общая сумма'
+
+    def link_to_user(self, obj):
+        # return 1
+        return format_html('<a href="{}">{}</a>', obj.user.get_admin_url() if obj.user else '', obj.user)
+
+    link_to_user.short_description = 'Пользователь'
 
     def order_request_button(self, obj):
         distance = obj.delivery.distance_km
