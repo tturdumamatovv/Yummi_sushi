@@ -31,9 +31,11 @@ class BannerSerializer(serializers.ModelSerializer):
 
     def get_link(self, obj):
         if obj.type == 'category':
-            return obj.category.slug
+            if obj.category:
+                return obj.category.slug
         if obj.type == 'product':
-            return obj.product.id
+            if obj.product:
+                return obj.product.id
         else:
             return obj.link
 
