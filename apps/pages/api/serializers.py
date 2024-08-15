@@ -23,9 +23,19 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class BannerSerializer(serializers.ModelSerializer):
+    link = serializers.SerializerMethodField()
+
     class Meta:
         model = Banner
-        fields = ['title', 'image_desktop', 'image_mobile', 'link', 'is_active', 'created_at']
+        fields = ['title', 'type', 'image_desktop', 'image_mobile', 'link', 'is_active', 'created_at']
+
+    def get_link(self, obj):
+        if obj.type == 'category':
+            return obj.category.id
+        if obj.type == 'product':
+            return obj.product.id
+        else:
+            return obj.link
 
 
 class OrderTypesSerializer(serializers.ModelSerializer):
