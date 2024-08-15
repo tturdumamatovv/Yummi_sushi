@@ -34,14 +34,14 @@ class BannerSerializer(serializers.ModelSerializer):
             if obj.category:
                 result = {
                     'name': obj.category.name,
-                    'slug': obj.category.slug
+                    'link': obj.category.slug
                 }
                 return result
         if obj.type == 'product':
             if obj.product:
                 result = {
                     'name': obj.product.name,
-                    'id': obj.product.id
+                    'link': obj.product.id
                 }
                 return result
         else:
