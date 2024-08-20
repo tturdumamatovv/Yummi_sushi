@@ -35,7 +35,7 @@ class MetaDataView(generics.GenericAPIView):
 
     def get(self, request, *args, **kwargs):
         main_page = MainPage.objects.first()
-        serializer = self.get_serializer(main_page)
+        serializer = self.get_serializer(main_page, context={'request': request})
 
         return Response(serializer.data)
 
