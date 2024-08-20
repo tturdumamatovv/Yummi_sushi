@@ -95,11 +95,10 @@ class MetaDataSerializer(serializers.ModelSerializer):
         fields = ['meta_title', 'meta_description', 'meta_image', ]
 
     def get_meta_title(self, obj):
-        print(obj)
-        return obj.meta_title
+        return obj.meta_title if obj.meta_title else None
 
     def get_meta_description(self, obj):
-        return obj.meta_description
+        return obj.meta_description if obj.meta_description else None
 
     def get_meta_image(self, obj):
         return obj.meta_image if obj.meta_image else None
