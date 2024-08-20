@@ -101,7 +101,7 @@ class MetaDataSerializer(serializers.ModelSerializer):
         return obj.meta_description if obj.meta_description else None
 
     def get_meta_image(self, obj):
-        return obj.meta_image if obj.meta_image else None
+        return obj.meta_image.url if obj.meta_image else None
 
 
 class PhoneSerializer(serializers.ModelSerializer):
