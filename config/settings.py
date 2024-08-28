@@ -294,6 +294,10 @@ SIMPLEUI_CONFIG = {
                     'url': '/admin/pages/banner/'
                 },
                 {
+                    'name': 'Сторисы',
+                    'url': '/admin/pages/stories/'
+                },
+                {
                     'name': 'Контакты',
                     'icon': 'fa fas fa-phone',
                     'url': '/admin/pages/contacts/'
