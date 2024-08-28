@@ -86,8 +86,24 @@ class Product(models.Model):
     def save(self, *args, **kwargs):
         if self.photo:
             image = Image.open(self.photo)
+
+            max_width = 800
+            max_height = 800
+
+            # Сохраняем пропорции
+            original_width, original_height = image.size
+            ratio = min(max_width / original_width, max_height / original_height)
+            new_width = int(original_width * ratio)
+            new_height = int(original_height * ratio)
+
+            # Изменяем размер изображения
+            resized_image = image.resize((new_width, new_height), Image.LANCZOS)
+
+            # Сохраняем изображение в формате WEBP с уменьшенным качеством для снижения размера файла
             image_io = BytesIO()
-            image.save(image_io, format='WEBP')
+            resized_image.save(image_io, format='WEBP', quality=85)  # quality можно адаптировать под ваши нужды
+
+            # Перезаписываем photo с новым изображением
             self.photo.save(f"{self.photo.name.split('.')[0]}.webp", ContentFile(image_io.getvalue()), save=False)
 
         super().save(*args, **kwargs)
