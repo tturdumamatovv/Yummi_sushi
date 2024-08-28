@@ -58,6 +58,8 @@ class Tag(models.Model):
 
 
 class Product(models.Model):
+    is_popular = models.BooleanField(default=False, verbose_name=_('Популярный'))
+    is_new = models.BooleanField(default=False, verbose_name=_('Новинка'))
     category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name=_('Категория'),
                                  related_name='products', blank=True, null=True)
     name = models.CharField(max_length=100, verbose_name=_('Название'))

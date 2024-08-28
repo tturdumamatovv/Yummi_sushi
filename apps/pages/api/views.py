@@ -7,14 +7,14 @@ from apps.pages.models import (
     Banner,
     MainPage,
     Contacts,
-    StaticPage
+    StaticPage, Stories
 )
 from apps.pages.api.serializers import (
     HomePageSerializer,
     ContactsSerializer,
     StaticPageSerializer,
     LayOutSerializer,
-    BannerSerializer, MetaDataSerializer
+    BannerSerializer, MetaDataSerializer, StoriesSerializer
 )
 
 
@@ -105,3 +105,10 @@ class BannersView(ListAPIView):
 
     def get_serializer(self, *args, **kwargs):
         return BannerSerializer(*args, **kwargs, context={'request': self.request})
+
+
+class StoriesView(ListAPIView):
+    queryset = Stories.objects.filter(is_active=True)
+
+    def get_serializer(self, *args, **kwargs):
+        return StoriesSerializer(*args, **kwargs, context={'request': self.request})

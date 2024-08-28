@@ -12,7 +12,7 @@ from apps.pages.models import (
     Address,
     PaymentMethod,
     Contacts,
-    StaticPage
+    StaticPage, Stories, Story
 )
 
 
@@ -86,11 +86,9 @@ class HomePageSerializer(serializers.Serializer):
 
 
 class MetaDataSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = MainPage
         fields = ['meta_title', 'meta_description', 'meta_image', ]
-
 
 
 class PhoneSerializer(serializers.ModelSerializer):
@@ -156,3 +154,42 @@ class LayOutSerializer(serializers.ModelSerializer):
     class Meta:
         model = MainPage
         fields = ['icon', 'phone']
+
+
+class StorySerializer(serializers.ModelSerializer):
+
+    link = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Story
+        fields = ['image', 'type', 'link', 'created_at',]
+
+    def get_link(self, obj):
+        if obj.type == 'category':
+            if obj.category:
+                result = {
+                    'name': obj.category.name,
+                    'link': obj.category.slug
+                }
+                return result
+        if obj.type == 'product':
+            if obj.product:
+                result = {
+                    'name': obj.product.name,
+                    'link': obj.product.id
+                }
+                return result
+        else:
+            result = {
+                'name': obj.type,
+                'link': obj.link
+            }
+            return result
+
+
+class StoriesSerializer(serializers.ModelSerializer):
+    stories = StorySerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Stories
+        fields = '__all__'

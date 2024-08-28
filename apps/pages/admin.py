@@ -13,7 +13,9 @@ from apps.pages.models import (
     MethodsOfPayment,
     DeliveryConditions,
     OrderTypes,
-    MainPage
+    MainPage,
+    Stories,
+    Story
 )
 
 
@@ -49,8 +51,8 @@ class BannerAdmin(admin.ModelAdmin):
             # Прямая внешняя ссылка
             return format_html('<a href="{}">{}</a>', obj.link, obj.link)
         return None  # Возвращаем None, если условия не выполняются
-    object_link.short_description = "Ссылка объекта"
 
+    object_link.short_description = "Ссылка объекта"
 
 
 @admin.register(StaticPage)
@@ -111,3 +113,13 @@ class MethodsOfPaymentInline(admin.TabularInline):
 class MainPageAdmin(admin.ModelAdmin):
     list_display = ('phone', 'icon', 'meta_title', 'meta_description', 'meta_image')
     inlines = [OrderTypesInline, DeliveryConditionsInline, MethodsOfPaymentInline]
+
+
+class StoryInline(admin.TabularInline):
+    extra = 0
+    model = Story
+
+
+@admin.register(Stories)
+class StoriesAdmin(admin.ModelAdmin):
+    inlines = [StoryInline]
