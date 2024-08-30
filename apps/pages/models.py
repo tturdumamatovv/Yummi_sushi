@@ -4,6 +4,7 @@ from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
+from apps.authentication.models import User
 from apps.product.models import Product, Category
 
 
@@ -298,3 +299,9 @@ class Story(models.Model):
     class Meta:
         verbose_name = "История"
         verbose_name_plural = "Истории"
+
+
+class StoriesUserCheck(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='stories_user_check')
+    stories = models.ForeignKey(Stories, on_delete=models.CASCADE, related_name='stories_user_check')
+    created_at = models.DateTimeField(verbose_name="Дата создания", auto_now_add=True, blank=True, null=True)

@@ -5,7 +5,7 @@ from .views import (
     ContactsView,
     StaticPageDetailView,
     LayOutView,
-    BannersView, StoriesView
+    BannersView, StoriesView, StoriesViewedView
 )
 
 urlpatterns = [
@@ -20,4 +20,6 @@ urlpatterns = [
     path('static-pages/delivery/', StaticPageDetailView.as_view(), name='about-us-page'),
     path('layout/', LayOutView.as_view(), name='layout'),
     path('stories/', StoriesView.as_view(), name='stories'),
+    path('stories/viewed/', StoriesViewedView.as_view(), name='stories'),
+
 ]

@@ -12,7 +12,7 @@ from apps.pages.models import (
     Address,
     PaymentMethod,
     Contacts,
-    StaticPage, Stories, Story
+    StaticPage, Stories, Story, StoriesUserCheck
 )
 
 
@@ -189,7 +189,18 @@ class StorySerializer(serializers.ModelSerializer):
 
 class StoriesSerializer(serializers.ModelSerializer):
     stories = StorySerializer(many=True, read_only=True)
+    viewed = serializers.SerializerMethodField()
 
     class Meta:
         model = Stories
         fields = '__all__'
+
+    def get_viewed(self, obj):
+        if self.context['request'].user.is_authenticated:
+            return StoriesUserCheck.objects.filter(stories=obj, user=self.context['request'].user).exists()
+        else:
+            return False
+
+class StoriesCheckSerializer(serializers.Serializer):
+    stories = serializers.IntegerField(help_text="Enter your story id here")
+

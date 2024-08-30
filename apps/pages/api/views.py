@@ -1,5 +1,7 @@
-from rest_framework import generics
-from rest_framework.generics import ListAPIView
+from django import forms
+from django.forms import Form
+from rest_framework import generics, status
+from rest_framework.generics import ListAPIView, CreateAPIView
 from rest_framework.response import Response
 
 from apps.product.models import Category
@@ -7,14 +9,14 @@ from apps.pages.models import (
     Banner,
     MainPage,
     Contacts,
-    StaticPage, Stories
+    StaticPage, Stories, StoriesUserCheck
 )
 from apps.pages.api.serializers import (
     HomePageSerializer,
     ContactsSerializer,
     StaticPageSerializer,
     LayOutSerializer,
-    BannerSerializer, MetaDataSerializer, StoriesSerializer
+    BannerSerializer, MetaDataSerializer, StoriesSerializer, StoriesCheckSerializer
 )
 
 
@@ -112,3 +114,17 @@ class StoriesView(ListAPIView):
 
     def get_serializer(self, *args, **kwargs):
         return StoriesSerializer(*args, **kwargs, context={'request': self.request})
+
+
+class StoriesViewedView(CreateAPIView):
+    serializer_class = StoriesCheckSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            stories = Stories.objects.get(id=serializer.validated_data['stories'])
+            user = request.user
+            StoriesUserCheck.objects.create(stories=stories, user=user)
+            return Response({"message": "Story checked successfully"}, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
