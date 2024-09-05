@@ -6,6 +6,7 @@ from django.db import models
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from unidecode import unidecode
+from mptt.models import MPTTModel, TreeForeignKey
 
 
 class Size(models.Model):
@@ -20,23 +21,29 @@ class Size(models.Model):
         return self.name
 
 
-class Category(models.Model):
+class Category(MPTTModel):
     name = models.CharField(max_length=50, verbose_name=_('Название'))
     description = models.CharField(max_length=100, blank=True, verbose_name=_('Описание'))
     slug = models.SlugField(max_length=100, unique=True, verbose_name=_('Ссылка'), blank=True, null=True)
     image = models.FileField(upload_to='category_photos/', verbose_name=_('Фото'), blank=True, null=True)
     order = models.PositiveIntegerField(default=0, editable=False, db_index=True)
+    parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children',
+                            verbose_name=_('Родительская категория'))
 
     class Meta:
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
-        ordering = ['order']
+
+    class MPTTMeta:
+        order_insertion_by = ['name']
 
     def __str__(self):
         return self.name
 
     def get_absolute_url(self):
         return f"/admin/product/category/{self.id}/change/"
+    prepopulated_fields = {'slug': ('name',)}
+
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -68,19 +75,20 @@ class Product(models.Model):
     toppings = models.ManyToManyField('Topping', related_name='products', verbose_name=_('Добавки'), blank=True)
     bonuses = models.BooleanField(default=False, verbose_name=_('Можно оптатить бонусами'))
     tags = models.ManyToManyField('Tag', related_name='products', verbose_name=_('Теги'), blank=True)
+    order = models.PositiveIntegerField(default=0, blank=False, null=False)
 
-    # ingredients = models.ManyToManyField('Ingredient', related_name='products', verbose_name=_('Ингредиенты'),
-    #                                      blank=True)
 
     class Meta:
         verbose_name = "Продукт"
         verbose_name_plural = "Продукты"
+        ordering = ['order']
 
     def __str__(self):
         return self.name
 
     def get_absolute_url(self):
         return f"/admin/product/product/{self.id}/change/"
+
     def get_min_price(self):
         prices = [size.discounted_price if size.discounted_price else size.price for size in self.product_sizes.all()]
         return min(prices) if prices else None
@@ -92,20 +100,16 @@ class Product(models.Model):
             max_width = 800
             max_height = 800
 
-            # Сохраняем пропорции
             original_width, original_height = image.size
             ratio = min(max_width / original_width, max_height / original_height)
             new_width = int(original_width * ratio)
             new_height = int(original_height * ratio)
 
-            # Изменяем размер изображения
             resized_image = image.resize((new_width, new_height), Image.LANCZOS)
 
-            # Сохраняем изображение в формате WEBP с уменьшенным качеством для снижения размера файла
             image_io = BytesIO()
-            resized_image.save(image_io, format='WEBP', quality=85)  # quality можно адаптировать под ваши нужды
+            resized_image.save(image_io, format='WEBP', quality=85)
 
-            # Перезаписываем photo с новым изображением
             self.photo.save(f"{self.photo.name.split('.')[0]}.webp", ContentFile(image_io.getvalue()), save=False)
 
         super().save(*args, **kwargs)
