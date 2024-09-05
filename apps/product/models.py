@@ -20,6 +20,19 @@ class Size(models.Model):
         return self.name
 
 
+class Tag(models.Model):
+    name = models.CharField(max_length=100, verbose_name=_('Название'))
+    text_color = ColorField(default='#FF0000', format='hex', verbose_name=_('Цвет текста'))
+    background_color = ColorField(default='#FF0000', format='hex', verbose_name=_('Цвет фона'))
+
+    class Meta:
+        verbose_name = "Тег"
+        verbose_name_plural = "Теги"
+
+    def __str__(self):
+        return self.name
+
+
 class Category(models.Model):
     name = models.CharField(max_length=50, verbose_name=_('Название'))
     description = models.CharField(max_length=100, blank=True, verbose_name=_('Описание'))
@@ -44,19 +57,6 @@ class Category(models.Model):
         super().save(*args, **kwargs)
 
 
-class Tag(models.Model):
-    name = models.CharField(max_length=100, verbose_name=_('Название'))
-    text_color = ColorField(default='#FF0000', format='hex', verbose_name=_('Цвет текста'))
-    background_color = ColorField(default='#FF0000', format='hex', verbose_name=_('Цвет фона'))
-
-    class Meta:
-        verbose_name = "Тег"
-        verbose_name_plural = "Теги"
-
-    def __str__(self):
-        return self.name
-
-
 class Product(models.Model):
     is_popular = models.BooleanField(default=False, verbose_name=_('Популярный'))
     is_new = models.BooleanField(default=False, verbose_name=_('Новинка'))
@@ -68,8 +68,7 @@ class Product(models.Model):
     toppings = models.ManyToManyField('Topping', related_name='products', verbose_name=_('Добавки'), blank=True)
     bonuses = models.BooleanField(default=False, verbose_name=_('Можно оптатить бонусами'))
     tags = models.ManyToManyField('Tag', related_name='products', verbose_name=_('Теги'), blank=True)
-    order = models.PositiveIntegerField(default=0, blank=False, null=False)
-
+    order = models.PositiveIntegerField(default=0, editable=False, db_index=True)
 
     class Meta:
         verbose_name = "Продукт"

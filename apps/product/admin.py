@@ -24,13 +24,6 @@ class SizeAdmin(ExcludeBaseFieldsMixin, TranslationAdmin):
     exclude_base_fields = ('name', 'description')
 
 
-@admin.register(Category)
-class CategoryAdmin(SortableAdminMixin, ExcludeBaseFieldsMixin, TranslationAdmin):
-    list_display = ('name', 'description', 'order')
-    search_fields = ('name',)
-    exclude_base_fields = ('name', 'description')
-
-
 @admin.register(Tag)
 class TagAdmin(ExcludeBaseFieldsMixin, TranslationAdmin):
     list_display = ('name',)
@@ -44,9 +37,16 @@ class ProductSizeInline(admin.TabularInline):
     extra = 0
 
 
+@admin.register(Category)
+class CategoryAdmin(SortableAdminMixin, ExcludeBaseFieldsMixin, TranslationAdmin):
+    list_display = ('name', 'description', 'order')
+    search_fields = ('name',)
+    exclude_base_fields = ('name', 'description')
+
+
 @admin.register(Product)
 class ProductAdmin(SortableAdminMixin, ExcludeBaseFieldsMixin, TranslationAdmin):
-    list_display = ('name', 'category', 'description')
+    list_display = ('order', 'name', 'category', 'description')
     search_fields = ('name',)
     list_filter = ('category',)
     filter_horizontal = ('toppings', 'tags',)  # 'ingredients')
