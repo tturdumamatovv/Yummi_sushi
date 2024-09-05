@@ -32,7 +32,7 @@ class ProductListByCategorySlugView(generics.ListAPIView):
         except Category.DoesNotExist:
             raise NotFound("Категория не найдена")
 
-        products = Product.objects.filter(category=category, product_sizes__isnull=False).distinct()
+        products = Product.objects.filter(category=category, product_sizes__isnull=False).distinct().order_by('order')
         # sets = Set.objects.filter(category=category)
 
         product_serializer = ProductSerializer(products, many=True, context={'request': request})
