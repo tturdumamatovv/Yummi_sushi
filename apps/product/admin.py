@@ -2,7 +2,6 @@ from adminsortable2.admin import SortableAdminMixin
 from django.contrib import admin
 from django.utils.html import format_html
 from modeltranslation.admin import TranslationAdmin
-from mptt.admin import DraggableMPTTAdmin
 
 from .models import Size, Category, Product, ProductSize, Topping, Tag  # Set, Ingredient
 from .forms import ProductSizeForm
