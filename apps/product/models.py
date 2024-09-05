@@ -21,29 +21,23 @@ class Size(models.Model):
         return self.name
 
 
-class Category(MPTTModel):
+class Category(models.Model):
     name = models.CharField(max_length=50, verbose_name=_('Название'))
     description = models.CharField(max_length=100, blank=True, verbose_name=_('Описание'))
     slug = models.SlugField(max_length=100, unique=True, verbose_name=_('Ссылка'), blank=True, null=True)
     image = models.FileField(upload_to='category_photos/', verbose_name=_('Фото'), blank=True, null=True)
     order = models.PositiveIntegerField(default=0, editable=False, db_index=True)
-    parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children',
-                            verbose_name=_('Родительская категория'))
 
     class Meta:
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
-
-    class MPTTMeta:
-        order_insertion_by = ['name']
+        ordering = ['order']
 
     def __str__(self):
         return self.name
 
     def get_absolute_url(self):
         return f"/admin/product/category/{self.id}/change/"
-    prepopulated_fields = {'slug': ('name',)}
-
 
     def save(self, *args, **kwargs):
         if not self.slug:

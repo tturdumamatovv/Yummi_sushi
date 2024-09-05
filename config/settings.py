@@ -38,7 +38,6 @@ DJANGO_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
-    'mptt',
     'rest_framework',
     'corsheaders',
     'drf_spectacular',

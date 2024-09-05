@@ -24,25 +24,12 @@ class SizeAdmin(ExcludeBaseFieldsMixin, TranslationAdmin):
     search_fields = ('name',)
     exclude_base_fields = ('name', 'description')
 
-Category.objects.rebuild()
-
 
 @admin.register(Category)
-class CategoryAdmin(DraggableMPTTAdmin, ExcludeBaseFieldsMixin, TranslationAdmin):
-    list_display = ('tree_actions', 'indented_name', 'description')
-    list_display_links = ('indented_name',)
+class CategoryAdmin(SortableAdminMixin, ExcludeBaseFieldsMixin, TranslationAdmin):
+    list_display = ('name', 'description', 'order')
     search_fields = ('name',)
     exclude_base_fields = ('name', 'description')
-    mptt_level_indent = 30  # Увеличенный отступ для более заметной вложенности
-
-    def indented_name(self, instance):
-        """
-        Возвращает отступленное название категории, основываясь на уровне вложенности.
-        Отступ рассчитывается как умножение mptt_level_indent на уровень вложенности.
-        """
-        level = instance._mpttfield('level') * self.mptt_level_indent
-        return format_html('<div style="padding-left:{}px;">{}</div>', level, instance.name)
-    indented_name.short_description = "Название"  # Или любой другой текст в соответствии с вашим языком
 
 
 @admin.register(Tag)
@@ -73,7 +60,6 @@ class ToppingAdmin(ExcludeBaseFieldsMixin, TranslationAdmin):
     list_display = ('name', 'price')
     search_fields = ('name',)
     exclude_base_fields = ('name',)
-
 
 # @admin.register(Set)
 # class SetAdmin(ExcludeBaseFieldsMixin, TranslationAdmin):
