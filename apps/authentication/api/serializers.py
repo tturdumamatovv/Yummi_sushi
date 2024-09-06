@@ -73,7 +73,7 @@ class UserAddressUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserAddress
         fields = ['id', 'user', 'city', 'apartment_number', 'entrance',
-                  'floor', 'intercom', 'created_at', 'is_primary']  # Include 'is_primary'
+                  'floor', 'intercom', 'created_at', 'is_primary', 'longitude', 'latitude']  # Include 'is_primary'
         read_only_fields = ['user', 'created_at']
 
 
