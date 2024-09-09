@@ -17,6 +17,7 @@ def generate_confirmation_code():
 def send_sms(phone_number, confirmation_code):
     login = config('login_nikita')
     password = config('password_nikita')
+    print(login, password)
     transaction_id = str(uuid.uuid4())
     sender = config('sender_nikita')
     text = f'Your confirmation code id: {confirmation_code}'
@@ -30,6 +31,7 @@ def send_sms(phone_number, confirmation_code):
     ET.SubElement(request_body, "text").text = message_send
     phones_element = ET.SubElement(request_body, "phones")
     ET.SubElement(phones_element, "phone").text = phone_number
+    print(phone_number)
 
     if settings.DEBUG:
         ET.SubElement(request_body, "test").text = "0"
@@ -41,6 +43,7 @@ def send_sms(phone_number, confirmation_code):
 
     response = requests.post(url, data=request_body_str, headers=headers)
     if response.status_code == 200:
+        print(response)
         print(response.content)
         print('SMS sent successfully')
     else:

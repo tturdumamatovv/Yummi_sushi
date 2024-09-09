@@ -71,3 +71,10 @@ class CategoryOnlyListView(generics.ListAPIView):
         categories = Category.objects.all()
         serializer = CategoryOnlySerializer(categories, many=True, context={'request': request})
         return Response(serializer.data)
+
+
+class PopularProducts(generics.ListAPIView):
+    serializer_class = ProductSerializer
+
+    def get_queryset(self):
+        return Product.objects.filter(is_popular=True)

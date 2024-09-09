@@ -7,14 +7,14 @@ from apps.product.api.views import (
     CategoryListView,
     ProductSearchView,
     ProductBonusView,
-    CategoryOnlyListView
+    CategoryOnlyListView, PopularProducts
 )  # , SetListView
 
 urlpatterns = [
-                  path('product/search/', ProductSearchView.as_view(), name='product-search'),
-                  path('bonus/', ProductBonusView.as_view(), name='bonus-list'),
-                  path('category/<slug:slug>/', ProductListByCategorySlugView.as_view(), name='category'),
-                  path('categories/', CategoryListView.as_view(), name='category-list'),
-                  path('categories/only/', CategoryOnlyListView.as_view(), name='category-only-list'),
-                # path('sets/', SetListView.as_view(), name='set-list'),
+          path('product/search/', ProductSearchView.as_view(), name='product-search'),
+          path('bonus/', ProductBonusView.as_view(), name='bonus-list'),
+          path('category/<slug:slug>/', ProductListByCategorySlugView.as_view(), name='category'),
+          path('categories/', CategoryListView.as_view(), name='category-list'),
+          path('categories/only/', CategoryOnlyListView.as_view(), name='category-only-list'),
+          path('popular/products/', PopularProducts.as_view(), name='popular-products'),
 ]
