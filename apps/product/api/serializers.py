@@ -54,8 +54,8 @@ class ProductSerializer(serializers.ModelSerializer):
     product_sizes = ProductSizeSerializer(many=True)
     min_price = serializers.SerializerMethodField()
     bonus_price = serializers.SerializerMethodField()
-    category_slug = serializers.CharField(source='category.slug')
-    category_name = serializers.CharField(source='category.name')
+    category_slug = serializers.SerializerMethodField()
+    category_name = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
@@ -73,6 +73,17 @@ class ProductSerializer(serializers.ModelSerializer):
             if min_bonus_price is None or size.bonus_price < min_bonus_price:
                 min_bonus_price = size.bonus_price
         return min_bonus_price
+
+    def get_category_slug(self, obj):
+        if obj.category:
+            return obj.category.slug
+        return None
+
+    def get_category_name(self, obj):
+        # Проверяем, существует ли категория у продукта
+        if obj.category:
+            return obj.category.name
+        return None
 
 
 class SizeProductSerializer(serializers.ModelSerializer):
