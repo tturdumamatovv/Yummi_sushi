@@ -1,11 +1,12 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import generics
+from rest_framework import generics, response
 from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from apps.product.api.filters import ProductFilter
 from apps.product.api.serializers import ProductSerializer, CategoryProductSerializer, \
-    CategoryOnlySerializer, ProductSizeWithBonusSerializer  # , SetSerializer
+    CategoryOnlySerializer, ProductSizeWithBonusSerializer, ProductIdListSerializer  # , SetSerializer
 from apps.product.models import Category, Product, ProductSize  # Set
 
 
@@ -78,3 +79,16 @@ class PopularProducts(generics.ListAPIView):
 
     def get_queryset(self):
         return Product.objects.filter(is_popular=True)
+
+
+class CheckProducts(APIView):
+    def post(self, request):
+        serializer = ProductIdListSerializer(data=request.data)
+        if serializer.is_valid():
+            product_ids = serializer.validated_data['products']
+            existing_products = ProductSize.objects.filter(id__in=product_ids).values('id', 'price')
+
+            response_data = {product['id']: product['price'] for product in existing_products}
+            return response.Response(response_data)
+
+        return response.Response(serializer.errors, status=400)

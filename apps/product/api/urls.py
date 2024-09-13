@@ -7,7 +7,9 @@ from apps.product.api.views import (
     CategoryListView,
     ProductSearchView,
     ProductBonusView,
-    CategoryOnlyListView, PopularProducts
+    CategoryOnlyListView,
+    PopularProducts,
+    CheckProducts
 )  # , SetListView
 
 urlpatterns = [
@@ -17,4 +19,6 @@ urlpatterns = [
           path('categories/', CategoryListView.as_view(), name='category-list'),
           path('categories/only/', CategoryOnlyListView.as_view(), name='category-only-list'),
           path('popular/products/', PopularProducts.as_view(), name='popular-products'),
+          path('check/products/', CheckProducts.as_view(), name='check-products'),
+
 ]

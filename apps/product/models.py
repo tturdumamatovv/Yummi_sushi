@@ -86,23 +86,26 @@ class Product(models.Model):
         return min(prices) if prices else None
 
     def save(self, *args, **kwargs):
-        if self.photo:
+        if self.photo and not self.photo.name.endswith('.webp'):
             image = Image.open(self.photo)
 
             max_width = 800
             max_height = 800
 
+            # Получение оригинальных размеров изображения
             original_width, original_height = image.size
             ratio = min(max_width / original_width, max_height / original_height)
             new_width = int(original_width * ratio)
             new_height = int(original_height * ratio)
 
+            # Изменение размера изображения
             resized_image = image.resize((new_width, new_height), Image.LANCZOS)
 
             image_io = BytesIO()
             resized_image.save(image_io, format='WEBP', quality=85)
 
-            self.photo.save(f"{self.photo.name.split('.')[0]}.webp", ContentFile(image_io.getvalue()), save=False)
+            # Сохранение обработанного изображения, изменение имени файла на .webp
+            self.photo.save(f"{self.photo.name.rsplit('.', 1)[0]}.webp", ContentFile(image_io.getvalue()), save=False)
 
         super().save(*args, **kwargs)
 
