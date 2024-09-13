@@ -6,7 +6,8 @@ from rest_framework.views import APIView
 
 from apps.product.api.filters import ProductFilter
 from apps.product.api.serializers import ProductSerializer, CategoryProductSerializer, \
-    CategoryOnlySerializer, ProductSizeWithBonusSerializer, ProductIdListSerializer  # , SetSerializer
+    CategoryOnlySerializer, ProductSizeWithBonusSerializer, \
+    ProductSizeIdListSerializer  # , SetSerializer
 from apps.product.models import Category, Product, ProductSize  # Set
 
 
@@ -81,14 +82,23 @@ class PopularProducts(generics.ListAPIView):
         return Product.objects.filter(is_popular=True)
 
 
-class CheckProducts(APIView):
+class CheckProductSizes(APIView):
     def post(self, request):
-        serializer = ProductIdListSerializer(data=request.data)
+        serializer = ProductSizeIdListSerializer(data=request.data)
         if serializer.is_valid():
-            product_ids = serializer.validated_data['products']
-            existing_products = ProductSize.objects.filter(id__in=product_ids).values('id', 'price')
+            size_ids = serializer.validated_data['sizes']
+            # Получаем нужные объекты из базы данных
+            sizes = ProductSize.objects.filter(id__in=size_ids).select_related('product', 'size')
+            response_data = {}
 
-            response_data = {product['id']: product['price'] for product in existing_products}
-            return response.Response(response_data)
+            for size in sizes:
+                # Добавляем ID размера и актуальную цену в ответ
+                response_data[size.id] = size.get_price() or None
 
-        return response.Response(serializer.errors, status=400)
+            # Добавляем те ID размеров, которые не были найдены в базе данных, со значением None
+            missing_sizes = set(size_ids) - set(response_data.keys())
+            response_data.update({size_id: None for size_id in missing_sizes})
+
+            return Response(response_data)
+
+        return Response(serializer.errors, status=400)

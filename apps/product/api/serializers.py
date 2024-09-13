@@ -169,9 +169,9 @@ class ProductSizeWithBonusSerializer(serializers.ModelSerializer):
         fields = ['product_name', 'product_description', 'product_photo', 'size', 'id', 'bonus_price']
 
 
-class ProductIdListSerializer(serializers.Serializer):
-    products = serializers.ListField(
+class ProductSizeIdListSerializer(serializers.Serializer):
+    sizes = serializers.ListField(
         child=serializers.IntegerField(),
         required=True,
-        help_text="List of product IDs"
+        help_text="List of product size IDs"
     )
