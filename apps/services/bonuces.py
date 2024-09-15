@@ -2,15 +2,15 @@ from decimal import Decimal
 
 from apps.orders.models import PercentCashback
 
-percents = PercentCashback.objects.all().first()
-if not percents:
-    percents = PercentCashback.objects.create(mobile_percent=5, web_percent=3)
-
-BONUS_PERCENTAGE_MOBILE = percents.mobile_percent
-BONUS_PERCENTAGE_WEB = percents.web_percent
-
 
 def calculate_bonus_points(order_total, delivery_fee, order_source):
+    percents = PercentCashback.objects.all().first()
+    if not percents:
+        percents = PercentCashback.objects.create(mobile_percent=5, web_percent=3)
+
+    BONUS_PERCENTAGE_MOBILE = percents.mobile_percent
+    BONUS_PERCENTAGE_WEB = percents.web_percent
+
     total_order_amount = order_total - delivery_fee
     if order_source == 'mobile':
         bonus_percentage = BONUS_PERCENTAGE_MOBILE

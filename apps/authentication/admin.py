@@ -58,7 +58,7 @@ class UserAdmin(admin.ModelAdmin):
         (_('Personal info'), {'fields': ('date_of_birth', 'email', 'profile_picture', 'bonus'),
                               'classes': ('collapse',)
                               }),
-        # (_('Permissions'), {'fields': ('is_staff', 'is_superuser', 'groups', 'user_permissions')}),
+        (_('Permissions'), {'fields': ('is_staff', 'is_superuser', 'groups', 'user_permissions')}),
         (_('Important dates'), {'fields': ('last_order', 'receive_notifications',)}),
     )
     add_fieldsets = (

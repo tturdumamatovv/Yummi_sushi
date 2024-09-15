@@ -35,6 +35,7 @@ DJANGO_APPS = [
     'apps.product',
     'apps.orders',
     'apps.pages',
+    'apps.support_admin_chat',
 ]
 
 THIRD_PARTY_APPS = [
@@ -99,6 +100,9 @@ ASGI_APPLICATION = 'config.asgi.application'
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+    'CONFIG': {
+        'hosts': [('127.0.0.1', 6379)],
     },
 }
 

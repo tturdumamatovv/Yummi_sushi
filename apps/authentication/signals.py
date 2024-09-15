@@ -4,11 +4,12 @@ from django.dispatch import receiver
 from .models import UserAddress
 from apps.orders.models import TelegramBotToken
 from apps.services.get_coordinates import get_coordinates
-token = TelegramBotToken.objects.first()
 
 
 @receiver(pre_save, sender=UserAddress)
 def set_coordinates(sender, instance, **kwargs):
+    token = TelegramBotToken.objects.first()
+
     if instance.city and (
             instance.latitude is None or instance.longitude is None):
         address = f"{instance.city}"
