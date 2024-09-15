@@ -5,7 +5,7 @@ from pathlib import Path
 from decouple import config
 
 from django.utils.translation import gettext_lazy as _
-
+from .configs.unfold import *
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = config('SECRET_KEY')
@@ -15,7 +15,14 @@ DEBUG = True
 ALLOWED_HOSTS = config('ALLOWED_HOSTS').split(' ')
 
 PROJECT_APPS = [
-    'simpleui',
+    "unfold",
+    "unfold.contrib.filters",
+    "unfold.contrib.forms",
+    "unfold.contrib.inlines",
+    "unfold.contrib.import_export",
+    "unfold.contrib.guardian",
+    "unfold.contrib.simple_history",
+    "import_export",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -131,7 +138,7 @@ CORS_TRUSTED_METHODS = [
 ]
 AUTH_USER_MODEL = "authentication.User"
 
-LANGUAGE_CODE = 'ru-ru'
+LANGUAGE_CODE = 'ru'
 LANGUAGES = (
     ('ru', _('Russian')),
     ('ky', _('Kyrgyz')),
@@ -142,6 +149,10 @@ MODELTRANSLATION_DEFAULT_LANGUAGE = 'ru'
 TIME_ZONE = 'Asia/Bishkek'
 
 USE_I18N = True
+
+LOCALE_PATHS = (
+    os.path.join(BASE_DIR, 'locale'),
+)
 
 USE_TZ = True
 
@@ -190,149 +201,3 @@ SPECTACULAR_SETTINGS = {
 }
 
 CORS_ORIGIN_ALLOW_ALL = True
-
-SIMPLEUI_HOME_INFO = False
-SIMPLEUI_HOME_ACTION = False
-SIMPLEUI_HOME_QUICK = True
-SIMPLEUI_DEFAULT_THEME = 'simpleui.css'
-SIMPLEUI_INDEX = 'https://yummisushi.kg/'
-SIMPLEUI_LOGO =  '/static/admin/simpleui-x/img/logo.png'
-SIMPLEUI_CONFIG = {
-    'system_keep': False,
-    'menus': [
-        {
-            'name': 'Пользователь',
-            'icon': 'fa fa-user',
-            'models': [
-                {
-                    'name': 'Адрес Пользователя',
-                    'icon': 'fa fa-home',
-                    'url': '/admin/authentication/useraddress/'
-                },
-                {
-                    'name': 'Пользователь',
-                    'icon': 'fa fa-user',
-                    'url': '/admin/authentication/user/'
-                },
-            ]
-        },
-        {
-            'name': 'Рестораны',
-            'icon': 'fa fas fa-utensils',
-            'models': [
-                {
-                    'name': 'Рестораны',
-                    'icon': 'fa fas fa-coffee',
-                    'url': '/admin/orders/restaurant/'
-                },
-                {
-                    'name': 'Заказы',
-                    'icon': 'fa fas fa-archive',
-                    'url': '/admin/orders/order/'
-                },
-                {
-                    'name': 'Доставки',
-                    'icon': 'fa fas fa-truck',
-                    'url': '/admin/orders/delivery/'
-                },
-                # {
-                #     'name': 'Отчеты',
-                #     'icon': 'fa fa-file',
-                #     'url': '/admin/orders/delivery/'
-                # },
-            ]
-        },
-        {
-            'name': 'Продукты',
-            'icon': 'fa fas fa-hamburger',
-            'models': [
-                {
-                    'name': 'Продукты',
-                    'icon': 'fa fas fa-pizza-slice',
-                    'url': '/admin/product/product/'
-                },
-                # {
-                #     'name': 'Сеты',
-                #     'icon': 'fa fas fa-pizza-slice',
-                #     'url': '/admin/product/set/'
-                # },
-                {
-                    'name': 'Добавки',
-                    'icon': 'fa fas fa-bacon',
-                    'url': '/admin/product/topping/'
-                },
-                {
-                    'name': 'Категории',
-                    'icon': 'fa fas fa-egg',
-                    'url': '/admin/product/category/'
-                },
-                {
-                    'name': 'Размеры',
-                    'icon': 'fa fas fa-drumstick-bite',
-                    'url': '/admin/product/size/'
-                },
-                {
-                    'name': 'Тэги',
-                    'icon': 'fa fas fa-tags',
-                    'url': '/admin/product/tag/'
-                },
-            ]
-        },
-        {
-            'name': 'Страницы',
-            'icon': 'fa fa-list',
-            'models': [
-                {
-                    'name': 'Главная страница',
-                    'icon': 'fa fas fa-file',
-                    'url': '/admin/pages/mainpage/'
-                },
-                {
-                    'name': 'Статические страницы',
-                    'icon': 'fa far fa-file-alt',
-                    'url': '/admin/pages/staticpage/'
-                },
-                {
-                    'name': 'Баннеры',
-                    'icon': 'fa fas fa-clone',
-                    'url': '/admin/pages/banner/'
-                },
-                {
-                    'name': 'Сторисы',
-                    'url': '/admin/pages/stories/'
-                },
-                {
-                    'name': 'Контакты',
-                    'icon': 'fa fas fa-phone',
-                    'url': '/admin/pages/contacts/'
-                },
-            ]
-        },
-        {
-            'name': 'Настройки',
-            'icon': 'fa fa-cog',
-            'models': [
-                {
-                    'name': 'Телеграмм',
-                    'icon': 'fa fab fa-telegram',
-                    'url': '/admin/orders/telegrambottoken/'
-                },
-                {
-                    'name': 'WhatsApp',
-                    'icon': 'fa fab fa-whatsapp',
-                    'url': '/admin/orders/whatsappchat/'
-                },
-                {
-                    'name': 'Кэшбек',
-                    'icon': 'fa fa-percent',
-                    'url': '/admin/orders/percentcashback/'
-                },
-                {
-                    'name': 'Тарифы на расстояние',
-                    'icon': 'fa fa-ticket ',
-                    'url': '/admin/orders/distancepricing/'
-                },
-            ]
-        },
-    ]
-}
