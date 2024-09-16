@@ -19,7 +19,6 @@ class LanguageMiddleware:
         return response
 
 
-
 class SimpleCorsMiddleware(BaseMiddleware):
     def __init__(self, inner):
         super().__init__(inner)
