@@ -37,6 +37,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
 
     async def receive(self, text_data):
+        print(text_data)
         text_data_json = json.loads(text_data)
 
         # Если это уведомление об открытии чата
