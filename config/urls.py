@@ -25,6 +25,7 @@ urlpatterns = [
     path('api/v1/orders/', include('apps.orders.api.urls')),
     path('api/v1/products/', include('apps.product.api.urls')),
     path('api/v1/pages/', include('apps.pages.api.urls')),
+    path('api/v1/chat/', include('apps.support_admin_chat.api.urls')),
     path('support/', include('apps.support_admin_chat.urls')),
 ]
 
