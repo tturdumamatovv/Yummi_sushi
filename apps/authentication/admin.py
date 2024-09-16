@@ -1,10 +1,12 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
+from unfold.admin import TabularInline, ModelAdmin
+
 from .models import User, UserAddress
 from apps.orders.models import Order
 
 
-class OrderInline(admin.TabularInline):
+class OrderInline(TabularInline):
     model = Order
     extra = 0
     classes = ['collapse']
@@ -50,7 +52,7 @@ class UserAddressInline(admin.StackedInline):
 
 
 @admin.register(User)
-class UserAdmin(admin.ModelAdmin):
+class UserAdmin(ModelAdmin):
     list_display = ('phone_number', 'full_name', 'is_staff', 'is_superuser')
     list_filter = ('is_staff', 'is_superuser',)
     fieldsets = (

@@ -2,12 +2,13 @@ from adminsortable2.admin import SortableAdminMixin
 from django.contrib import admin
 from django.utils.html import format_html
 from modeltranslation.admin import TranslationAdmin
+from unfold.admin import TabularInline, ModelAdmin
 
 from .models import Size, Category, Product, ProductSize, Topping, Tag  # Set, Ingredient
 from .forms import ProductSizeForm
 
 
-class ExcludeBaseFieldsMixin:
+class ExcludeBaseFieldsMixin(ModelAdmin):
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
         base_fields = getattr(self, 'exclude_base_fields', [])
@@ -31,7 +32,7 @@ class TagAdmin(ExcludeBaseFieldsMixin, TranslationAdmin):
     exclude_base_fields = ('name',)
 
 
-class ProductSizeInline(admin.TabularInline):
+class ProductSizeInline(TabularInline):
     model = ProductSize
     form = ProductSizeForm
     extra = 0

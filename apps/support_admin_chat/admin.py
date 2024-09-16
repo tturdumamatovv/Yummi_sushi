@@ -1,13 +1,14 @@
 from django.contrib import admin
+from unfold.admin import TabularInline, ModelAdmin
 
 from .models import ChatRoom, ChatMessage
 
 
-class ChatMessageInline(admin.TabularInline):
+class ChatMessageInline(TabularInline):
     model = ChatMessage
     extra = 0
 
 
 @admin.register(ChatRoom)
-class ChatRoomAdmin(admin.ModelAdmin):
+class ChatRoomAdmin(ModelAdmin):
     inlines = [ChatMessageInline]

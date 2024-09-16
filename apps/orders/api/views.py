@@ -35,6 +35,8 @@ class ListOrderView(generics.ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
+        if user.is_anonymous:
+            return Order.objects.none()
         return Order.objects.filter(user=user).order_by('-id')
 
     def get_serializer_context(self):
