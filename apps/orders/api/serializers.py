@@ -48,7 +48,7 @@ class ProductOrderItemSerializer(serializers.ModelSerializer):
         photo_url = obj.product_size.product.photo.url if obj.product_size.product.photo else None
         if photo_url and request:
             photo_url = request.build_absolute_uri(photo_url)
-        toppings_list = [topping for topping in obj.topping.all()]
+        toppings_list = [topping.id for topping in obj.topping.all()]
 
         size = {
             'size_id': obj.product_size.id,
