@@ -49,6 +49,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         if message:
             # Сохраняем сообщение
+            print(message + " " + str(self.user_id))
             await self.save_message(self.user_id, message)
 
             # Отправляем сообщение всем участникам чата
@@ -86,7 +87,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
             # Сообщение от администратора помечается как прочитанное
             ChatMessage.objects.create(room=room, sender=self.scope['user'], message=message, is_read=True)
         else:
-            room, _ = ChatRoom.objects.get_or_create(user_id=user_id)
+            # Создаем или получаем комнату для пользователя, если это не админ
+            print(self.scope)
+            room, _ = ChatRoom.objects.get_or_create(user_id=3)
             # Сообщения от пользователей сохраняются как непрочитанные
             ChatMessage.objects.create(room=room, sender=self.scope['user'], message=message, is_read=False)
 

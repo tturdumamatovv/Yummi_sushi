@@ -4,7 +4,7 @@ from .views import (
     OrderPreviewView,
     ReportCreateView,
     RestaurantListView,
-    ListOrderView
+    ListOrderView, PromoCodeDetailView
 )
 
 urlpatterns = [
@@ -13,4 +13,6 @@ urlpatterns = [
     path('order-preview/', OrderPreviewView.as_view(), name='order-preview'),
     path('reports/', ReportCreateView.as_view(), name='create-report'),
     path('restaurants/', RestaurantListView.as_view(), name='restaurant-list'),
+    path('promocode/<str:code>/', PromoCodeDetailView.as_view(), name='promocode-detail'),
+
 ]

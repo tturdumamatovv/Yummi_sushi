@@ -13,7 +13,7 @@ from .models import (
     DistancePricing,
     TelegramBotToken,
     PercentCashback,
-    Report, WhatsAppChat
+    Report, WhatsAppChat, PromoCode
 )
 from apps.services.generate_message import generate_order_message
 
@@ -101,3 +101,12 @@ class PercentCashbackAdmin(ModelAdmin):
 @admin.register(Report)
 class ReportAdmin(ModelAdmin):
     pass
+
+
+@admin.register(PromoCode)
+class PromoCodeAdmin(ModelAdmin):
+    list_display = ['code', 'discount', 'valid_from', 'valid_to', 'active']
+    list_filter = ['active', 'valid_from', 'valid_to']
+    search_fields = ['code']
+
+

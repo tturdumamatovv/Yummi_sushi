@@ -17,6 +17,7 @@ class ChatRoomSerializer(serializers.ModelSerializer):
     user_phone = serializers.CharField(source='user.phone_number', read_only=True)
     user_id = serializers.IntegerField(source='user.id', read_only=True)
 
+
     class Meta:
         model = ChatRoom
         fields = ['id', 'user', 'user_phone', 'active', 'messages', 'user_id']

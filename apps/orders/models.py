@@ -1,8 +1,11 @@
+import random
+import string
+
+from django.core.exceptions import ValidationError
+from django.core.validators import MinLengthValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django.core.exceptions import ValidationError
 from geopy.distance import geodesic
-from django.core.validators import MinLengthValidator
 
 from apps.authentication.models import UserAddress
 from apps.pages.models import SingletonModel
@@ -133,6 +136,8 @@ class Order(models.Model):
         verbose_name=_('Источник заказа')
     )
     comment = models.TextField(verbose_name=_('Комментарий'), blank=True, null=True)
+    promo_code = models.ForeignKey('PromoCode', on_delete=models.SET_NULL, null=True, blank=True)
+
 
     class Meta:
         verbose_name = _("Заказ")
@@ -245,3 +250,22 @@ class Report(models.Model):
     class Meta:
         verbose_name = _("Отчет")
         verbose_name_plural = _("Отчеты")
+
+
+class PromoCode(models.Model):
+    code = models.CharField(max_length=10, unique=True, verbose_name='Промокод')
+    valid_from = models.DateTimeField(verbose_name='Начало действия')
+    valid_to = models.DateTimeField(verbose_name='Конец действия')
+    discount = models.IntegerField(help_text='Процент скидки', verbose_name='Скидка')
+    active = models.BooleanField(default=False, verbose_name='Активен')
+
+    def __str__(self):
+        return self.code
+
+    @staticmethod
+    def generate_code(length=6):
+        return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(length))
+
+    def is_valid(self):
+        from django.utils import timezone
+        return self.active and self.valid_from <= timezone.now() <= self.valid_to
