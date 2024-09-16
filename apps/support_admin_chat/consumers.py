@@ -27,7 +27,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             await self.mark_messages_as_read(self.room_id)
 
         # Отправляем предыдущие сообщения (загружаем историю)
-        await self.send_previous_messages(self.room_id)
+        # await self.send_previous_messages(self.room_id)
 
     async def disconnect(self, close_code):
         # Отключение от группы
@@ -97,12 +97,12 @@ class ChatConsumer(AsyncWebsocketConsumer):
         room = ChatRoom.objects.get(id=room_id)
         room.messages.filter(is_read=False).update(is_read=True)
 
-    @database_sync_to_async
-    def send_previous_messages(self, room_id):
-        """
-        Отправляем предыдущие 50 сообщений.
-        """
-        room = ChatRoom.objects.get(id=room_id)
-        messages = room.messages.all().order_by('-timestamp')[:50]
-        return [{'sender': msg.sender.phone_number, 'message': msg.message, 'timestamp': msg.timestamp.isoformat()} for
-                msg in messages]
+    # @database_sync_to_async
+    # def send_previous_messages(self, room_id):
+    #     """
+    #     Отправляем предыдущие 50 сообщений.
+    #     """
+    #     room = ChatRoom.objects.get(id=room_id)
+    #     messages = room.messages.all().order_by('-timestamp')[:50]
+    #     return [{'sender': msg.sender.phone_number, 'message': msg.message, 'timestamp': msg.timestamp.isoformat()} for
+    #             msg in messages]
