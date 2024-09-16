@@ -1,8 +1,9 @@
 from django.db import models
 from django.conf import settings
 
-from apps.authentication.models import User
+from django.contrib.auth import get_user_model
 
+User = get_user_model()
 
 class ChatRoom(models.Model):
     user = models.OneToOneField(User, related_name='chat_room', on_delete=models.CASCADE)
