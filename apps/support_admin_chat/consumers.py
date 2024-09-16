@@ -34,15 +34,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
         if text_data_json.get("type") == "chat_opened":
             await self.mark_messages_as_read(self.room_id)
-
-        # Получаем сообщение из данных
-        message = text_data_json.get("message")
-
-        if message:
-            # Сохраняем сообщение
-            await self.save_message(self.user_id, message)
-
-            # Отправляем сообщение всем участникам чата
+        elif message:
+            await self.save_message(sender_id, message)
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
@@ -69,19 +62,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def save_message(self, user_id, message):
-        # Определяем комнату
-        if self.scope["user"].is_staff:
-            room = ChatRoom.objects.get(id=self.room_id)
-            # Сообщение от администратора помечается как прочитанное
-            ChatMessage.objects.create(
-                room=room, sender=self.scope["user"], message=message, is_read=True
-            )
-        else:
-            room, _ = ChatRoom.objects.get_or_create(user_id=user_id)
-            # Сообщения от пользователей сохраняются как непрочитанные
-            ChatMessage.objects.create(
-                room=room, sender=self.scope["user"], message=message, is_read=False
-            )
+        user = User.objects.get(id=user_id)
+        room = ChatRoom.objects.get(id=self.room_id)
+        ChatMessage.objects.create(
+            room=room, sender=user, message=message, is_read=self.is_admin
+        )
 
     @database_sync_to_async
     def mark_messages_as_read(self, room_id):
