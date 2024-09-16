@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const roomId = "{{ chat_room.id }}";  // Убедитесь, что идентификатор комнаты передан правильно
 
     // Открытие WebSocket соединения с корректным roomId
-    const ws = new WebSocket('ws://' + window.location.host + '/ws/chat/' + roomId + '/');
+    const ws = new WebSocket('wss://' + window.location.host + '/ws/chat/' + roomId + '/');
 
     // Функция для создания HTML структуры сообщений
     function createMessageElement(senderId, senderUsername, messageText) {
