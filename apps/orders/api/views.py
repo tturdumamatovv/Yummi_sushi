@@ -303,7 +303,7 @@ class CreateReOrderView(APIView):
     def get(self, request, order_id):
         try:
             order = Order.objects.get(id=order_id)
-            serializer = ReOrderSerializer(order)
+            serializer = ReOrderSerializer(order, context={'request': request})
             return Response(serializer.data)
         except Order.DoesNotExist:
             return Response({'error': 'Заказ не найден'}, status=status.HTTP_404_NOT_FOUND)

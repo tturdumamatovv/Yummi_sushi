@@ -63,6 +63,7 @@ class ProductOrderItemSerializer(serializers.ModelSerializer):
         }
 
         return {
+            'id': obj.product_size.product.id,
             'name': obj.product_size.product.name,
             'price': obj.product_size.get_price(),
             'image': photo_url,
@@ -265,18 +266,45 @@ class ReOrderProductSizeSerializer(serializers.ModelSerializer):
 
 
 class ReOrderItemSerializer(serializers.ModelSerializer):
-    product_size = ReOrderProductSizeSerializer(read_only=True)
+    product_size = ReOrderProductSizeSerializer(read_only=True) # Нудно передать дальше
     topping = ReOrderToppingSerializer(many=True, read_only=True)
 
     class Meta:
         model = OrderItem
         fields = ['product_size', 'topping', 'quantity', 'total_amount', 'is_bonus']
+    def to_representation(self, instance):
+        """
+        Переопределяем метод to_representation для того, чтобы передать контекст дальше во вложенные сериализаторы.
+        """
+        # Получаем стандартное представление данных модели
+        ret = super().to_representation(instance)
 
+        # Создаем экземпляр сериализатора для product_size с передачей контекста
+        product_size_serializer = ReOrderProductSizeSerializer(instance.product_size, context=self.context)
+        ret['product_size'] = product_size_serializer.data
+
+        # Создаем экземпляр сериализатора для topping с передачей контекста
+        topping_serializer = ReOrderToppingSerializer(instance.topping.all(), many=True, context=self.context)
+        ret['topping'] = topping_serializer.data
+
+        return ret
 
 class ReOrderSerializer(serializers.ModelSerializer):
-    order_items = ReOrderItemSerializer(many=True, read_only=True)
+    order_items = ReOrderItemSerializer(many=True, read_only=True) # Нудно передать дальше
 
     class Meta:
         model = Order
         fields = ['id', 'restaurant', 'delivery', 'order_time', 'total_amount', 'order_items', 'payment_method',
                   'order_status', 'comment']
+    def to_representation(self, instance):
+        """
+        Переопределяем метод to_representation для того, чтобы передать контекст дальше во вложенные сериализаторы.
+        """
+        # Получаем стандартное представление данных модели
+        ret = super().to_representation(instance)
+
+        # Создаем экземпляр сериализатора для order_items с передачей контекста
+        order_items_serializer = ReOrderItemSerializer(instance.order_items.all(), many=True, context=self.context)
+        ret['order_items'] = order_items_serializer.data
+
+        return ret
