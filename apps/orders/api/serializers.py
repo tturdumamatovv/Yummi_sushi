@@ -233,11 +233,14 @@ class ReportSerializer(serializers.ModelSerializer):
 class PromoCodeSerializer(serializers.ModelSerializer):
     class Meta:
         model = PromoCode
-        fields = ['code', 'valid_from', 'valid_to', 'discount', 'active']
+        fields = ['code', 'valid_from', 'valid_to', 'type', 'discount', 'active']
+
+
 class ReOrderProductSizeSerializer(serializers.ModelSerializer):
     size = serializers.CharField(source='size.name')
     price = serializers.DecimalField(max_digits=10, decimal_places=2, coerce_to_string=False)
-    discounted_price = serializers.DecimalField(max_digits=10, decimal_places=2, coerce_to_string=False, allow_null=True)
+    discounted_price = serializers.DecimalField(max_digits=10, decimal_places=2, coerce_to_string=False,
+                                                allow_null=True)
     bonus_price = serializers.DecimalField(max_digits=10, decimal_places=2, coerce_to_string=False)
     is_selected = serializers.SerializerMethodField()
 
@@ -282,8 +285,6 @@ class ReOrderProductSerializer(serializers.ModelSerializer):
     def get_product_sizes(self, obj):
         order_item = self.context.get('order_item')
         return ReOrderProductSizeSerializer(obj.product_sizes.all(), many=True, context={'order_item': order_item}).data
-
-
 
     class Meta:
         model = Product

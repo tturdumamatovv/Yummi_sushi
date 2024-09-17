@@ -1,5 +1,6 @@
 import random
 import string
+from decimal import Decimal
 
 from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator
@@ -146,6 +147,17 @@ class Order(models.Model):
     def __str__(self):
         return f"Заказ #{self.id}"
 
+    def apply_promo_code(self):
+        if self.promo_code and self.promo_code.is_valid():
+            if self.promo_code.type == 'p':
+                discount_rate = Decimal(self.promo_code.discount) / Decimal(100)
+                discount_amount = discount_rate * self.total_amount
+            elif self.promo_code.type == 'f':
+                discount_amount = Decimal(self.promo_code.discount)
+            discount_amount = min(discount_amount, self.total_amount)
+            return self.total_amount - discount_amount
+        return self.total_amount
+
     def get_total_amount(self):
         total_amount = self.delivery.delivery_fee
         for order_item in self.order_items.all():
@@ -168,6 +180,7 @@ class Order(models.Model):
         return total_bonus_amount
 
     def save(self, *args, **kwargs):
+        self.total_amount = self.apply_promo_code()
         super().save(*args, **kwargs)
 
 
@@ -190,6 +203,8 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.product_size.product.name if self.product_size else self.set.name} ({self.product_size.size.name if self.product_size else 'Сет'}) - {self.quantity} шт."
+
+
 
     def calculate_total_amount(self):
         if not self.is_bonus:
@@ -258,6 +273,7 @@ class PromoCode(models.Model):
     valid_to = models.DateTimeField(verbose_name='Конец действия')
     discount = models.IntegerField(help_text='Процент скидки', verbose_name='Скидка')
     active = models.BooleanField(default=False, verbose_name='Активен')
+    type = models.CharField(max_length=1, choices=[('p', 'Процент'), ('f', 'Фиксированная сумма')], verbose_name='Тип')
 
     def __str__(self):
         return self.code
