@@ -273,7 +273,7 @@ class PromoCode(models.Model):
     valid_to = models.DateTimeField(verbose_name='Конец действия')
     discount = models.IntegerField(help_text='Процент скидки', verbose_name='Скидка')
     active = models.BooleanField(default=False, verbose_name='Активен')
-    type = models.CharField(max_length=1, choices=[('p', 'Процент'), ('f', 'Фиксированная сумма')], verbose_name='Тип')
+    type = models.CharField(max_length=3, choices=[('%', 'Процент'), ('сом', 'Фиксированная сумма')], verbose_name='Тип')
 
     def __str__(self):
         return self.code
