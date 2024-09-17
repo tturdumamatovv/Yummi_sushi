@@ -256,13 +256,24 @@ class ReOrderProductSerializer(serializers.ModelSerializer):
 
 
 class ReOrderProductSizeSerializer(serializers.ModelSerializer):
-    product = ReOrderProductSerializer(read_only=True)
+    product = ReOrderProductSerializer(read_only=True)  # Нудно передать дальше
     price = serializers.DecimalField(source='product.price', max_digits=10, decimal_places=2,
                                      read_only=True)  # Если цена прямо не связана с размером и зависит от продукта
 
     class Meta:
         model = ProductSize
         fields = ['id', 'size', 'product', 'price', 'discounted_price', 'bonus_price']
+
+    def to_representation(self, instance):
+
+        ret = super().to_representation(instance)
+
+        product_size_serializer = ReOrderProductSerializer(instance.product, context=self.context)
+        ret['product_size'] = product_size_serializer.data
+
+
+
+        return ret
 
 
 class ReOrderItemSerializer(serializers.ModelSerializer):
