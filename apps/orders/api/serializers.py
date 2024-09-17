@@ -43,7 +43,7 @@ class ProductOrderItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OrderItem
-        fields = ['product_size_id', 'quantity', 'topping_ids', 'is_bonus', 'product']  # , 'excluded_ingredient_ids'
+        fields = ['product_size_id', 'quantity', 'topping', 'is_bonus', 'product']  # , 'excluded_ingredient_ids'
 
     def validate(self, data):
         if data.get('product_size_id') == 0:
