@@ -16,6 +16,7 @@ from apps.orders.models import (
     TelegramBotToken, PromoCode
 
 )  # Ingredient)
+from apps.product.models import ProductSize
 
 
 class RestaurantSerializer(serializers.ModelSerializer):
@@ -108,7 +109,6 @@ class OrderListSerializer(serializers.ModelSerializer):
     def get_user_address(self, obj):
         return obj.delivery.user_address.city if obj.delivery.user_address else "Самовывоз"
 
-
     def get_app_download_url(self, obj):
         link = TelegramBotToken.objects.first().app_download_link
         if not link:
@@ -130,7 +130,8 @@ class OrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = [
             'id', 'delivery', 'order_time', 'total_amount', 'is_pickup',
-            'order_status', 'products', 'payment_method', 'change', 'restaurant_id', 'order_source', 'comment', 'promo_code'
+            'order_status', 'products', 'payment_method', 'change', 'restaurant_id', 'order_source', 'comment',
+            'promo_code'
             # 'sets',
         ]
         read_only_fields = ['total_amount', 'order_time', 'order_status']
@@ -160,7 +161,6 @@ class OrderSerializer(serializers.ModelSerializer):
                 delivery_time=delivery_data['delivery_time'] if 'delivery_time' in delivery_data else None,
                 delivery_fee=delivery_fee
             )
-
 
             order = Order.objects.create(
                 delivery=delivery,
@@ -227,3 +227,32 @@ class PromoCodeSerializer(serializers.ModelSerializer):
     class Meta:
         model = PromoCode
         fields = ['code', 'valid_from', 'valid_to', 'discount', 'active']
+
+
+
+class ReOrderToppingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Topping
+        fields = ['id', 'name', 'price']
+
+class ReOrderProductSizeSerializer(serializers.ModelSerializer):
+    product_name = serializers.CharField(source='product.name', read_only=True)  # Получаем название продукта
+
+    class Meta:
+        model = ProductSize
+        fields = ['id', 'size', 'product_name', 'price', 'bonus_price']
+
+class ReOrderItemSerializer(serializers.ModelSerializer):
+    product_size = ReOrderProductSizeSerializer(read_only=True)
+    topping = ReOrderToppingSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = OrderItem
+        fields = ['product_size', 'topping', 'quantity', 'total_amount', 'is_bonus']
+
+class ReOrderSerializer(serializers.ModelSerializer):
+    order_items = ReOrderItemSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Order
+        fields = ['restaurant', 'delivery', 'order_time', 'total_amount', 'order_items', 'payment_method', 'order_status', 'comment']

@@ -27,7 +27,7 @@ from .serializers import (
     OrderPreviewSerializer,
     ReportSerializer,
     RestaurantSerializer,
-    OrderListSerializer, PromoCodeSerializer
+    OrderListSerializer, PromoCodeSerializer, ReOrderSerializer
 )
 
 
@@ -285,7 +285,6 @@ class RestaurantListView(generics.ListAPIView):
     serializer_class = RestaurantSerializer
 
 
-
 class PromoCodeDetailView(APIView):
     def get(self, request, code):
         try:
@@ -297,3 +296,14 @@ class PromoCodeDetailView(APIView):
                 return Response({"error": "Промокод не активен или срок его действия истек"}, status=status.HTTP_404_NOT_FOUND)
         except PromoCode.DoesNotExist:
             return Response({"error": "Промокод не найден"}, status=status.HTTP_404_NOT_FOUND)
+
+
+
+class CreateReOrderView(APIView):
+    def get(self, request, order_id):
+        try:
+            order = Order.objects.get(id=order_id)
+            serializer = ReOrderSerializer(order)
+            return Response(serializer.data)
+        except Order.DoesNotExist:
+            return Response({'error': 'Заказ не найден'}, status=status.HTTP_404_NOT_FOUND)
