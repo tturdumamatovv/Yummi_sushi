@@ -19,6 +19,12 @@ from apps.orders.models import (
 from apps.product.models import ProductSize, Product
 
 
+class ToppingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Topping
+        fields = ['id', 'name', 'price']
+
+
 class RestaurantSerializer(serializers.ModelSerializer):
     class Meta:
         model = Restaurant
@@ -29,7 +35,7 @@ class RestaurantSerializer(serializers.ModelSerializer):
 class ProductOrderItemSerializer(serializers.ModelSerializer):
     product = serializers.SerializerMethodField(read_only=True)
     product_size_id = serializers.IntegerField(write_only=True)
-    topping_ids = serializers.ListField(child=serializers.IntegerField(), write_only=True, required=False)
+    topping = ToppingSerializer(many=True, read_only=False)  # Список топингов теперь полностью сериализуется
     quantity = serializers.IntegerField(default=0)
     is_bonus = serializers.BooleanField(default=False)
 
