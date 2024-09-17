@@ -123,6 +123,9 @@ class ProductSize(models.Model):
         verbose_name = "Цена продукта по размеру"
         verbose_name_plural = "Цены продуктов по размерам"
 
+    def get_price(self):
+        return self.discounted_price if self.discounted_price else self.price
+
     def __str__(self):
         return f"{self.product.name} - {self.size.name} - {self.get_price()}"
 
