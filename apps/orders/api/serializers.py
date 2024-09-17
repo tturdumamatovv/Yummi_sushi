@@ -247,15 +247,18 @@ class ReOrderSizeSerializer(serializers.ModelSerializer):
         model = Size
         fields = ['id', 'name', 'description', 'is_selected']
 
+
 class ReOrderProductSizeSerializer(serializers.ModelSerializer):
     size = ReOrderSizeSerializer()
     price = serializers.DecimalField(max_digits=10, decimal_places=2, coerce_to_string=False)
-    discounted_price = serializers.DecimalField(max_digits=10, decimal_places=2, coerce_to_string=False, allow_null=True)
+    discounted_price = serializers.DecimalField(max_digits=10, decimal_places=2, coerce_to_string=False,
+                                                allow_null=True)
     bonus_price = serializers.DecimalField(max_digits=10, decimal_places=2, coerce_to_string=False)
 
     class Meta:
         model = ProductSize
         fields = ['id', 'size', 'price', 'discounted_price', 'bonus_price']
+
 
 class ReOrderToppingSerializer(serializers.ModelSerializer):
     is_selected = serializers.SerializerMethodField()
@@ -267,7 +270,8 @@ class ReOrderToppingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Topping
-        fields = ['id', 'name', 'price', 'is_selected']
+        fields = ['id', 'name', 'price', 'photo', 'is_selected']
+
 
 class ReOrderProductSerializer(serializers.ModelSerializer):
     image_url = serializers.SerializerMethodField()
@@ -280,24 +284,29 @@ class ReOrderProductSerializer(serializers.ModelSerializer):
 
     def get_sizes(self, obj):
         order_item = self.context.get('order_item')
-        sizes_serializer = ReOrderProductSizeSerializer(obj.product_sizes.all(), many=True, context={'order_item': order_item})
+        sizes_serializer = ReOrderProductSizeSerializer(obj.product_sizes.all(), many=True,
+                                                        context={'order_item': order_item})
         return sizes_serializer.data
 
     class Meta:
         model = Product
         fields = ['id', 'name', 'description', 'image_url', 'sizes', 'toppings']
 
+
 class ReOrderItemSerializer(serializers.ModelSerializer):
     product = serializers.SerializerMethodField()
     total_amount = serializers.DecimalField(max_digits=10, decimal_places=2, coerce_to_string=False)
 
     def get_product(self, obj):
-        product_serializer = ReOrderProductSerializer(obj.product_size.product, context={'request': self.context.get('request'), 'order_item': obj})
+        product_serializer = ReOrderProductSerializer(obj.product_size.product,
+                                                      context={'request': self.context.get('request'),
+                                                               'order_item': obj})
         return product_serializer.data
 
     class Meta:
         model = OrderItem
         fields = ['product', 'quantity', 'total_amount', 'is_bonus']
+
 
 class ReOrderSerializer(serializers.ModelSerializer):
     order_items = ReOrderItemSerializer(many=True, read_only=True)
@@ -305,10 +314,12 @@ class ReOrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ['id', 'restaurant', 'delivery', 'order_time', 'total_amount', 'order_items', 'payment_method', 'order_status', 'comment']
+        fields = ['id', 'restaurant', 'delivery', 'order_time', 'total_amount', 'order_items', 'payment_method',
+                  'order_status', 'comment']
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
-        order_items_serializer = ReOrderItemSerializer(instance.order_items.all(), many=True, context={'request': self.context.get('request')})
+        order_items_serializer = ReOrderItemSerializer(instance.order_items.all(), many=True,
+                                                       context={'request': self.context.get('request')})
         ret['order_items'] = order_items_serializer.data
         return ret
