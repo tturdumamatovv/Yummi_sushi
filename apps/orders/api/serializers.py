@@ -16,7 +16,7 @@ from apps.orders.models import (
     TelegramBotToken, PromoCode
 
 )  # Ingredient)
-from apps.product.models import ProductSize
+from apps.product.models import ProductSize, Product
 
 
 class RestaurantSerializer(serializers.ModelSerializer):
@@ -229,18 +229,34 @@ class PromoCodeSerializer(serializers.ModelSerializer):
         fields = ['code', 'valid_from', 'valid_to', 'discount', 'active']
 
 
-
 class ReOrderToppingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Topping
         fields = ['id', 'name', 'price']
 
+
+class ReOrderProductSerializer(serializers.ModelSerializer):
+    image_url = serializers.SerializerMethodField()
+
+    def get_image_url(self, obj):
+        if obj.photo:
+            return obj.photo.url
+        return None
+
+    class Meta:
+        model = Product
+        fields = ['id', 'name', 'image_url', 'description']
+
+
 class ReOrderProductSizeSerializer(serializers.ModelSerializer):
-    product_name = serializers.CharField(source='product.name', read_only=True)  # Получаем название продукта
+    product = ReOrderProductSerializer(read_only=True)
+    price = serializers.DecimalField(source='product.price', max_digits=10, decimal_places=2,
+                                     read_only=True)  # Если цена прямо не связана с размером и зависит от продукта
 
     class Meta:
         model = ProductSize
-        fields = ['id', 'size', 'product_name', 'price', 'bonus_price']
+        fields = ['id', 'size', 'product', 'price', 'discounted_price', 'bonus_price']
+
 
 class ReOrderItemSerializer(serializers.ModelSerializer):
     product_size = ReOrderProductSizeSerializer(read_only=True)
@@ -250,9 +266,11 @@ class ReOrderItemSerializer(serializers.ModelSerializer):
         model = OrderItem
         fields = ['product_size', 'topping', 'quantity', 'total_amount', 'is_bonus']
 
+
 class ReOrderSerializer(serializers.ModelSerializer):
     order_items = ReOrderItemSerializer(many=True, read_only=True)
 
     class Meta:
         model = Order
-        fields = ['restaurant', 'delivery', 'order_time', 'total_amount', 'order_items', 'payment_method', 'order_status', 'comment']
+        fields = ['id', 'restaurant', 'delivery', 'order_time', 'total_amount', 'order_items', 'payment_method',
+                  'order_status', 'comment']
