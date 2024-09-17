@@ -37,13 +37,13 @@ class RestaurantSerializer(serializers.ModelSerializer):
 class ProductOrderItemSerializer(serializers.ModelSerializer):
     product = serializers.SerializerMethodField(read_only=True)
     product_size_id = serializers.IntegerField(write_only=True)
-    topping = ToppingSerializer(many=True, read_only=False)
+    topping_ids = serializers.ListField(child=serializers.IntegerField(), write_only=True, required=False)
     quantity = serializers.IntegerField(default=0)
     is_bonus = serializers.BooleanField(default=False)
 
     class Meta:
         model = OrderItem
-        fields = ['product_size_id', 'quantity', 'topping', 'is_bonus', 'product']
+        fields = ['product_size_id', 'quantity', 'topping_ids', 'is_bonus', 'product']
 
     def validate(self, data):
         if data.get('product_size_id') == 0:
