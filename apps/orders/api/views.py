@@ -293,10 +293,10 @@ class PromoCodeDetailView(APIView):
                 serializer = PromoCodeSerializer(promo_code)
                 return Response(serializer.data)
             else:
-                return Response({"error": "Промокод не активен или срок его действия истек"}, status=status.HTTP_404_NOT_FOUND)
+                return Response({"error": "Промокод не активен или срок его действия истек"},
+                                status=status.HTTP_404_NOT_FOUND)
         except PromoCode.DoesNotExist:
             return Response({"error": "Промокод не найден"}, status=status.HTTP_404_NOT_FOUND)
-
 
 
 class CreateReOrderView(APIView):
