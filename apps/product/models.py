@@ -1,3 +1,4 @@
+import os
 from io import BytesIO
 from PIL import Image
 from colorfield.fields import ColorField
@@ -85,28 +86,44 @@ class Product(models.Model):
         prices = [size.discounted_price if size.discounted_price else size.price for size in self.product_sizes.all()]
         return min(prices) if prices else None
 
-    def save(self, *args, **kwargs):
-        if self.photo and not self.photo.name.endswith('.webp'):
+    def process_and_save_image(self):
+        """ Обрабатывает и сохраняет изображение, преобразуя его в формат .webp и изменяя размер, и удаляет старое изображение если нужно """
+        if not self.photo:
+            return
+
+        # Путь к текущему файлу перед изменением
+        old_path = self.photo.path if self.photo.name else None
+
+        # Проверяем, нужно ли преобразование
+        if not self.photo.name.endswith('.webp'):
             image = Image.open(self.photo)
 
             max_width = 800
             max_height = 800
 
-            # Получение оригинальных размеров изображения
             original_width, original_height = image.size
             ratio = min(max_width / original_width, max_height / original_height)
             new_width = int(original_width * ratio)
             new_height = int(original_height * ratio)
 
-            # Изменение размера изображения
             resized_image = image.resize((new_width, new_height), Image.LANCZOS)
 
             image_io = BytesIO()
             resized_image.save(image_io, format='WEBP', quality=85)
 
-            # Сохранение обработанного изображения, изменение имени файла на .webp
-            self.photo.save(f"{self.photo.name.rsplit('.', 1)[0]}.webp", ContentFile(image_io.getvalue()), save=False)
+            new_name = f"{self.photo.name.rsplit('.', 1)[0]}.webp"
+            self.photo.save(new_name, ContentFile(image_io.getvalue()), save=False)
 
+        # Вызов родительского метода save
+        super().save()
+
+        # Удаление старого файла, если путь существует и файл был обновлён
+        if old_path and old_path != self.photo.path:
+            if os.path.isfile(old_path):
+                os.remove(old_path)
+
+    def save(self, *args, **kwargs):
+        self.process_and_save_image()
         super().save(*args, **kwargs)
 
 
