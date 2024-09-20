@@ -25,8 +25,8 @@ UNFOLD = {
     #         "href": lambda request: static("favicon.svg"),
     #     },
     # ],
-    "SHOW_HISTORY": False, # show/hide "History" button, default: True
-    "SHOW_VIEW_ON_SITE": True, # show/hide "View on site" button, default: True
+    "SHOW_HISTORY": False,  # show/hide "History" button, default: True
+    "SHOW_VIEW_ON_SITE": True,  # show/hide "View on site" button, default: True
     # "ENVIRONMENT": "sample_app.environment_callback",
     # "DASHBOARD_CALLBACK": "sample_app.dashboard_callback",
     "LOGIN": {
@@ -89,6 +89,11 @@ UNFOLD = {
                         "title": _("Пользователи"),
                         "icon": "person",
                         "link": reverse_lazy("admin:authentication_user_changelist"),
+                    },
+                    {
+                        "title": _("Чат поддержки"),
+                        "icon": "support",
+                        "link": reverse_lazy("admin-chat-list"),
                     },
                 ],
             },
