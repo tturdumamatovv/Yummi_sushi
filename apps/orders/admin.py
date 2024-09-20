@@ -3,7 +3,7 @@ from urllib.parse import quote
 from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
-from unfold.admin import ModelAdmin
+from unfold.admin import ModelAdmin, TabularInline
 
 from .models import (
     Restaurant,
@@ -42,7 +42,7 @@ class DeliveryAdmin(ModelAdmin):
     list_filter = ('delivery_time', 'restaurant')
 
 
-class OrderItemInline(admin.TabularInline):
+class OrderItemInline(TabularInline):
     model = OrderItem
     extra = 0
 

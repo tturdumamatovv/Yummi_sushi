@@ -1,4 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from .api.serializers import ChatMessageSerializer
 from .models import ChatRoom, ChatMessage
 # Create your views here.
 from django.db.models import Q
@@ -7,6 +10,8 @@ from django.db.models import Q
 from django.shortcuts import render
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
+from ..orders.api.serializers import OrderSerializer
+from ..orders.models import Order
 
 
 @staff_member_required
@@ -57,3 +62,19 @@ def user_chat(request):
     }
 
     return render(request, 'user_chat.html', context)
+
+
+class UserOrdersView(APIView):
+    def get(self, request, user_id):
+        orders = Order.objects.filter(user_id=user_id).order_by('-id')
+        serializer = OrderSerializer(orders, many=True)
+        return Response({'orders': serializer.data})
+
+
+class ChatRoomMessagesView(APIView):
+    def get(self, request, room_id):
+        room = get_object_or_404(ChatRoom, id=room_id)
+        messages = ChatMessage.objects.filter(room=room).order_by('timestamp')
+        serializer = ChatMessageSerializer(messages, many=True)
+        print(serializer.data)
+        return Response({'messages': serializer.data})
