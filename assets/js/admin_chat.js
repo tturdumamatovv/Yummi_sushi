@@ -99,38 +99,119 @@ document.addEventListener('DOMContentLoaded', function () {
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
     }
-
 function loadOrders(userId) {
-    ordersLoading.style.display = 'block';
+    console.log(`Загрузка заказов для пользователя с ID: ${userId}`); // Отладка
+
+    ordersLoading.style.display = 'block'; // Показываем спиннер загрузки
 
     fetch(`/support/api/orders/${userId}/`)
         .then(response => response.json())
         .then(data => {
-            ordersLoading.style.display = 'none';
+            console.log('Данные заказа:', data); // Отладка данных заказа
+
+            ordersLoading.style.display = 'none'; // Скрываем спиннер
+
+            // Проверяем, что заказы были получены внутри объекта data.orders
             if (data.orders && Array.isArray(data.orders)) {
-                data.orders.forEach(order => {
-                    // Создаем элемент ссылки
-                    const orderElement = document.createElement('li');
-                    const linkElement = document.createElement('a');
-                    linkElement.href = `/admin/orders/order/${order.id}/change/`; // Ссылка на детали заказа
-                    linkElement.textContent = `Заказ №${order.id}: ${getStatusText(order.order_status)}`;
+                const accordionContainer = document.createElement('div');
+                accordionContainer.classList.add('accordion', 'accordion-flush', 'overflow-y-scroll');
+                accordionContainer.id = 'accordionFlushOrders';
 
-                    // Применяем цвет в зависимости от статуса
-                    linkElement.style.color = getStatusColor(order.order_status);
+                // Создаем аккордеон для каждого заказа
+                data.orders.forEach((order, index) => {
+                    console.log(`Создание аккордеона для заказа №${order.id}`); // Отладка
 
-                    // Добавляем ссылку в элемент списка
-                    orderElement.appendChild(linkElement);
-                    ordersList.appendChild(orderElement);
+                    const orderItem = document.createElement('div');
+                    orderItem.classList.add('accordion-item');
+
+                    // Заголовок аккордеона
+                    const header = document.createElement('h2');
+                    header.classList.add('accordion-header');
+                    const button = document.createElement('button');
+                    button.classList.add('accordion-button', 'collapsed');
+                    button.setAttribute('type', 'button');
+                    button.setAttribute('data-bs-toggle', 'collapse');
+                    button.setAttribute('data-bs-target', `#flush-collapse${order.id}`);
+                    button.setAttribute('aria-expanded', 'false');
+                    button.setAttribute('aria-controls', `flush-collapse${order.id}`);
+                    button.textContent = `Заказ №${order.id}: ${getStatusText(order.order_status)}`;
+                    button.style.color = getStatusColor(order.order_status);
+
+                    header.appendChild(button);
+
+                    // Тело аккордеона (содержимое заказа)
+                    const collapse = document.createElement('div');
+                    collapse.id = `flush-collapse${order.id}`;
+                    collapse.classList.add('accordion-collapse', 'collapse');
+                    collapse.setAttribute('data-bs-parent', '#accordionFlushOrders');
+
+                    const body = document.createElement('div');
+                    body.classList.add('accordion-body');
+
+
+                    // Добавляем основную информацию о заказе
+                    body.innerHTML = `
+                        <strong>Дата заказа:</strong> ${new Date(order.order_time).toLocaleString()}<br>
+                        <strong>Сумма:</strong> ${order.total_amount} KGS<br>
+                        <strong>Метод оплаты:</strong> ${order.payment_method === 'card' ? 'Карта' : 'Наличные'}<br>
+                        <strong>Промокод:</strong> ${order.promo_code || 'Отсутствует'}<br>
+                        <strong>Тип получения:</strong> ${order.is_pickup ? 'Самовывоз' : 'Доставка'}<br>
+                        <strong>Продукты:</strong>
+                    `;
+
+
+                    // Создаем список продуктов
+                    if (order.order_items && Array.isArray(order.order_items)) {
+                        const productList = document.createElement('ul');
+                        productList.style.paddingLeft = '20px'; // Небольшой отступ для списка
+
+                        order.order_items.forEach(item => {
+                            const productItem = document.createElement('li');
+
+                            // Добавляем основную информацию о продукте
+                            productItem.innerHTML = `
+                                <strong>${item.product.name}</strong> (${item.product.product_sizes.find(size => size.is_selected).size}) — ${item.quantity} шт.<br>
+                                <em>Итого: ${item.total_amount} KGS</em><br>
+                            `;
+
+                            productList.appendChild(productItem);
+                        });
+
+                        // Добавляем список продуктов в тело аккордеона
+                        body.appendChild(productList);
+                    } else {
+                        body.innerHTML += '<br><em>Продукты не найдены</em>';
+                    }
+                                        const openButton = document.createElement('a');
+                    openButton.href = `/order/${order.id}/`; // Формируем URL для детального просмотра заказа
+                    openButton.target = '_blank'; // Открытие в новой вкладке
+                    openButton.classList.add('btn', 'btn-primary', 'btn-sm', 'mt-2', 'mx-auto'); // Стиль кнопки
+                    openButton.textContent = 'Открыть заказ';
+
+                    body.appendChild(openButton);
+
+                    // Добавляем кнопку "Открыть" для детального просмотра заказа
+// Добавляем кнопку к телу аккордеона
+                    collapse.appendChild(body);
+
+                    // Добавляем заголовок и содержимое в аккордеон
+                    orderItem.appendChild(header);
+                    orderItem.appendChild(collapse);
+                    accordionContainer.appendChild(orderItem);
                 });
+
+                // Очищаем список и добавляем аккордеон
+                ordersList.innerHTML = ''; // Очищаем предыдущие заказы
+                ordersList.appendChild(accordionContainer); // Добавляем аккордеон
+            } else {
+                console.error('Неверный формат данных:', data); // Отладка ошибки
             }
         })
         .catch(error => {
-            ordersLoading.style.display = 'none';
-            console.error('Error loading orders:', error);
+            ordersLoading.style.display = 'none'; // Скрываем спиннер при ошибке
+            console.error('Ошибка загрузки заказов:', error); // Отладка ошибки
         });
-}
-
-// Функция для получения текста статуса
+}// Функция для получения текста статуса
 function getStatusText(status) {
     const statusMap = {
         'pending': 'В ожидании',
@@ -153,7 +234,8 @@ function getStatusColor(status) {
     };
     return colorMap[status] || 'black'; // По умолчанию черный цвет
 }
-    // Обработка кликов на список чатов
+// Функция для получения цвета в зависимости от статуса
+  // Обработка кликов на список чатов
     document.querySelectorAll('.chat-link').forEach(link => {
         link.addEventListener('click', function (event) {
             event.preventDefault();

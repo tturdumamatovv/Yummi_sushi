@@ -10,7 +10,7 @@ from django.db.models import Q
 from django.shortcuts import render
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
-from ..orders.api.serializers import OrderSerializer
+from ..orders.api.serializers import OrderChatSerializer
 from ..orders.models import Order
 
 
@@ -67,7 +67,9 @@ def user_chat(request):
 class UserOrdersView(APIView):
     def get(self, request, user_id):
         orders = Order.objects.filter(user_id=user_id).order_by('-id')
-        serializer = OrderSerializer(orders, many=True)
+        serializer = OrderChatSerializer(orders, many=True)
+        for i in serializer.data:
+            print(i)
         return Response({'orders': serializer.data})
 
 

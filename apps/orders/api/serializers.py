@@ -280,7 +280,11 @@ class ReOrderProductSerializer(serializers.ModelSerializer):
 
     def get_photo(self, obj):
         request = self.context.get('request')
-        return request.build_absolute_uri(obj.photo.url) if obj.photo else None
+        if request:
+            if hasattr(obj, 'photo'):
+                return request.build_absolute_uri(obj.photo.url) if obj.photo else None
+        else:
+            return None
 
     def get_product_sizes(self, obj):
         order_item = self.context.get('order_item')
@@ -321,3 +325,18 @@ class ReOrderSerializer(serializers.ModelSerializer):
                                                        context={'request': self.context.get('request')})
         ret['order_items'] = order_items_serializer.data
         return ret
+
+
+
+
+class OrderChatSerializer(OrderSerializer):
+    order_items = ReOrderItemSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Order
+        fields = [
+            'id', 'delivery', 'order_time', 'total_amount', 'is_pickup',
+            'order_status', 'order_items', 'payment_method', 'change', 'restaurant_id', 'order_source', 'comment',
+            'promo_code'
+            # 'sets',
+        ]
