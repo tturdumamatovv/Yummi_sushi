@@ -16,7 +16,9 @@ from apps.pages.models import (
     OrderTypes,
     MainPage,
     Stories,
-    Story
+    Story,
+SiteSettings,
+BonusPage
 )
 
 
@@ -124,3 +126,12 @@ class StoryInline(TabularInline):
 @admin.register(Stories)
 class StoriesAdmin(ModelAdmin):
     inlines = [StoryInline]
+
+
+@admin.register(SiteSettings)
+class SiteSettingsAdmin(ModelAdmin):
+    pass
+
+@admin.register(BonusPage)
+class BonusPageAdmin(ModelAdmin):
+    pass

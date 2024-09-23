@@ -23,7 +23,7 @@ class ProductBonusView(generics.ListAPIView):
         product__bonuses=True,
         bonus_price__gt=0
     )
-    serializer_class = ProductSizeWithBonusSerializer
+    serializer_class =  ProductSizeWithBonusSerializer
 
 
 class ProductListByCategorySlugView(generics.ListAPIView):

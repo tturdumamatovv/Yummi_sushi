@@ -12,7 +12,7 @@ from apps.pages.models import (
     Address,
     PaymentMethod,
     Contacts,
-    StaticPage, Stories, Story, StoriesUserCheck
+    StaticPage, Stories, Story, StoriesUserCheck, SiteSettings, BonusPage
 )
 
 
@@ -151,18 +151,56 @@ class StaticPageSerializer(serializers.ModelSerializer):
 
 
 class LayOutSerializer(serializers.ModelSerializer):
+    top_logo = serializers.SerializerMethodField()
+    bottom_logo = serializers.SerializerMethodField()
+    favicon = serializers.SerializerMethodField()
+    title = serializers.SerializerMethodField()
+    description = serializers.SerializerMethodField()
+
     class Meta:
         model = MainPage
-        fields = ['icon', 'phone']
+        fields = [
+            'icon',
+            'phone',
+            "top_logo",
+            "bottom_logo",
+            "favicon",
+            "title",
+            "description",
+        ]
+
+    def get_top_logo(self, obj):
+        i = SiteSettings.objects.first()
+        if i:
+            return i.top_logo.url if i.top_logo else None
+
+    def get_bottom_logo(self, obj):
+        i = SiteSettings.objects.first()
+        if i:
+            return i.bottom_logo.url if i.bottom_logo else None
+
+    def get_favicon(self, obj):
+        i = SiteSettings.objects.first()
+        if i:
+            return i.favicon.url if i.favicon else None
+
+    def get_title(self, obj):
+        i = SiteSettings.objects.first()
+        if i:
+            return i.title if i.title else None
+
+    def get_description(self, obj):
+        i = SiteSettings.objects.first()
+        if i:
+            return i.description if i.description else None
 
 
 class StorySerializer(serializers.ModelSerializer):
-
     link = serializers.SerializerMethodField()
 
     class Meta:
         model = Story
-        fields = ['image', 'type', 'link', 'created_at',]
+        fields = ['image', 'type', 'link', 'created_at', ]
 
     def get_link(self, obj):
         if obj.type == 'category':
@@ -201,6 +239,12 @@ class StoriesSerializer(serializers.ModelSerializer):
         else:
             return False
 
+
 class StoriesCheckSerializer(serializers.Serializer):
     stories = serializers.IntegerField(help_text="Enter your story id here")
 
+
+class BonuspageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BonusPage
+        fields = '__all__'

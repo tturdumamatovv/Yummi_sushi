@@ -1,4 +1,6 @@
 from rest_framework import serializers
+
+from apps.pages.models import BonusPage
 from apps.product.models import (
     Product,
     ProductSize,
@@ -164,9 +166,11 @@ class ProductSizeWithBonusSerializer(serializers.ModelSerializer):
         representation['bonus_price'] = float(representation['bonus_price'])
         return representation
 
+
+
     class Meta:
         model = ProductSize
-        fields = ['product_name', 'product_description', 'product_photo', 'size', 'id', 'bonus_price']
+        fields = ['product_name', 'product_description', 'product_photo', 'size', 'id', 'bonus_price',]
 
 
 class ProductSizeIdListSerializer(serializers.Serializer):
@@ -175,3 +179,5 @@ class ProductSizeIdListSerializer(serializers.Serializer):
         required=True,
         help_text="List of product size IDs"
     )
+
+

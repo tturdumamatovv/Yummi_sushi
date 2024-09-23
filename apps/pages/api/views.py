@@ -3,20 +3,21 @@ from django.forms import Form
 from rest_framework import generics, status
 from rest_framework.generics import ListAPIView, CreateAPIView
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from apps.product.models import Category
 from apps.pages.models import (
     Banner,
     MainPage,
     Contacts,
-    StaticPage, Stories, StoriesUserCheck
+    StaticPage, Stories, StoriesUserCheck, BonusPage
 )
 from apps.pages.api.serializers import (
     HomePageSerializer,
     ContactsSerializer,
     StaticPageSerializer,
     LayOutSerializer,
-    BannerSerializer, MetaDataSerializer, StoriesSerializer, StoriesCheckSerializer
+    BannerSerializer, MetaDataSerializer, StoriesSerializer, StoriesCheckSerializer, BonuspageSerializer
 )
 
 
@@ -128,3 +129,11 @@ class StoriesViewedView(CreateAPIView):
             return Response({"message": "Story checked successfully"}, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class BonusPageView(APIView):
+    def get(self, request, *args, **kwargs):
+
+        page = BonusPage.objects.first()
+        serializer = BonuspageSerializer(page, context={'request': request})
+        return Response(serializer.data)
