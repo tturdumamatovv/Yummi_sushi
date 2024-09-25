@@ -21,11 +21,12 @@ cred = credentials.Certificate(
 firebase_admin.initialize_app(cred)
 
 
-def send_firebase_notification(token, title, body):
+def send_firebase_notification(token, title, body, image=None):
     message = messaging.Message(
         notification=messaging.Notification(
             title=title,
-            body=body
+            body=body,
+            image=image
         ),
         token=token,
     )

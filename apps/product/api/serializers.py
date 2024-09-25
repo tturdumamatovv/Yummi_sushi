@@ -166,8 +166,6 @@ class ProductSizeWithBonusSerializer(serializers.ModelSerializer):
         representation['bonus_price'] = float(representation['bonus_price'])
         return representation
 
-
-
     class Meta:
         model = ProductSize
         fields = ['product_name', 'product_description', 'product_photo', 'size', 'id', 'bonus_price',]
