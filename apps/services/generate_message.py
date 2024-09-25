@@ -91,12 +91,3 @@ def generate_order_message(order, delivery_distance_km, delivery_fee):
         message += f"Комментарий: {order.comment}\n"
 
     return message
-
-
-
-def format_order_status_change_message(order_date, order_id, order_status):
-    formatted_date = order_date.strftime('%d.%m.%Y %H:%M')
-    return (
-        f"Статус вашего заказа {order_id} изменен на {order_status}.\n"
-        f"Дата заказа: {formatted_date}"
-    )

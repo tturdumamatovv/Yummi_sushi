@@ -1,7 +1,8 @@
-from django.contrib import admin
+from django.contrib import admin, messages
 from django.utils.html import format_html
 from unfold.admin import ModelAdmin, TabularInline
 
+from apps.authentication.models import User
 from apps.pages.models import (
     Banner,
     Phone,
@@ -17,9 +18,10 @@ from apps.pages.models import (
     MainPage,
     Stories,
     Story,
-SiteSettings,
-BonusPage
+    SiteSettings,
+    BonusPage, Advertisement,
 )
+from apps.services.firebase_notification import send_firebase_notification
 
 
 @admin.register(Banner)
@@ -132,6 +134,60 @@ class StoriesAdmin(ModelAdmin):
 class SiteSettingsAdmin(ModelAdmin):
     pass
 
+
 @admin.register(BonusPage)
 class BonusPageAdmin(ModelAdmin):
     pass
+
+
+@admin.register(Advertisement)
+class AdvertisementAdmin(ModelAdmin):
+    list_display = ('title', 'created_at', 'is_active')
+    list_filter = ('is_active', 'created_at')
+    search_fields = ('title', 'content')
+    actions = ['send_advertisement']
+
+    def send_advertisement(self, request, queryset):
+        if queryset.count() != 1:
+            self.message_user(request, "Пожалуйста, выберите только одно рекламное объявление", level=messages.WARNING)
+            return
+
+        ad = queryset.first()
+        users = User.objects.filter(receive_notifications=True)
+
+        success_count = 0
+        for user in users:
+            if user.fcm_token:
+                try:
+                    # Полный URL для изображения
+                    image_url = request.build_absolute_uri(ad.image.url) if ad.image else None
+                    print({
+                            'type': 'advertisement',
+                            'ad_id': str(ad.id),
+                            'image_url': image_url
+                        })
+
+                    send_firebase_notification(
+                        token=user.fcm_token,
+                        title=ad.title,
+                        body=ad.content,
+                        data={
+                            'type': 'advertisement',
+                            'ad_id': str(ad.id),
+                            'image_url': image_url
+                        }
+                    )
+                    success_count += 1
+                except Exception as e:
+                    self.message_user(request, f"Ошибка при отправке уведомления пользователю {user.id}: {str(e)}",
+                                      level=messages.ERROR)
+            else:
+                self.message_user(request, f"У пользователя {user.id} отсутствует токен Firebase",
+                                  level=messages.WARNING)
+
+        self.message_user(request, f"Реклама успешно отправлена {success_count} из {users.count()} пользователей",
+                          level=messages.SUCCESS)
+
+    send_advertisement.short_description = "Отправить выбранную рекламу всем пользователям"
+
+
