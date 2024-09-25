@@ -37,7 +37,7 @@ def check_status_change(sender, instance, **kwargs):
         if instance.user.fcm_token:
             try:
                 body = format_order_status_change_message(instance.order_date, instance.id,
-                                                          instance.get_order_status_display)
+                                                          instance.order_status)
                 send_firebase_notification(
                     token=instance.user.fcm_token,
                     title="Изменение статуса заказа",
