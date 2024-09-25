@@ -71,20 +71,28 @@ class OrderAdmin(ModelAdmin):
     link_to_user.short_description = 'Пользователь'
 
     def order_request_button(self, obj):
+        # Инициализация переменной с пустой строкой
+        url_encoded_message = ''
+
+        # Получаем расстояние и стоимость доставки, если они доступны
         distance = obj.delivery.distance_km if obj.delivery else None
         delivery_fee = obj.delivery.delivery_fee if obj.delivery else None
+
+        # Генерируем сообщение, если есть доставка и стоимость
         if distance and delivery_fee:
             message = generate_order_message(obj, distance, delivery_fee)
-            url_encoded_message = quote(message)
+            url_encoded_message = quote(message)  # Кодируем сообщение для URL
+
+        # Получаем номер WhatsApp, если он существует
         phone = WhatsAppChat.objects.first()
         if not phone:
             return format_html('')
-        else:
-            phone.whatsapp_number
 
-        link = f'https://wa.me/{phone}?text={url_encoded_message}'
+        # Создаём ссылку на WhatsApp
+        link = f'https://wa.me/{phone.whatsapp_number}?text={url_encoded_message}'
         return format_html(
-            f'<a style="color: white; background-color: orange;" class="button" target="_blank" href="{link}">WhatsApp</a>')
+            f'<a style="color: white; background-color: orange;" class="button" target="_blank" href="{link}">WhatsApp</a>'
+        )
 
     order_request_button.short_description = 'Действие'
 
