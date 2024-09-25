@@ -179,6 +179,9 @@ class Order(models.Model):
 
         return total_bonus_amount
 
+    def get_order_status_display(self):
+        return dict(Order.ORDER_STATUS_CHOICES)[self.order_status]
+
     def save(self, *args, **kwargs):
         self.total_amount = self.apply_promo_code()
         super().save(*args, **kwargs)

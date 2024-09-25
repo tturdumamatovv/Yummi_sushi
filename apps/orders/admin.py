@@ -71,10 +71,11 @@ class OrderAdmin(ModelAdmin):
     link_to_user.short_description = 'Пользователь'
 
     def order_request_button(self, obj):
-        distance = obj.delivery.distance_km
-        delivery_fee = obj.delivery.delivery_fee
-        message = generate_order_message(obj, distance, delivery_fee)
-        url_encoded_message = quote(message)
+        distance = obj.delivery.distance_km if obj.delivery else None
+        delivery_fee = obj.delivery.delivery_fee if obj.delivery else None
+        if distance and delivery_fee:
+            message = generate_order_message(obj, distance, delivery_fee)
+            url_encoded_message = quote(message)
         phone = WhatsAppChat.objects.first()
         if not phone:
             return format_html('')
