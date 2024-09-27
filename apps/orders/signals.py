@@ -37,7 +37,7 @@ def get_readable_order_status(status):
         return 'Неизвестный статус'
 
 
-@receiver(pre_save, sender=Order)
+@receiver(post_save, sender=Order)
 def check_status_change(sender, instance, **kwargs):
     if instance.pk:
         old_order = sender.objects.get(pk=instance.pk)
@@ -47,25 +47,25 @@ def check_status_change(sender, instance, **kwargs):
         #     instance.user.last_order = datetime.now()
         #     instance.user.save()
         #     apply_bonus_points(instance.user, instance.total_bonus_amount)
+        if instance.user:
+            if instance.user.fcm_token:
+                readable_status = get_readable_order_status(instance.order_status)
 
-        if instance.user.fcm_token:
-            readable_status = get_readable_order_status(instance.order_status)
+                data = {
+                    "order_id": str(instance.id),
+                    "status": str(readable_status),
+                    "date": str(datetime.now().strftime("%d/%m/%Y, %H:%M:%S")),
+                    "type": "notificationPage"
 
-            data = {
-                "order_id": str(instance.id),
-                "status": str(readable_status),
-                "date": str(datetime.now().strftime("%d/%m/%Y, %H:%M:%S")),
-                "type": "notificationPage"
-
-            }
-            print(data)
-            try:
-                send_firebase_notification(instance.user.fcm_token,
-                                           "Изменение статуса заказа",
-                                           f"Статус вашего заказа {instance.id} изменен на {instance.order_status}",
-                                           data=data)
-            except Exception as e:
-                print(f"Ошибка при отправке уведомления: {e}")
+                }
+                print(data)
+                try:
+                    send_firebase_notification(instance.user.fcm_token,
+                                               "Изменение статуса заказа",
+                                               f"Статус вашего заказа {instance.id} изменен на {instance.order_status}",
+                                               data=data)
+                except Exception as e:
+                    print(f"Ошибка при отправке уведомления: {e}")
 
 
 @receiver(post_save, sender=Order)

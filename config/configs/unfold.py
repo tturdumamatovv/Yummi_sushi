@@ -1,10 +1,10 @@
-from django.conf.urls.static import static
+from django.templatetags.static import static
 from django.urls import reverse_lazy
 from django.utils.translation import gettext_lazy as _
 
 UNFOLD = {
-    "SITE_TITLE": "YummiSushi Admin",
-    "SITE_HEADER": "YummiSushi Admin",
+    "SITE_TITLE": "Yummi Admin",
+    "SITE_HEADER": "Yummi Admin",
     "SITE_URL": "/",
     # "SITE_ICON": lambda request: static("icon.svg"),  # both modes, optimise for 32px height
     # "SITE_ICON": {
@@ -163,16 +163,22 @@ UNFOLD = {
                     },
                     {
                         "title": _("Статические страницы"),
-                        "icon": "note_alt",
+                        "icon": "note_add",
                         "link": reverse_lazy("admin:pages_staticpage_changelist"),
                     },
                     {
+                        "title": _("Страница Бонусов"),
+                        "icon": "request_page",
+                        "link": reverse_lazy("admin:pages_bonuspage_changelist"),
+                    },
+                    {
                         "title": _("Баннеры"),
-                        "icon": "view_carousel",
+                        "icon": "paid",
                         "link": reverse_lazy("admin:pages_banner_changelist"),
                     },
                     {
                         "title": _("Истории"),
+                        "icon": "view_carousel",
                         "link": reverse_lazy("admin:pages_stories_changelist"),
                     },
                     {
