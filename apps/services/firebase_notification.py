@@ -1,6 +1,7 @@
 from datetime import date, datetime
 
 import firebase_admin
+from apps.pages.models import SiteSettings
 from firebase_admin import credentials
 from firebase_admin import messaging
 
@@ -25,12 +26,19 @@ firebase_admin.initialize_app(cred)
 
 def send_firebase_notification(token, title, body, data, image_url=None):
     data = {key: str(value) for key, value in data.items()}
+    site_settings = SiteSettings.objects.first()
+
+    if site_settings:
+        image = site_settings.site_logo.url if site_settings.site_logo else None
+    else:
+        image = 'https://i.pinimg.com/736x/ba/46/11/ba4611010100965fb6ffa1c13c877eb3.jpg'
+
 
     message = messaging.Message(
         notification=messaging.Notification(
             title=title,
             body=body,
-            image=image_url or 'https://www.gstatic.com/webp/gallery/2.jpg'
+            image=image_url or image
         ),
         data=data,
         token=token,
