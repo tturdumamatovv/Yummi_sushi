@@ -31,14 +31,18 @@ UNFOLD = {
     # "DASHBOARD_CALLBACK": "sample_app.dashboard_callback",
     "LOGIN": {
         "image": lambda request: static("sample/login-bg.jpg"),
-        "redirect_after": lambda request: reverse_lazy("admin:authentication_user_changelist"),
+        "redirect_after": lambda request: reverse_lazy(
+            "admin:authentication_user_changelist"
+        ),
     },
-    # "STYLES": [
-    #     lambda request: static("css/style.css"),
-    # ],
-    # "SCRIPTS": [
-    #     lambda request: static("js/script.js"),
-    # ],
+    "STYLES": [
+        lambda request: static("css/style.css"),
+        # lambda request: static("css/bootstrap.min.css"),
+    ],
+    "SCRIPTS": [
+        lambda request: static("js/admin_notifications.js"),
+        # lambda request: static("js/bootstrap.bundle.min.js"),
+    ],
     "COLORS": {
         "font": {
             "subtle-light": "107 114 128",
@@ -59,8 +63,8 @@ UNFOLD = {
             "700": "202 111 0",
             "800": "171 92 0",
             "900": "140 74 0",
-            "950": "112 59 0"
-        }
+            "950": "112 59 0",
+        },
     },
     # "EXTENSIONS": {
     #     "modeltranslation": {
@@ -83,7 +87,9 @@ UNFOLD = {
                     {
                         "title": _("Адреса пользователей"),
                         "icon": "home",
-                        "link": reverse_lazy("admin:authentication_useraddress_changelist"),
+                        "link": reverse_lazy(
+                            "admin:authentication_useraddress_changelist"
+                        ),
                     },
                     {
                         "title": _("Пользователи"),
@@ -196,7 +202,9 @@ UNFOLD = {
                     {
                         "title": _("Telegram"),
                         "icon": "settings",
-                        "link": reverse_lazy("admin:orders_telegrambottoken_changelist"),
+                        "link": reverse_lazy(
+                            "admin:orders_telegrambottoken_changelist"
+                        ),
                     },
                     {
                         "title": _("WhatsApp"),

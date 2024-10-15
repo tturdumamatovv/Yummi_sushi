@@ -23,18 +23,18 @@ def set_coordinates(sender, instance, **kwargs):
 
 
 def get_readable_order_status(status):
-    if status == 'pending':
-        return 'В ожидании'
-    elif status == 'in_progress':
-        return 'В процессе'
-    elif status == 'delivery':
-        return 'Доставка'
-    elif status == 'completed':
-        return 'Завершено'
-    elif status == 'cancelled':
-        return 'Отменено'
+    if status == "pending":
+        return "В ожидании"
+    elif status == "in_progress":
+        return "В процессе"
+    elif status == "delivery":
+        return "Доставка"
+    elif status == "completed":
+        return "Завершено"
+    elif status == "cancelled":
+        return "Отменено"
     else:
-        return 'Неизвестный статус'
+        return "Неизвестный статус"
 
 
 @receiver(post_save, sender=Order)
@@ -55,25 +55,27 @@ def check_status_change(sender, instance, **kwargs):
                     "order_id": str(instance.id),
                     "status": str(readable_status),
                     "date": str(datetime.now().strftime("%d/%m/%Y, %H:%M:%S")),
-                    "type": "notificationPage"
-
+                    "type": "notificationPage",
                 }
                 print(data)
                 try:
-                    send_firebase_notification(instance.user.fcm_token,
-                                               "Изменение статуса заказа",
-                                               f"Статус вашего заказа {instance.id} изменен на {instance.order_status}",
-                                               data=data)
+                    send_firebase_notification(
+                        instance.user.fcm_token,
+                        "Изменение статуса заказа",
+                        f"Статус вашего заказа {instance.id} изменен на {instance.order_status}",
+                        data=data,
+                    )
                 except Exception as e:
                     print(f"Ошибка при отправке уведомления: {e}")
 
 
 @receiver(post_save, sender=Order)
 def order_created(sender, instance, created, **kwargs):
-    channel_layer = get_channel_layer()
-    async_to_sync(channel_layer.group_send)(
-        "orders_notifications", {
-            "type": "send_notification",
-            "message": f"Новый заказ №: {instance.id}"
-        }
-    )
+    if created:  # Проверяем, что это новый заказ
+        channel_layer = get_channel_layer()
+        notification_message = f"Новый заказ №: {instance.id}"
+
+        async_to_sync(channel_layer.group_send)(
+            "orders_notifications",
+            {"type": "send_notification", "message": notification_message},
+        )
