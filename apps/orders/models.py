@@ -14,7 +14,10 @@ from apps.product.models import ProductSize, Topping  # Set,Ingredient
 
 
 class WhatsAppChat(SingletonModel):
-    whatsapp_number = models.CharField(max_length=200, unique=True, verbose_name=_("Телеграм Бот Токен"))
+    whatsapp_number = models.CharField(
+        max_length=200, unique=True, verbose_name=_("Телеграм Бот Токен")
+    )
+
     def __str__(self):
         return f"{self.whatsapp_number}"
 
@@ -24,14 +27,24 @@ class WhatsAppChat(SingletonModel):
 
 
 class TelegramBotToken(models.Model):
-    bot_token = models.CharField(max_length=200, unique=True, verbose_name=_("Телеграм Бот Токен"))
-    report_channels = models.TextField(max_length=200, blank=True, null=True, verbose_name=_("Айди каналов"))
-    app_download_link = models.CharField(max_length=250, blank=True, null=True, verbose_name=_("Ссылка на приложение"))
-    google_map_api_key = models.CharField(max_length=250, blank=True, null=True, verbose_name=_("Ключ для карты"))
+    bot_token = models.CharField(
+        max_length=200, unique=True, verbose_name=_("Телеграм Бот Токен")
+    )
+    report_channels = models.TextField(
+        max_length=200, blank=True, null=True, verbose_name=_("Айди каналов")
+    )
+    app_download_link = models.CharField(
+        max_length=250, blank=True, null=True, verbose_name=_("Ссылка на приложение")
+    )
+    google_map_api_key = models.CharField(
+        max_length=250, blank=True, null=True, verbose_name=_("Ключ для карты")
+    )
 
     def clean(self):
         if TelegramBotToken.objects.exists() and not self.pk:
-            raise ValidationError(_('Может существовать только один экземпляр модели TelegramBotToken.'))
+            raise ValidationError(
+                _("Может существовать только один экземпляр модели TelegramBotToken.")
+            )
 
     def save(self, *args, **kwargs):
         self.pk = 1  # Гарантирует, что всегда существует только один экземпляр
@@ -46,17 +59,36 @@ class TelegramBotToken(models.Model):
 
 
 class Restaurant(models.Model):
-    name = models.CharField(max_length=100, verbose_name=_('Название'))
-    address = models.CharField(max_length=255, verbose_name=_('Адрес'))
-    phone_number = models.CharField(max_length=15, verbose_name=_('Телефонный номер'), blank=True, null=True)
-    email = models.EmailField(verbose_name=_('Электронная почта'), blank=True, null=True)
-    opening_hours = models.TimeField(verbose_name=_('Время открытия'), blank=True, null=True)
-    closing_hours = models.TimeField(verbose_name=_('Время закрытия'), blank=True, null=True)
-    latitude = models.DecimalField(max_digits=9, decimal_places=6, verbose_name=_('Широта'), blank=True, null=True)
-    longitude = models.DecimalField(max_digits=9, decimal_places=6, verbose_name=_('Долгота'), blank=True, null=True)
-    telegram_chat_ids = models.TextField(verbose_name=_('Telegram Chat IDs'), validators=[MinLengthValidator(1)],
-                                         help_text=_('Введите чат-айди через запятую'), blank=True, null=True)
-    self_pickup_available = models.BooleanField(default=True, verbose_name=_('Самовывоз доступен'))
+    name = models.CharField(max_length=100, verbose_name=_("Название"))
+    address = models.CharField(max_length=255, verbose_name=_("Адрес"))
+    phone_number = models.CharField(
+        max_length=15, verbose_name=_("Телефонный номер"), blank=True, null=True
+    )
+    email = models.EmailField(
+        verbose_name=_("Электронная почта"), blank=True, null=True
+    )
+    opening_hours = models.TimeField(
+        verbose_name=_("Время открытия"), blank=True, null=True
+    )
+    closing_hours = models.TimeField(
+        verbose_name=_("Время закрытия"), blank=True, null=True
+    )
+    latitude = models.DecimalField(
+        max_digits=9, decimal_places=6, verbose_name=_("Широта"), blank=True, null=True
+    )
+    longitude = models.DecimalField(
+        max_digits=9, decimal_places=6, verbose_name=_("Долгота"), blank=True, null=True
+    )
+    telegram_chat_ids = models.TextField(
+        verbose_name=_("Telegram Chat IDs"),
+        validators=[MinLengthValidator(1)],
+        help_text=_("Введите чат-айди через запятую"),
+        blank=True,
+        null=True,
+    )
+    self_pickup_available = models.BooleanField(
+        default=True, verbose_name=_("Самовывоз доступен")
+    )
 
     class Meta:
         verbose_name = _("Ресторан")
@@ -67,7 +99,11 @@ class Restaurant(models.Model):
 
     def get_telegram_chat_ids(self):
         if self.telegram_chat_ids:
-            return [chat_id.strip() for chat_id in self.telegram_chat_ids.split(',') if chat_id.strip()]
+            return [
+                chat_id.strip()
+                for chat_id in self.telegram_chat_ids.split(",")
+                if chat_id.strip()
+            ]
         return []
 
     def distance_to(self, user_lat, user_lon):
@@ -77,13 +113,29 @@ class Restaurant(models.Model):
 
 
 class Delivery(models.Model):
-    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, verbose_name=_('Ресторан'))
-    user_address = models.ForeignKey(UserAddress, on_delete=models.CASCADE, verbose_name=_('Адрес пользователя'),
-                                     blank=True, null=True)
-    delivery_time = models.DateTimeField(verbose_name=_('Время доставки'), blank=True, null=True)
-    delivery_fee = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Стоимость доставки')
-                                       , blank=True, null=True)
-    distance_km = models.CharField(max_length=10, verbose_name=_('Расстояние (км)'), blank=True, null=True)
+    restaurant = models.ForeignKey(
+        Restaurant, on_delete=models.CASCADE, verbose_name=_("Ресторан")
+    )
+    user_address = models.ForeignKey(
+        UserAddress,
+        on_delete=models.CASCADE,
+        verbose_name=_("Адрес пользователя"),
+        blank=True,
+        null=True,
+    )
+    delivery_time = models.DateTimeField(
+        verbose_name=_("Время доставки"), blank=True, null=True
+    )
+    delivery_fee = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        verbose_name=_("Стоимость доставки"),
+        blank=True,
+        null=True,
+    )
+    distance_km = models.CharField(
+        max_length=10, verbose_name=_("Расстояние (км)"), blank=True, null=True
+    )
 
     class Meta:
         verbose_name = _("Доставка")
@@ -94,51 +146,75 @@ class Delivery(models.Model):
 
 
 class Order(models.Model):
-    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, verbose_name=_('Ресторан'))
-    delivery = models.ForeignKey(Delivery, on_delete=models.CASCADE, verbose_name=_('Доставка'), blank=True, null=True)
-    order_time = models.DateTimeField(auto_now_add=True, verbose_name=_('Время заказа'))
-    total_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Общая сумма'), blank=True,
-                                       null=True)
-    total_bonus_amount = models.IntegerField(verbose_name=_('Общая сумма бонусов'), blank=True, null=True)
-    user = models.ForeignKey('authentication.User', on_delete=models.CASCADE, related_name='orders', verbose_name=_('Пользователь')
-                             , blank=True, null=True)
-    is_pickup = models.BooleanField(default=False, verbose_name=_('Самовывоз'))
+    restaurant = models.ForeignKey(
+        Restaurant, on_delete=models.CASCADE, verbose_name=_("Ресторан")
+    )
+    delivery = models.ForeignKey(
+        Delivery,
+        on_delete=models.CASCADE,
+        verbose_name=_("Доставка"),
+        blank=True,
+        null=True,
+    )
+    order_time = models.DateTimeField(auto_now_add=True, verbose_name=_("Время заказа"))
+    total_amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        verbose_name=_("Общая сумма"),
+        blank=True,
+        null=True,
+    )
+    total_bonus_amount = models.IntegerField(
+        verbose_name=_("Общая сумма бонусов"), blank=True, null=True
+    )
+    user = models.ForeignKey(
+        "authentication.User",
+        on_delete=models.CASCADE,
+        related_name="orders",
+        verbose_name=_("Пользователь"),
+        blank=True,
+        null=True,
+    )
+    is_pickup = models.BooleanField(default=False, verbose_name=_("Самовывоз"))
     payment_method = models.CharField(
         max_length=255,
-        choices=[('card', 'Карта'),
-                 ('cash', 'Наличные'),
-                 ('online', 'Онлайн'),
-                 ],
-        default='card',
-        verbose_name=_('Способ оплаты')
+        choices=[
+            ("card", "Карта"),
+            ("cash", "Наличные"),
+            ("online", "Онлайн"),
+        ],
+        default="card",
+        verbose_name=_("Способ оплаты"),
     )
-    change = models.IntegerField(verbose_name=_('Сдача'), blank=True, null=True)
+    change = models.IntegerField(verbose_name=_("Сдача"), blank=True, null=True)
 
     order_status = models.CharField(
         max_length=20,
         choices=[
-            ('pending', _('В ожидании')),
-            ('in_progress', _('В процессе')),
-            ('delivery', _('Доставка')),
-            ('completed', _('Завершено')),
-            ('cancelled', _('Отменено'))
+            ("pending", _("В ожидании")),
+            ("in_progress", _("В процессе")),
+            ("delivery", _("Доставка")),
+            ("completed", _("Завершено")),
+            ("cancelled", _("Отменено")),
         ],
-        default='pending',
-        verbose_name=_('Статус заказа')
+        default="pending",
+        verbose_name=_("Статус заказа"),
     )
     order_source = models.CharField(
         max_length=10,
         choices=[
-            ('mobile', 'Мобильное приложение'),
-            ('web', 'Веб-сайт'),
-            ('unknown', 'Неизвестно')
+            ("mobile", "Мобильное приложение"),
+            ("web", "Веб-сайт"),
+            ("unknown", "Неизвестно"),
         ],
-        default='unknown',
-        verbose_name=_('Источник заказа')
+        default="unknown",
+        verbose_name=_("Источник заказа"),
     )
-    comment = models.TextField(verbose_name=_('Комментарий'), blank=True, null=True)
-    promo_code = models.ForeignKey('PromoCode', on_delete=models.SET_NULL, null=True, blank=True)
-
+    comment = models.TextField(verbose_name=_("Комментарий"), blank=True, null=True)
+    promo_code = models.ForeignKey(
+        "PromoCode", on_delete=models.SET_NULL, null=True, blank=True
+    )
+    is_read = models.BooleanField(default=False, verbose_name=_("Прочитано"))
 
     class Meta:
         verbose_name = _("Заказ")
@@ -149,10 +225,10 @@ class Order(models.Model):
 
     def apply_promo_code(self):
         if self.promo_code and self.promo_code.is_valid():
-            if self.promo_code.type == 'p':
+            if self.promo_code.type == "p":
                 discount_rate = Decimal(self.promo_code.discount) / Decimal(100)
                 discount_amount = discount_rate * self.total_amount
-            elif self.promo_code.type == 'f':
+            elif self.promo_code.type == "f":
                 discount_amount = Decimal(self.promo_code.discount)
             discount_amount = min(discount_amount, self.total_amount)
             return self.total_amount - discount_amount
@@ -188,13 +264,25 @@ class Order(models.Model):
 
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='order_items', verbose_name=_('Заказ'))
-    product_size = models.ForeignKey(ProductSize, on_delete=models.CASCADE, verbose_name=_('Размер продукта'),
-                                     blank=True, null=True)
-    topping = models.ManyToManyField(Topping, blank=True, verbose_name=_('Добавки'))
-    quantity = models.PositiveIntegerField(verbose_name=_('Количество'))
-    total_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name=_('Общая сумма'))
-    is_bonus = models.BooleanField(default=False, verbose_name=_('Бонусный продукт'))
+    order = models.ForeignKey(
+        Order,
+        on_delete=models.CASCADE,
+        related_name="order_items",
+        verbose_name=_("Заказ"),
+    )
+    product_size = models.ForeignKey(
+        ProductSize,
+        on_delete=models.CASCADE,
+        verbose_name=_("Размер продукта"),
+        blank=True,
+        null=True,
+    )
+    topping = models.ManyToManyField(Topping, blank=True, verbose_name=_("Добавки"))
+    quantity = models.PositiveIntegerField(verbose_name=_("Количество"))
+    total_amount = models.DecimalField(
+        max_digits=10, decimal_places=2, verbose_name=_("Общая сумма")
+    )
+    is_bonus = models.BooleanField(default=False, verbose_name=_("Бонусный продукт"))
 
     # excluded_ingredient = models.ManyToManyField(Ingredient, blank=True,
     #                                              verbose_name=_('Исключенные ингредиенты'))
@@ -207,16 +295,22 @@ class OrderItem(models.Model):
     def __str__(self):
         return f"{self.product_size.product.name if self.product_size else self.set.name} ({self.product_size.size.name if self.product_size else 'Сет'}) - {self.quantity} шт."
 
-
-
     def calculate_total_amount(self):
         if not self.is_bonus:
-            total = self.quantity * (self.product_size.get_price() if self.product_size else self.set.get_price())
+            total = self.quantity * (
+                self.product_size.get_price()
+                if self.product_size
+                else self.set.get_price()
+            )
             for topping in self.topping.all():
                 total += topping.price * self.quantity
             return total
         else:
-            total = self.quantity * (self.product_size.bonus_price if self.product_size else self.set.bonus_price)
+            total = self.quantity * (
+                self.product_size.bonus_price
+                if self.product_size
+                else self.set.bonus_price
+            )
             for topping in self.topping.all():
                 total += topping.price * self.quantity
             return total
@@ -246,7 +340,9 @@ class DistancePricing(models.Model):
 
 
 class PercentCashback(SingletonModel):
-    mobile_percent = models.IntegerField(verbose_name=_("Процент за мобильное приложение"))
+    mobile_percent = models.IntegerField(
+        verbose_name=_("Процент за мобильное приложение")
+    )
     web_percent = models.IntegerField(verbose_name=_("Процент за веб-сайт"))
 
     def __str__(self):
@@ -258,7 +354,9 @@ class PercentCashback(SingletonModel):
 
 
 class Report(models.Model):
-    image = models.ImageField(upload_to='reports/', blank=True, null=True, verbose_name=_("Картинка"))
+    image = models.ImageField(
+        upload_to="reports/", blank=True, null=True, verbose_name=_("Картинка")
+    )
     description = models.TextField(verbose_name=_("Описание"))
     contact_number = models.CharField(max_length=15, verbose_name=_("Контактный номер"))
 
@@ -271,20 +369,27 @@ class Report(models.Model):
 
 
 class PromoCode(models.Model):
-    code = models.CharField(max_length=10, unique=True, verbose_name='Промокод')
-    valid_from = models.DateTimeField(verbose_name='Начало действия')
-    valid_to = models.DateTimeField(verbose_name='Конец действия')
-    discount = models.IntegerField(help_text='Процент скидки', verbose_name='Скидка')
-    active = models.BooleanField(default=False, verbose_name='Активен')
-    type = models.CharField(max_length=3, choices=[('%', 'Процент'), ('сом', 'Фиксированная сумма')], verbose_name='Тип')
+    code = models.CharField(max_length=10, unique=True, verbose_name="Промокод")
+    valid_from = models.DateTimeField(verbose_name="Начало действия")
+    valid_to = models.DateTimeField(verbose_name="Конец действия")
+    discount = models.IntegerField(help_text="Процент скидки", verbose_name="Скидка")
+    active = models.BooleanField(default=False, verbose_name="Активен")
+    type = models.CharField(
+        max_length=3,
+        choices=[("%", "Процент"), ("сом", "Фиксированная сумма")],
+        verbose_name="Тип",
+    )
 
     def __str__(self):
         return self.code
 
     @staticmethod
     def generate_code(length=6):
-        return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(length))
+        return "".join(
+            random.choice(string.ascii_uppercase + string.digits) for _ in range(length)
+        )
 
     def is_valid(self):
         from django.utils import timezone
+
         return self.active and self.valid_from <= timezone.now() <= self.valid_to
