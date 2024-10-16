@@ -8,6 +8,7 @@ from rest_framework.views import APIView
 
 from apps.authentication.models import UserAddress
 from apps.orders.models import (
+    MinOrderAmount,
     Restaurant,
     TelegramBotToken,
     Order, PromoCode
@@ -23,6 +24,7 @@ from apps.services.generate_message import generate_order_message
 from apps.services.is_restaurant_open import is_restaurant_open
 from apps.services.send_telegram_message import send_telegram_message
 from .serializers import (
+    MinOrderAmountSerializer,
     OrderSerializer,
     OrderPreviewSerializer,
     ReportSerializer,
@@ -307,3 +309,10 @@ class CreateReOrderView(APIView):
             return Response(serializer.data)
         except Order.DoesNotExist:
             return Response({'error': 'Заказ не найден'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class GetMinOrderAmountView(APIView):
+    def get(self, request):
+        min_order_amount = MinOrderAmount.objects.first()
+        serializer = MinOrderAmountSerializer(min_order_amount)
+        return Response(serializer.data)

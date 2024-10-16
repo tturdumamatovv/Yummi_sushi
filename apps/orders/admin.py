@@ -9,6 +9,7 @@ from unfold.admin import ModelAdmin, TabularInline
 from django.contrib import messages
 
 from .models import (
+    MinOrderAmount,
     Restaurant,
     Delivery,
     Order,
@@ -230,3 +231,8 @@ class PromoCodeAdmin(ModelAdmin):
     list_display = ["code", "discount", "valid_from", "valid_to", "active", "type"]
     list_filter = ["active", "valid_from", "valid_to"]
     search_fields = ["code"]
+
+
+@admin.register(MinOrderAmount)
+class MinOrderAmountAdmin(ModelAdmin):
+    pass

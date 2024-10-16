@@ -221,6 +221,11 @@ UNFOLD = {
                         "icon": "settings",
                         "link": reverse_lazy("admin:orders_distancepricing_changelist"),
                     },
+                    {
+                        "title": _("Минимальная сумма заказа"),
+                        "icon": "settings",
+                        "link": reverse_lazy("admin:orders_minorderamount_changelist"),
+                    },
                 ],
             },
         ],

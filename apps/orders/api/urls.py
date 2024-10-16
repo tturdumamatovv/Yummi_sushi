@@ -6,7 +6,8 @@ from .views import (
     RestaurantListView,
     ListOrderView,
     PromoCodeDetailView,
-    CreateReOrderView
+    CreateReOrderView,
+    GetMinOrderAmountView,
 )
 
 urlpatterns = [
@@ -17,5 +18,5 @@ urlpatterns = [
     path('restaurants/', RestaurantListView.as_view(), name='restaurant-list'),
     path('promocode/<str:code>/', PromoCodeDetailView.as_view(), name='promocode-detail'),
     path('reorder/<int:order_id>/', CreateReOrderView.as_view(), name='reorder'),
-
+    path('min-order-amount/', GetMinOrderAmountView.as_view(), name='min-order-amount'),
 ]

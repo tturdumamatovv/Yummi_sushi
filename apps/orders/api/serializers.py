@@ -7,6 +7,7 @@ from rest_framework import serializers
 
 from apps.authentication.models import UserAddress
 from apps.orders.models import (
+    MinOrderAmount,
     Order,
     OrderItem,
     Delivery,
@@ -340,3 +341,9 @@ class OrderChatSerializer(OrderSerializer):
             'promo_code'
             # 'sets',
         ]
+
+
+class MinOrderAmountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MinOrderAmount
+        fields = ["amount"]

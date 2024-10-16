@@ -393,3 +393,16 @@ class PromoCode(models.Model):
         from django.utils import timezone
 
         return self.active and self.valid_from <= timezone.now() <= self.valid_to
+
+
+class MinOrderAmount(SingletonModel):
+    amount = models.DecimalField(
+        max_digits=10, decimal_places=2, verbose_name=_("Минимальная сумма заказа")
+    )
+
+    def __str__(self):
+        return f"{self.amount} сом"
+
+    class Meta:
+        verbose_name = _("Минимальная сумма заказа")
+        verbose_name_plural = _("Минимальные суммы заказов")
