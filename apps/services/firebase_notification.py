@@ -21,7 +21,6 @@ cred = credentials.Certificate(
     }
 )
 
-firebase_admin.initialize_app(cred)
 
 
 def send_firebase_notification(token, title, body, data, image_url=None):

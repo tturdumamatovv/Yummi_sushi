@@ -99,7 +99,7 @@ UNFOLD = {
                     {
                         "title": _("Чат поддержки"),
                         "icon": "support",
-                        "link": reverse_lazy("admin-chat-list"),
+                        "link": reverse_lazy("admin:chat_chat_changelist"),
                     },
                 ],
             },

@@ -4,9 +4,19 @@ from datetime import timedelta
 from pathlib import Path
 from decouple import config
 
+import firebase_admin
+from firebase_admin import credentials
+
 from django.utils.translation import gettext_lazy as _
 from .configs.unfold import *
+
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+cred = credentials.Certificate(os.path.join(BASE_DIR, 'yummi-sushi-5ecf2-firebase-adminsdk-kbifv-5e6560abb6.json'))
+firebase_admin.initialize_app(cred, {
+    'storageBucket': 'yummi-sushi-5ecf2.appspot.com'
+})
+
 
 SECRET_KEY = config('SECRET_KEY')
 
@@ -43,6 +53,7 @@ DJANGO_APPS = [
     'apps.orders',
     'apps.pages',
     'apps.support_admin_chat',
+    'apps.chat'
 ]
 
 THIRD_PARTY_APPS = [
