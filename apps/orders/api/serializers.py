@@ -107,7 +107,7 @@ class OrderListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ['id', 'total_amount', 'order_time', 'restaurant', 'order_items', 'total_bonus_amount',
-                  'is_pickup', 'user_address', 'app_download_url', 'order_status']
+                  'is_pickup', 'user_address', 'app_download_url', 'order_status', 'payment_method', 'order_source']
 
     def get_total_amount(self, obj):
         return obj.get_total_amount_2()
