@@ -151,3 +151,15 @@ class CreateChatView(generics.GenericAPIView):
         )
 
         return Response({"chat_id": chat.id}, status=status.HTTP_201_CREATED)
+
+
+def mark_messages_as_read(request, chat_id):
+    if request.method == "POST":
+        # Получаем все непрочитанные сообщения для данного чата
+        messages = Message.objects.filter(chat_id=chat_id, is_read=False)
+
+        # Помечаем сообщения как прочитанные и считаем количество обновленных сообщений
+        count = messages.update(is_read=True)
+
+        return JsonResponse({"status": "success", "count": count})
+    return JsonResponse({"status": "error"}, status=400)
