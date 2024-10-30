@@ -8,6 +8,8 @@ from .views import (
     PromoCodeDetailView,
     CreateReOrderView,
     GetMinOrderAmountView,
+    get_user_orders,
+    get_order_details
 )
 
 urlpatterns = [
@@ -19,4 +21,6 @@ urlpatterns = [
     path('promocode/<str:code>/', PromoCodeDetailView.as_view(), name='promocode-detail'),
     path('reorder/<int:order_id>/', CreateReOrderView.as_view(), name='reorder'),
     path('min-order-amount/', GetMinOrderAmountView.as_view(), name='min-order-amount'),
+    path('user/orders/', get_user_orders, name='user_orders'),
+    path('details/', get_order_details, name='get_order_details'),
 ]
